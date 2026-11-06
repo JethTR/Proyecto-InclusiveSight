@@ -32,20 +32,6 @@ El repositorio tiene la landing page y dos aplicaciones web, hechas con HTML, CS
 
 Las carpetas se ordenan por función ("screaming architecture"): cada función guarda junto su HTML, su CSS y su JS. Lo que usan dos o más funciones va en `compartido/`, y una función nunca importa archivos de otra.
 
-## Cómo correrlo
-
-El JavaScript usa módulos ES, que no funcionan abriendo los archivos con doble clic (`file://`). Hay que usar un servidor local desde la raíz del repositorio. Por ejemplo, con Python:
-
-```bash
-python -m http.server 8000
-```
-
-Luego abre `http://localhost:8000/` (landing) o `http://localhost:8000/estudiante/` (app). También sirve la extensión Live Server de VS Code.
-
-## Publicación
-
-GitHub Pages, desde la rama `main` y la carpeta `/ (root)`: *Settings → Pages → Deploy from branch*. Todas las rutas son relativas y respetan mayúsculas y minúsculas, así que funcionan en la URL del repositorio.
-
 ## Enlaces
 
 - Mockups en Figma: https://www.figma.com/design/mAMd9yocUOIolmdB7gkmNK
