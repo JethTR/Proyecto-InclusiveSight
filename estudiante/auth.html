@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Iniciar sesión · InclusiveSight</title>
+  <meta name="description" content="InclusiveSight: rutas guiadas por voz y vibración para estudiantes con discapacidad visual.">
+  <!-- Fuentes del diseño: Atkinson Hyperlegible (texto) y Material Symbols Rounded (iconos, solo los usados). -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&amp;display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&amp;icon_names=account_balance,add,add_alarm,alt_route,arrow_back,arrow_forward,badge,block,call,category,check,chevron_right,closed_caption,delete,directions_walk,door_open,edit,elevator,emergency,flag,format_list_numbered,help,history,info,keyboard,local_cafe,local_library,location_on,lock,lock_reset,login,logout,mail,map,mark_email_read,meeting_room,menu_book,mic,my_location,navigation,near_me,notifications,pause,pause_circle,person,play_arrow,record_voice_over,remove,replay,route,schedule,science,search,send,send_to_mobile,settings,smartphone,sos,stairs,star,straighten,support_agent,sync,tune,turn_left,turn_right,vibration,volume_up,warning,wc,where_to_vote,wrong_location&amp;display=block">
+  <link rel="stylesheet" href="../compartido/estilos/variables.css">
+  <link rel="stylesheet" href="../compartido/estilos/base.css">
+  <link rel="stylesheet" href="../compartido/estilos/componentes.css">
+  <link rel="stylesheet" href="funciones/acceso/acceso.css">
+</head>
+<!-- Acceso: 1.2 Iniciar sesión, 1.1 Crear cuenta y 1.3 Recuperar contraseña.
+     Se ve una sola sección a la vez según el hash (#iniciar-sesion, #crear-cuenta, #recuperar). Sin hash: #iniciar-sesion.
+     Los errores empiezan ocultos y sin conectar: al validar, el JavaScript los muestra y agrega aria-invalid y aria-describedby. -->
+<body>
+  <a class="saltar" href="#contenido">Saltar al contenido principal</a>
+  <main class="pantalla-completa" id="contenido" tabindex="-1">
+
+    <!-- 1.2 · Iniciar sesión -->
+    <section class="vista" id="vista-iniciar-sesion" data-vista="iniciar-sesion" aria-labelledby="titulo-iniciar-sesion">
+      <header class="encabezado">
+        <a class="boton-icono" href="index.html" aria-label="Volver al inicio"><span class="icono material-symbols-rounded" aria-hidden="true">arrow_back</span></a>
+        <h1 id="titulo-iniciar-sesion" tabindex="-1">Iniciar sesión</h1>
+      </header>
+      <form class="formulario" action="app.html" method="post" novalidate data-formulario="ingreso">
+        <!-- Error genérico (HU-0003): no dice qué dato falló. En cada intento fallido dice cuántos quedan (de 3) -->
+        <p class="error-formulario" id="ingreso-error" role="alert" data-mensaje="error" hidden>Correo o contraseña incorrectos. Intentos restantes: <span data-dato="intentos-restantes"></span>.</p>
+        <!-- Al tercer intento fallido se bloquea el inicio de sesión y el botón "Iniciar sesión" se desactiva -->
+        <p class="error-formulario" id="ingreso-bloqueo" role="alert" data-mensaje="bloqueo" hidden>Fallaste 3 intentos y el inicio de sesión quedó bloqueado. <a href="#recuperar">Recupera tu contraseña</a> para volver a entrar.</p>
+        <div class="campo">
+          <label class="campo-etiqueta" for="ingreso-correo">Correo</label>
+          <div class="campo-control">
+            <span class="icono material-symbols-rounded" aria-hidden="true">mail</span>
+            <input id="ingreso-correo" name="correo" type="email" placeholder="nombre@correo.com" autocomplete="email" required>
+          </div>
+          <p class="error-campo" id="ingreso-correo-error" data-mensaje="error" hidden></p>
+        </div>
+        <div class="campo">
+          <label class="campo-etiqueta" for="ingreso-clave">Contraseña</label>
+          <div class="campo-control">
+            <span class="icono material-symbols-rounded" aria-hidden="true">lock</span>
+            <input id="ingreso-clave" name="clave" type="password" autocomplete="current-password" required minlength="8">
+            <button class="campo-accion" type="button" data-accion="mostrar-clave" aria-controls="ingreso-clave" aria-pressed="false">Mostrar<span class="visualmente-oculto"> contraseña</span></button>
+          </div>
+          <p class="error-campo" id="ingreso-clave-error" data-mensaje="error" hidden></p>
+        </div>
+        <p><a href="#recuperar">¿Olvidaste tu contraseña?</a></p>
+        <div class="acciones">
+          <button class="boton boton-principal" type="submit"><span class="icono material-symbols-rounded" aria-hidden="true">login</span> Iniciar sesión</button>
+          <a class="boton boton-secundario" href="#crear-cuenta">Crear cuenta</a>
+        </div>
+      </form>
+    </section>
+
+    <!-- 1.1 · Crear cuenta -->
+    <section class="vista" id="vista-crear-cuenta" data-vista="crear-cuenta" aria-labelledby="titulo-crear-cuenta" hidden>
+      <header class="encabezado">
+        <a class="boton-icono" href="index.html" aria-label="Volver al inicio"><span class="icono material-symbols-rounded" aria-hidden="true">arrow_back</span></a>
+        <h1 id="titulo-crear-cuenta" tabindex="-1">Crear cuenta</h1>
+      </header>
+      <p class="introduccion">Es opcional. Con una cuenta guardas tus favoritos y preferencias en cualquier dispositivo.</p>
+      <form class="formulario" action="app.html" method="post" novalidate data-formulario="registro">
+        <div class="campo">
+          <label class="campo-etiqueta" for="registro-nombre">Nombre</label>
+          <div class="campo-control">
+            <span class="icono material-symbols-rounded" aria-hidden="true">person</span>
+            <input id="registro-nombre" name="nombre" type="text" placeholder="Escribe tu nombre" autocomplete="name" required>
+          </div>
+          <p class="error-campo" id="registro-nombre-error" data-mensaje="error" hidden></p>
+        </div>
+        <div class="campo">
+          <label class="campo-etiqueta" for="registro-correo">Correo</label>
+          <div class="campo-control">
+            <span class="icono material-symbols-rounded" aria-hidden="true">mail</span>
+            <input id="registro-correo" name="correo" type="email" placeholder="nombre@correo.com" autocomplete="email" required>
+          </div>
+          <p class="error-campo" id="registro-correo-error" data-mensaje="error" hidden></p>
+        </div>
+        <div class="campo">
+          <label class="campo-etiqueta" for="registro-clave">Contraseña</label>
+          <div class="campo-control">
+            <span class="icono material-symbols-rounded" aria-hidden="true">lock</span>
+            <input id="registro-clave" name="clave" type="password" placeholder="Mínimo 8 caracteres" aria-describedby="registro-clave-ayuda" autocomplete="new-password" required minlength="8">
+            <button class="campo-accion" type="button" data-accion="mostrar-clave" aria-controls="registro-clave" aria-pressed="false">Mostrar<span class="visualmente-oculto"> contraseña</span></button>
+          </div>
+          <!-- El texto de ejemplo desaparece al escribir: la indicación también va en texto -->
+          <p class="campo-ayuda visualmente-oculto" id="registro-clave-ayuda">Mínimo 8 caracteres.</p>
+          <p class="error-campo" id="registro-clave-error" data-mensaje="error" hidden></p>
+        </div>
+        <div class="acciones">
+          <button class="boton boton-principal" type="submit">Crear cuenta</button>
+          <a class="boton boton-secundario" href="app.html" data-accion="entrar-invitado">Ahora no, seguir como invitado</a>
+        </div>
+      </form>
+    </section>
+
+    <!-- 1.3 · Recuperar contraseña -->
+    <section class="vista" id="vista-recuperar" data-vista="recuperar" aria-labelledby="titulo-recuperar" hidden>
+      <header class="encabezado">
+        <a class="boton-icono" href="#iniciar-sesion" aria-label="Volver a iniciar sesión"><span class="icono material-symbols-rounded" aria-hidden="true">arrow_back</span></a>
+        <h1 id="titulo-recuperar" tabindex="-1">Recuperar contraseña</h1>
+      </header>
+      <p class="introduccion">Escribe tu correo y te enviaremos un enlace para crear una contraseña nueva.</p>
+      <form class="formulario" action="#recuperar" method="post" novalidate data-formulario="recuperar">
+        <div class="campo">
+          <label class="campo-etiqueta" for="recuperar-correo">Correo</label>
+          <div class="campo-control">
+            <span class="icono material-symbols-rounded" aria-hidden="true">mail</span>
+            <input id="recuperar-correo" name="correo" type="email" placeholder="nombre@correo.com" autocomplete="email" required>
+          </div>
+          <!-- Aquí sí se informa si el correo no existe (decisión del equipo, riesgo aceptado) -->
+          <p class="error-campo" id="recuperar-correo-error" hidden>Este correo no está registrado.</p>
+        </div>
+        <button class="boton boton-principal" type="submit"><span class="icono material-symbols-rounded" aria-hidden="true">send</span> Enviar enlace</button>
+      </form>
+      <section class="tarjeta confirmacion" aria-labelledby="titulo-revisa" data-mensaje="confirmacion" hidden>
+        <span class="icono material-symbols-rounded" aria-hidden="true">mark_email_read</span>
+        <h2 id="titulo-revisa">Revisa tu correo</h2>
+        <p>Te enviamos un enlace. Tiene vigencia limitada.</p>
+      </section>
+      <a class="boton boton-secundario" href="#iniciar-sesion">Volver a iniciar sesión</a>
+    </section>
+
+  </main>
+  <div class="anuncios" role="status" aria-live="polite" aria-atomic="true"></div>
+  <script type="module" src="funciones/acceso/acceso.js"></script>
+</body>
+</html>

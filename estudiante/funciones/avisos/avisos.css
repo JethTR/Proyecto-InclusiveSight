@@ -1,0 +1,32 @@
+/* Estilos de la vista avisos (W5, 6.1 avisos, 6.2 zona cerrada, 6.3 programar recordatorio, 6.4 notificaciones). */
+
+/* Lista de avisos: el destacado (zona cerrada) es amarillo y los demás son filas blancas */
+.lista-avisos .item-lista {
+  align-items: center;
+}
+
+/* 6.2 · Ruta alternativa */
+[data-parte="zona-cerrada"] .tarjeta .dato > .icono {
+  display: grid;
+  place-items: center;
+  width: var(--tactil);
+  height: var(--tactil);
+  border-radius: 50%;
+  background: var(--color-suave);
+}
+
+/* 6.4 · Interruptores dentro de la tarjeta */
+[data-parte="notificaciones"] .tarjeta {
+  gap: var(--espacio-2);
+}
+
+@media (min-width: 900px) {
+  /* W5: la tarjeta de recordatorio va a la derecha de la lista */
+  #vista-avisos .columnas > .tarjeta {
+    flex: 0 1 420px;
+  }
+
+  #vista-avisos .columnas > .columna {
+    flex: 1 1 480px;
+  }
+}

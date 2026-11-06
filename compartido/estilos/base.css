@@ -1,0 +1,154 @@
+/* Estilos base de las dos aplicaciones: reset, tipografía, enlaces, foco visible, utilidades
+   y las reglas del modo invitado/registrado y de celular/escritorio. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--color-fondo);
+  color: var(--color-texto);
+  font-family: var(--fuente);
+  font-size: var(--texto-base);
+  line-height: var(--interlineado);
+}
+
+h1, h2, h3, p, ul, ol, dl, dd, figure {
+  margin: 0;
+}
+
+h1, h2, h3 {
+  font-weight: 700;
+  line-height: var(--interlineado);
+}
+
+ul, ol {
+  padding: 0;
+  list-style: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button, input, select, textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* Los campos siempre están sobre blanco: texto azul aunque estén dentro de un fondo azul */
+input, select, textarea {
+  color: var(--color-texto-superficie);
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 0.15em;
+}
+
+/* Foco visible en todo lo que se puede usar con teclado */
+:focus-visible {
+  outline: var(--foco);
+  outline-offset: 3px;
+}
+
+/* El h1 y <main> reciben foco por código (al cambiar de vista): sin borde, porque no se usan con teclado */
+[tabindex="-1"]:focus {
+  outline: none;
+}
+
+/* Íconos (Material Symbols Rounded). La clase de Google pone la fuente; aquí, el tamaño */
+.icono {
+  flex-shrink: 0;
+  font-size: var(--icono);
+  line-height: 1;
+  font-variation-settings: "FILL" 0, "GRAD" 0;
+}
+
+/* Utilidades */
+.visualmente-oculto {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.saltar {
+  position: absolute;
+  top: var(--espacio-2);
+  left: var(--espacio-2);
+  z-index: 1000;
+  padding: var(--espacio-3) var(--espacio-4);
+  border-radius: var(--radio-s);
+  background: var(--color-acento);
+  color: var(--color-texto-superficie);
+  font-weight: 700;
+  transform: translateY(-200%);
+}
+
+.saltar:focus {
+  transform: none;
+}
+
+.anuncios {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+/* hidden siempre gana, aunque un componente ponga display */
+[hidden] {
+  display: none !important;
+}
+
+/* Modo invitado y registrado */
+body[data-modo="invitado"] [data-requiere-cuenta],
+body[data-modo="registrado"] [data-solo-invitado] {
+  display: none !important;
+}
+
+/* Contenido solo para celular o solo para escritorio */
+@media (max-width: 899px) {
+  [data-dispositivo="escritorio"] {
+    display: none !important;
+  }
+}
+
+@media (min-width: 900px) {
+  [data-dispositivo="movil"] {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}

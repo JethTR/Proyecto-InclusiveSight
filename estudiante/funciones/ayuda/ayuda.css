@@ -1,0 +1,113 @@
+/* Estilos de ayuda.html, de la vista tutorial (2.1, 2.2 y 2.3) y de los cuadros de ayuda contextual (2.4). */
+
+/* ===== Tutorial ===== */
+.tutorial-paso {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--espacio-4);
+}
+
+.tutorial-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--tactil);
+  font-weight: 700;
+}
+
+.tutorial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--espacio-5);
+  margin: auto 0;
+  text-align: center;
+}
+
+.tutorial > .icono {
+  display: grid;
+  place-items: center;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: var(--color-superficie);
+  color: var(--color-texto-superficie);
+  font-size: 80px;
+}
+
+.tutorial h2,
+.tutorial-paso > h2 {
+  font-size: var(--texto-4xl);
+}
+
+.tutorial-paso > h2 {
+  text-align: left;
+}
+
+/* Subtítulos de lo que dice la voz */
+.subtitulos {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espacio-3);
+  padding: var(--espacio-4);
+  border-radius: var(--radio-xl);
+  background: var(--color-superficie);
+  color: var(--color-texto-superficie);
+  text-align: left;
+}
+
+.controles-audio {
+  display: flex;
+  justify-content: center;
+  gap: var(--espacio-4);
+}
+
+/* Pausar el audio: botón amarillo, como en 2.1 */
+.controles-audio .boton-icono[data-accion="pausar-audio"] {
+  background: var(--color-acento);
+}
+
+.tutorial-paso > .acciones {
+  margin-top: auto;
+}
+
+.tutorial-paso > .acciones .boton-secundario {
+  border-color: transparent;
+  text-decoration: underline;
+}
+
+/* ===== 2.3 · Práctica de vibración ===== */
+.patron {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px var(--espacio-4);
+  border-radius: var(--radio-xl);
+  background: var(--color-superficie);
+  color: var(--color-texto-superficie);
+}
+
+.patron > .icono {
+  display: grid;
+  place-items: center;
+  width: var(--tactil);
+  height: var(--tactil);
+  border-radius: 50%;
+  background: var(--color-suave);
+}
+
+.patron .item-nombre,
+.patron .item-detalle {
+  display: block;
+}
+
+/* ===== ayuda.html ===== */
+.pantalla-completa > .tarjeta > .boton {
+  margin-top: var(--espacio-1);
+}
+
+/* ===== 2.4 · Cuadro de ayuda contextual ===== */
+.ayuda-contextual p {
+  font-size: var(--texto-l);
+}

@@ -1,0 +1,1101 @@
+/* Componentes de las dos aplicaciones. Celular primero; escritorio desde 900px.
+   Sobre el azul, el botón principal es amarillo y el secundario tiene borde blanco.
+   Sobre una superficie blanca (.tarjeta o <dialog>), el principal es azul y el secundario tiene borde azul. */
+
+/* ================= Esqueleto de la aplicación ================= */
+
+.app {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.principal {
+  /* Espacio para la barra inferior del celular */
+  padding-bottom: 104px;
+}
+
+/* Menú lateral (escritorio) / barra de navegación inferior (celular) */
+.menu-lateral {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 50;
+  padding: 10px var(--espacio-2);
+  border-radius: var(--radio-barra) var(--radio-barra) 0 0;
+  background: var(--color-superficie);
+  color: var(--color-texto-superficie);
+}
+
+.menu-lateral .marca,
+.menu-lateral .sesion {
+  display: none;
+}
+
+.barra-navegacion ul {
+  display: flex;
+}
+
+.barra-navegacion li {
+  flex: 1;
+}
+
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--espacio-1);
+  min-height: var(--tactil);
+  font-size: var(--texto-s);
+  text-decoration: none;
+}
+
+.menu-item .icono {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 34px;
+  border-radius: var(--radio-l);
+}
+
+.menu-item[aria-current="page"] {
+  font-weight: 700;
+}
+
+.menu-item[aria-current="page"] .icono {
+  background: var(--color-fondo);
+  color: var(--color-acento);
+}
+
+/* Vistas sin menú (tutorial y guía) y vistas sin barra inferior en celular */
+.app:has(.vista[data-pantalla-completa]:not([hidden])) .menu-lateral {
+  display: none;
+}
+
+.app:has(.vista[data-pantalla-completa]:not([hidden])) .principal {
+  padding-bottom: 0;
+}
+
+@media (max-width: 899px) {
+  .app:has(.vista[data-barra-movil="oculta"]:not([hidden]), .parte[data-barra-movil="oculta"]:not([hidden])) .menu-lateral {
+    display: none;
+  }
+
+  .app:has(.vista[data-barra-movil="oculta"]:not([hidden]), .parte[data-barra-movil="oculta"]:not([hidden])) .principal {
+    padding-bottom: 0;
+  }
+}
+
+@media (min-width: 900px) {
+  .app {
+    display: flex;
+    align-items: stretch;
+  }
+
+  .principal {
+    flex: 1;
+    min-width: 0;
+    padding-bottom: 0;
+  }
+
+  .menu-lateral {
+    position: sticky;
+    inset: 0 auto auto 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex-shrink: 0;
+    width: var(--menu-ancho);
+    height: 100vh;
+    height: 100dvh;
+    padding: var(--espacio-6) var(--espacio-5);
+    border-right: 1px solid var(--color-borde-menu);
+    border-radius: 0;
+    background: var(--color-fondo);
+    color: var(--color-texto);
+  }
+
+  .menu-lateral .marca {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    column-gap: var(--espacio-3);
+    align-items: center;
+    margin-bottom: var(--espacio-5);
+    text-decoration: none;
+  }
+
+  .marca .logo {
+    grid-row: span 2;
+    width: 52px;
+    height: 52px;
+  }
+
+  .marca-nombre {
+    align-self: end;
+    font-size: var(--texto-xl);
+    font-weight: 700;
+  }
+
+  .marca-lema {
+    align-self: start;
+    font-size: var(--texto-xs);
+    color: var(--color-texto-secundario);
+  }
+
+  .barra-navegacion ul {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .menu-item {
+    flex-direction: row;
+    gap: var(--espacio-3);
+    padding: var(--espacio-3) 14px;
+    border-radius: var(--radio-s);
+    font-size: var(--texto-base);
+  }
+
+  .menu-item .icono {
+    display: inline;
+    width: auto;
+    height: auto;
+    border-radius: 0;
+  }
+
+  .menu-item[aria-current="page"],
+  .menu-item[aria-current="page"] .icono {
+    background: var(--color-superficie);
+    color: var(--color-texto-superficie);
+  }
+
+  .menu-lateral .sesion {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: auto;
+  }
+}
+
+/* Usuario (menú lateral y tarjeta de cuenta) */
+.usuario {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.usuario > .icono {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-superficie);
+  color: var(--color-texto-superficie);
+}
+
+.usuario-nombre {
+  display: block;
+  font-weight: 700;
+}
+
+.usuario-rol {
+  display: block;
+  font-size: var(--texto-xs);
+  color: var(--color-texto-secundario);
+}
+
+.perfil {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.perfil > .icono {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--color-suave);
+  font-size: 36px;
+}
+
+.perfil-nombre {
+  display: block;
+  font-size: var(--texto-xl);
+  font-weight: 700;
+}
+
+.perfil-correo {
+  display: block;
+  font-size: var(--texto-m);
+}
+
+/* ================= Vistas, barra superior y contenido ================= */
+
+.barra-superior,
+.encabezado {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.barra-superior {
+  padding: var(--espacio-6) var(--espacio-6) var(--espacio-2);
+}
+
+.barra-superior h1 {
+  font-size: var(--texto-4xl);
+}
+
+/* Con botón de volver, el título es más pequeño (como en el mockup) */
+.barra-superior .boton-icono:first-child + h1,
+.barra-superior h2,
+.encabezado h1,
+.encabezado h2 {
+  font-size: var(--texto-3xl);
+}
+
+.barra-superior > h1,
+.barra-superior > h2 {
+  flex: 1;
+  min-width: 0;
+}
+
+.contenido {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+  padding: var(--espacio-2) var(--espacio-6) var(--espacio-6);
+}
+
+/* Partes de una vista (3.1, 3.3, 5.3, 6.2...): ya están dentro de .contenido */
+.parte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+}
+
+.parte > .barra-superior {
+  padding: 0;
+}
+
+/* Cuando una parte está activa (ej. #buscar/cerca), reemplaza el contenido principal de su vista */
+.vista[data-parte-activa] > .barra-superior,
+.vista[data-parte-activa] > .contenido > :not(.parte) {
+  display: none;
+}
+
+.columnas,
+.columna {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+}
+
+@media (min-width: 900px) {
+  .barra-superior {
+    padding: var(--espacio-7) var(--espacio-8) var(--espacio-2);
+  }
+
+  .barra-superior h1 {
+    font-size: var(--texto-5xl);
+  }
+
+  .contenido {
+    padding: var(--espacio-4) var(--espacio-8) 36px;
+  }
+
+  .columnas {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--espacio-7);
+  }
+
+  .columna {
+    flex: 0 1 480px;
+    min-width: 0;
+  }
+
+  .columnas > .tarjeta {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+/* Pantallas de una columna sin menú: index, auth, ayuda, tutorial y guía */
+.pantalla-completa,
+.vista[data-pantalla-completa] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+  width: 100%;
+  max-width: var(--contenido-movil);
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: var(--espacio-6);
+}
+
+.pantalla-completa > .vista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+  flex: 1;
+}
+
+/* Textos */
+.introduccion {
+  font-size: var(--texto-base);
+}
+
+.nota {
+  font-size: var(--texto-s);
+  color: var(--color-texto-secundario);
+}
+
+.seccion-titulo {
+  font-size: var(--texto-l);
+  font-weight: 700;
+}
+
+.lema {
+  font-size: var(--texto-xl);
+}
+
+.mensaje {
+  padding: var(--espacio-4);
+  border-radius: var(--radio-xl);
+  background: var(--color-superficie);
+  color: var(--color-texto-superficie);
+}
+
+/* ================= Botones y enlaces ================= */
+
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: var(--tactil);
+  padding: 15px var(--espacio-5);
+  border: 2px solid transparent;
+  border-radius: var(--radio-l);
+  background: none;
+  font-size: var(--texto-l);
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+}
+
+.boton-principal {
+  background: var(--color-acento);
+  color: var(--color-texto-superficie);
+}
+
+/* Botón desactivado (ej. "Iniciar sesión" bloqueado tras 3 intentos) */
+.boton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.boton-secundario,
+.boton-peligro {
+  border-color: var(--color-superficie);
+  color: var(--color-texto);
+}
+
+.boton-pequeno {
+  width: auto;
+  padding: 10px var(--espacio-4);
+  border-radius: var(--radio-s);
+  background: var(--color-fondo);
+  color: var(--color-superficie);
+  font-size: var(--texto-base);
+}
+
+/* Sobre blanco */
+:is(.tarjeta, dialog) .boton-principal {
+  background: var(--color-fondo);
+  color: var(--color-superficie);
+}
+
+:is(.tarjeta, dialog) :is(.boton-secundario, .boton-peligro) {
+  border-color: var(--color-fondo);
+  color: var(--color-texto-superficie);
+}
+
+/* Sobre amarillo (alerta de riesgo): botón secundario azul */
+.alerta .boton-secundario {
+  border-color: var(--color-fondo);
+  color: var(--color-texto-superficie);
+}
+
+.boton-icono {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: var(--tactil);
+  height: var(--tactil);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-superficie);
+  color: var(--color-texto-superficie);
+  text-decoration: none;
+}
+
+.boton-icono .icono {
+  font-size: 26px;
+}
+
+.boton-ayuda {
+  margin-left: auto;
+}
+
+:is(.tarjeta, dialog) .boton-icono {
+  background: var(--color-suave);
+}
+
+.acciones {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+}
+
+/* Enlaces de texto: subrayados, en negrita y con área táctil de 48px */
+.enlaces ul {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--espacio-1) var(--espacio-5);
+}
+
+.enlaces a,
+.enlace-saltar,
+.enlace-peligro,
+.enlace-secundario {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tactil);
+  padding: 0 var(--espacio-1);
+  border: 0;
+  background: none;
+  color: inherit;
+  font-size: var(--texto-base);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.enlace-peligro {
+  width: 100%;
+}
+
+/* ================= Campos ================= */
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-2);
+}
+
+.campo-etiqueta,
+.opciones legend {
+  font-size: var(--texto-base);
+  font-weight: 700;
+}
+
+.campo-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 58px;
+  padding: 0 var(--espacio-4);
+  border: 2px solid transparent;
+  border-radius: var(--radio-l);
+  background: var(--color-superficie);
+  color: var(--color-texto-superficie);
+}
+
+/* Campo enfocado: borde amarillo, como en 1.2 */
+.campo-control:focus-within {
+  border-color: var(--color-acento);
+  outline: 2px solid var(--color-acento);
+}
+
+.campo-control input,
+.campo-control select {
+  flex: 1;
+  min-width: 0;
+  min-height: 54px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: var(--texto-l);
+}
+
+.campo-control input:focus,
+.campo-control select:focus {
+  outline: none;
+}
+
+.campo-control input::placeholder,
+.buscador input::placeholder {
+  color: var(--color-marcador);
+  opacity: 1;
+}
+
+.campo-accion {
+  min-height: var(--tactil);
+  padding: 0 var(--espacio-1);
+  border: 0;
+  background: none;
+  font-size: var(--texto-base);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.campo-ayuda {
+  font-size: var(--texto-m);
+  color: var(--color-texto-secundario);
+}
+
+:is(.tarjeta, dialog) .campo-control {
+  border-color: var(--color-suave);
+}
+
+:is(.tarjeta, dialog) .campo-ayuda {
+  color: inherit;
+}
+
+.campo-control input[aria-invalid="true"] {
+  text-decoration: underline wavy var(--color-acento);
+}
+
+/* Mensajes de error: amarillos, como las alertas del mockup */
+.error-formulario,
+.error-campo {
+  padding: var(--espacio-3) var(--espacio-4);
+  border-radius: var(--radio-l);
+  background: var(--color-acento);
+  color: var(--color-texto-superficie);
+  font-weight: 700;
+}
+
+.error-campo {
+  font-size: var(--texto-m);
+}
+
+/* ================= Opciones (radios) ================= */
+
+.opciones {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.opciones legend {
+  margin-bottom: var(--espacio-2);
+  padding: 0;
+}
+
+.opcion {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: var(--espacio-4);
+  border: 4px solid transparent;
+  border-radius: var(--radio-xl);
+  background: var(--color-superficie);
+  color: var(--color-texto-superficie);
+  cursor: pointer;
+}
+
+.opcion:has(input:checked) {
+  border-color: var(--color-acento);
+}
+
+/* Texto "Elegido" solo visual: el lector ya anuncia el radio como marcado.
+   La segunda línea lo oculta a los lectores en los navegadores que la entienden. */
+.opcion:has(input:checked)::after {
+  content: "Elegido";
+  content: "Elegido" / "";
+  font-size: var(--texto-s);
+  font-weight: 700;
+}
+
+.opcion:has(input:focus-visible) {
+  outline: var(--foco);
+  outline-offset: 3px;
+}
+
+.opcion input {
+  appearance: none;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  margin: 0;
+  border: 2.5px solid currentColor;
+  border-radius: 50%;
+}
+
+.opcion input:checked {
+  background: radial-gradient(circle, currentColor 0 6px, transparent 6.5px);
+}
+
+.opcion input:focus-visible {
+  outline: none;
+}
+
+.opcion-texto {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.opcion-titulo {
+  font-size: var(--texto-l);
+  font-weight: 700;
+}
+
+.opcion-detalle {
+  font-size: var(--texto-s);
+}
+
+/* En escritorio, dentro de una tarjeta (W6): borde azul en la elegida y gris en las demás */
+:is(.tarjeta, dialog) .opcion {
+  padding: 14px;
+  border-width: 2px;
+  border-color: var(--color-suave);
+  border-radius: var(--radio-m);
+}
+
+:is(.tarjeta, dialog) .opcion:has(input:checked) {
+  border-width: 3px;
+  border-color: var(--color-fondo);
+}
+
+/* ================= Interruptor (button role="switch") ================= */
+
+.interruptor {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-3);
+}
+
+.interruptor-texto {
+  flex: 1;
+  font-weight: 700;
+}
+
+.interruptor-detalle {
+  display: block;
+  font-size: var(--texto-s);
+  font-weight: 400;
+}
+
+.interruptor-boton {
+  position: relative;
+  min-width: 108px;
+  min-height: var(--tactil);
+  padding: 0 72px 0 0;
+  border: 0;
+  background: none;
+  font-size: var(--texto-m);
+  font-weight: 700;
+  text-align: right;
+}
+
+/* Pista */
+.interruptor-boton::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 60px;
+  height: 34px;
+  border: 2px solid var(--color-superficie);
+  border-radius: 17px;
+  background: var(--color-pista);
+  transform: translateY(-50%);
+}
+
+/* Perilla */
+.interruptor-boton::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  right: 30px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--color-superficie);
+  transform: translateY(-50%);
+}
+
+.interruptor-boton[aria-checked="true"]::after {
+  border-color: var(--color-fondo);
+  background: var(--color-fondo);
+}
+
+.interruptor-boton[aria-checked="true"]::before {
+  right: 4px;
+  background: var(--color-acento);
+}
+
+:is(.tarjeta, dialog) .interruptor-boton::after {
+  border-color: var(--color-pista-superficie);
+  background: var(--color-pista-superficie);
+}
+
+:is(.tarjeta, dialog) .interruptor-boton[aria-checked="true"]::after {
+  border-color: var(--color-fondo);
+  background: var(--color-fondo);
+}
+
+/* ================= Tarjetas, alertas y listas ================= */
+
+.tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+  padding: var(--espacio-5);
+  border-radius: var(--radio-xl);
+  background: var(--color-superficie);
+  color: var(--color-texto-superficie);
+}
+
+.tarjeta .nota {
+  color: inherit;
+}
+
+.tarjeta-titulo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--texto-xl);
+  font-weight: 700;
+}
+
+.tarjeta-subtitulo {
+  font-size: var(--texto-l);
+  font-weight: 700;
+}
+
+@media (min-width: 900px) {
+  .tarjeta {
+    padding: var(--espacio-6);
+  }
+}
+
+/* Alerta amarilla (zona de riesgo, zona cerrada, error de carga) */
+.alerta,
+.mensaje-carga {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 2px 14px;
+  padding: var(--espacio-4);
+  border-radius: var(--radio-xl);
+  background: var(--color-acento);
+  color: var(--color-texto-superficie);
+}
+
+.alerta > .icono {
+  grid-row: span 2;
+  font-size: 32px;
+}
+
+.alerta > :not(.icono) {
+  grid-column: 2;
+}
+
+.alerta-titulo {
+  display: block;
+  font-size: var(--texto-l);
+  font-weight: 700;
+}
+
+.alerta p:not(.alerta-titulo),
+.alerta-texto > span:not(.alerta-titulo) {
+  font-size: var(--texto-m);
+}
+
+/* Alerta que lleva a otra pantalla: con chevron a la derecha */
+.alerta-enlace {
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  width: 100%;
+  border: 0;
+  font-size: inherit;
+  text-align: left;
+  text-decoration: none;
+}
+
+.alerta-enlace > .icono {
+  grid-row: auto;
+}
+
+.alerta-enlace > :not(.icono) {
+  grid-column: auto;
+}
+
+.alerta-enlace > .icono:last-child {
+  font-size: var(--icono-l);
+}
+
+.alerta-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.alerta-info {
+  background: var(--color-superficie);
+}
+
+.mensaje-carga {
+  grid-template-columns: 1fr;
+  margin: var(--espacio-6);
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+}
+
+/* Fila de lista: resultados, ajustes, avisos */
+.item-lista {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: var(--tactil);
+  padding: 14px;
+  border: 4px solid transparent;
+  border-radius: var(--radio-xl);
+  background: var(--color-superficie);
+  color: var(--color-texto-superficie);
+  font-size: inherit;
+  text-align: left;
+  text-decoration: none;
+}
+
+/* Ícono principal dentro de un círculo */
+.item-lista > .icono:first-child {
+  display: grid;
+  place-items: center;
+  width: var(--tactil);
+  height: var(--tactil);
+  border-radius: 50%;
+  background: var(--color-suave);
+  font-size: 26px;
+}
+
+/* Chevron */
+.item-lista > .icono:last-child:not(:first-child) {
+  margin-left: auto;
+  font-size: var(--icono-l);
+}
+
+.item-lista[aria-current="true"] {
+  border-color: var(--color-acento);
+}
+
+.item-texto {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.item-nombre {
+  font-size: var(--texto-l);
+  font-weight: 700;
+}
+
+.item-detalle {
+  font-size: var(--texto-m);
+}
+
+@media (min-width: 900px) {
+  .item-lista {
+    border-radius: var(--radio-l);
+  }
+
+  .item-lista > .icono:first-child {
+    width: 44px;
+    height: 44px;
+    font-size: var(--icono);
+  }
+
+  .item-nombre {
+    font-size: var(--texto-base);
+  }
+
+  .item-detalle {
+    font-size: var(--texto-s);
+  }
+}
+
+/* Dato con ícono (ficha del destino, editar favorito, zona cerrada) */
+.dato {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-3);
+}
+
+/* Chips (atajos de búsqueda) */
+.chips ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--tactil);
+  padding: 0 var(--espacio-4);
+  border: 2px solid var(--color-superficie);
+  border-radius: var(--radio-pildora);
+  font-size: var(--texto-base);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.chip .icono {
+  font-size: var(--espacio-5);
+}
+
+@media (min-width: 900px) {
+  .chip {
+    font-size: var(--texto-m);
+  }
+}
+
+/* Pestañas (Mis rutas) */
+.pestanas ul {
+  display: inline-flex;
+  gap: var(--espacio-1);
+  padding: var(--espacio-1);
+  border-radius: var(--radio-m);
+  background: var(--color-pista);
+}
+
+.pestana {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--espacio-4);
+  border-radius: 10px;
+  font-size: var(--texto-m);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.pestana[aria-current="page"],
+.pestana[aria-selected="true"] {
+  background: var(--color-superficie);
+  color: var(--color-texto-superficie);
+}
+
+/* Barra de progreso (tutorial y guía) */
+.progreso {
+  appearance: none;
+  width: 100%;
+  height: 10px;
+  border: 0;
+  border-radius: 5px;
+  background: var(--color-pista);
+  overflow: hidden;
+}
+
+.progreso::-webkit-progress-bar {
+  background: var(--color-pista);
+}
+
+.progreso::-webkit-progress-value {
+  border-radius: 5px;
+  background: var(--color-acento);
+}
+
+.progreso::-moz-progress-bar {
+  border-radius: 5px;
+  background: var(--color-acento);
+}
+
+/* ================= Diálogos (ayuda contextual y confirmaciones) ================= */
+
+dialog {
+  width: calc(100% - 2 * var(--espacio-6));
+  max-width: 420px;
+  padding: var(--espacio-6);
+  border: 0;
+  border-radius: var(--radio-xl);
+  background: var(--color-superficie);
+  color: var(--color-texto-superficie);
+}
+
+dialog[open] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+}
+
+dialog::backdrop {
+  background: var(--color-telon);
+}
+
+dialog > .icono:first-child {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--color-suave);
+  font-size: 30px;
+}
+
+dialog h2 {
+  font-size: var(--texto-3xl);
+}
+
+/* ================= Mapa (complemento: su información también está en texto) ================= */
+
+.mapa {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-2);
+}
+
+.mapa-lienzo {
+  min-height: 240px;
+  border-radius: var(--radio-m);
+  background: var(--color-mapa);
+}
+
+.mapa figcaption {
+  font-size: var(--texto-s);
+}
+
+@media (min-width: 900px) {
+  .mapa-lienzo {
+    min-height: 560px;
+  }
+}

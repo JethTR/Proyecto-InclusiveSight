@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>InclusiveSight · Rutas guiadas por voz y vibración</title>
+  <meta name="description" content="InclusiveSight: sistema de orientación por voz y vibración para que estudiantes con discapacidad visual se muevan con autonomía dentro del campus.">
+  <!-- Fuentes del diseño: Atkinson Hyperlegible (texto) y Material Symbols Rounded (iconos, solo los usados). -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&amp;display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&amp;icon_names=account_balance,arrow_forward,dashboard,design_services,directions_walk,flag,location_on,person,school,search,smartphone,turn_left,turn_right,vibration,warning,where_to_vote,wrong_location&amp;display=block">
+  <link rel="stylesheet" href="compartido/estilos/variables.css">
+  <link rel="stylesheet" href="compartido/estilos/base.css">
+  <link rel="stylesheet" href="compartido/estilos/componentes.css">
+  <link rel="stylesheet" href="landing/landing.css">
+</head>
+<!-- Landing page de InclusiveSight. Los textos salen del documento del proyecto (docs/prompt_contexto_InclusiveSight.md)
+     y de las pantallas del mockup. La aplicación del estudiante está en estudiante/. -->
+<body>
+  <a class="saltar" href="#contenido">Saltar al contenido principal</a>
+
+  <header class="cabecera">
+    <div class="contenedor cabecera-fila">
+      <a class="marca" href="#contenido">
+        <img class="logo" src="compartido/img/logo-inclusivesight.svg" alt="" width="44" height="44">
+        <span class="marca-nombre">InclusiveSight</span>
+      </a>
+      <nav class="navegacion" aria-label="Secciones">
+        <ul>
+          <li><a href="#problema">El problema</a></li>
+          <li><a href="#solucion">La solución</a></li>
+          <li><a href="#como-funciona">Cómo funciona</a></li>
+          <li><a href="#para-quien">Para quién</a></li>
+          <li><a href="#equipo">Equipo</a></li>
+        </ul>
+      </nav>
+      <a class="boton boton-principal boton-cabecera" href="estudiante/index.html">Probar la app</a>
+    </div>
+  </header>
+
+  <main id="contenido" tabindex="-1">
+
+    <!-- Portada -->
+    <section class="portada" aria-labelledby="titulo-portada">
+      <div class="contenedor portada-contenido">
+        <img class="portada-logo" src="compartido/img/logo-inclusivesight.svg" alt="" width="132" height="132">
+        <h1 id="titulo-portada">InclusiveSight</h1>
+        <p class="lema">Llega a tu clase con rutas guiadas por voz y vibración</p>
+        <p class="portada-texto">Un sistema de orientación para que estudiantes ciegos o con baja visión se muevan con autonomía dentro del campus universitario, sin depender de otras personas.</p>
+        <div class="portada-acciones">
+          <a class="boton boton-principal" href="estudiante/index.html"><span class="icono material-symbols-rounded" aria-hidden="true">arrow_forward</span> Probar la app</a>
+          <a class="boton boton-secundario" href="https://www.figma.com/design/mAMd9yocUOIolmdB7gkmNK"><span class="icono material-symbols-rounded" aria-hidden="true">design_services</span> Ver el prototipo en Figma</a>
+        </div>
+        <p class="nota">Puedes usarla sin cuenta. Con una cuenta guardas tus favoritos y tus preferencias.</p>
+      </div>
+    </section>
+
+    <!-- El problema -->
+    <section class="seccion" id="problema" aria-labelledby="titulo-problema">
+      <div class="contenedor">
+        <h2 id="titulo-problema">El problema</h2>
+        <div class="problema">
+          <span class="icono material-symbols-rounded" aria-hidden="true">wrong_location</span>
+          <p>En los campus universitarios complejos, la señalización y los mapas están pensados para personas que ven. Por eso, las personas con discapacidad visual se desorientan, pierden tiempo, sienten estrés y dependen de terceros para llegar a sus clases.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- La solución -->
+    <section class="seccion" id="solucion" aria-labelledby="titulo-solucion">
+      <div class="contenedor">
+        <h2 id="titulo-solucion">La solución</h2>
+        <p class="seccion-intro">InclusiveSight es un sistema háptico-auditivo con tres partes que trabajan juntas.</p>
+        <ul class="tarjetas">
+          <li class="tarjeta">
+            <span class="icono icono-circulo material-symbols-rounded" aria-hidden="true">smartphone</span>
+            <h3>App para el celular</h3>
+            <p>Compatible con TalkBack y VoiceOver. Te guía con instrucciones de voz breves y con patrones de vibración distintos para cada giro.</p>
+          </li>
+          <li class="tarjeta">
+            <span class="icono icono-circulo material-symbols-rounded" aria-hidden="true">location_on</span>
+            <h3>Puntos de referencia</h3>
+            <p>Balizas o etiquetas instaladas en ingresos, escaleras, pasillos y servicios. La app las detecta por proximidad, sin que tengas que apuntar la cámara.</p>
+          </li>
+          <li class="tarjeta">
+            <span class="icono icono-circulo material-symbols-rounded" aria-hidden="true">dashboard</span>
+            <h3>Panel web institucional</h3>
+            <p>La oficina de inclusión gestiona los puntos, el mapa, las zonas de riesgo y los reportes sin depender de desarrolladores.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Cómo funciona -->
+    <section class="seccion" id="como-funciona" aria-labelledby="titulo-como-funciona">
+      <div class="contenedor">
+        <h2 id="titulo-como-funciona">Cómo funciona</h2>
+        <ol class="pasos-landing">
+          <li class="tarjeta">
+            <span class="icono icono-circulo material-symbols-rounded" aria-hidden="true">search</span>
+            <h3>Busca tu destino</h3>
+            <p>Dilo en voz alta, escríbelo, explora por categoría o mira qué tienes cerca. Antes de salir conoces la distancia, el tiempo y si hay escaleras en el camino.</p>
+          </li>
+          <li class="tarjeta">
+            <span class="icono icono-circulo material-symbols-rounded" aria-hidden="true">directions_walk</span>
+            <h3>Sigue la ruta</h3>
+            <p>Recibes instrucciones cortas por voz y una vibración en cada giro. Antes de una escalera, un desnivel o una obra, la app te alerta.</p>
+          </li>
+          <li class="tarjeta">
+            <span class="icono icono-circulo material-symbols-rounded" aria-hidden="true">where_to_vote</span>
+            <h3>Llega a tu clase</h3>
+            <p>Al llegar sientes tres pulsos y la app te dice dónde está la entrada. Si te pierdes, puedes pedir ayuda desde la misma ruta.</p>
+          </li>
+        </ol>
+
+        <!-- Práctica de vibración (2.3): usa la vibración del celular si el navegador lo permite -->
+        <section class="tarjeta practica" aria-labelledby="titulo-practica">
+          <h3 id="titulo-practica"><span class="icono material-symbols-rounded" aria-hidden="true">vibration</span> Practica las vibraciones</h3>
+          <p>Toca «Probar» para sentir cada patrón en tu celular.</p>
+          <ul class="patrones-landing">
+            <li class="patron">
+              <span class="icono icono-circulo material-symbols-rounded" aria-hidden="true">turn_left</span>
+              <span class="item-texto"><span class="item-nombre" id="patron-izquierda">Giro a la izquierda</span> <span class="item-detalle">Dos pulsos cortos</span></span>
+              <button class="boton boton-pequeno" type="button" data-patron="izquierda" aria-describedby="patron-izquierda">Probar</button>
+            </li>
+            <li class="patron">
+              <span class="icono icono-circulo material-symbols-rounded" aria-hidden="true">turn_right</span>
+              <span class="item-texto"><span class="item-nombre" id="patron-derecha">Giro a la derecha</span> <span class="item-detalle">Un pulso largo</span></span>
+              <button class="boton boton-pequeno" type="button" data-patron="derecha" aria-describedby="patron-derecha">Probar</button>
+            </li>
+            <li class="patron">
+              <span class="icono icono-circulo material-symbols-rounded" aria-hidden="true">flag</span>
+              <span class="item-texto"><span class="item-nombre" id="patron-llegada">Llegada al destino</span> <span class="item-detalle">Tres pulsos</span></span>
+              <button class="boton boton-pequeno" type="button" data-patron="llegada" aria-describedby="patron-llegada">Probar</button>
+            </li>
+            <li class="patron">
+              <span class="icono icono-circulo material-symbols-rounded" aria-hidden="true">warning</span>
+              <span class="item-texto"><span class="item-nombre" id="patron-riesgo">Alerta de riesgo</span> <span class="item-detalle">Vibración continua fuerte</span></span>
+              <button class="boton boton-pequeno" type="button" data-patron="riesgo" aria-describedby="patron-riesgo">Probar</button>
+            </li>
+          </ul>
+          <!-- Se muestra si el navegador no puede vibrar (computadoras e iPhone) -->
+          <p class="nota" data-mensaje="sin-vibracion" hidden>Este dispositivo no permite vibrar desde el navegador. Pruébalo desde un celular Android.</p>
+        </section>
+      </div>
+    </section>
+
+    <!-- Para quién -->
+    <section class="seccion" id="para-quien" aria-labelledby="titulo-para-quien">
+      <div class="contenedor">
+        <h2 id="titulo-para-quien">Para quién</h2>
+        <ul class="tarjetas">
+          <li class="tarjeta">
+            <span class="icono icono-circulo material-symbols-rounded" aria-hidden="true">school</span>
+            <h3>Estudiantes</h3>
+            <p>Universitarios con discapacidad visual parcial o total que necesitan llegar a tiempo y con autonomía a sus clases.</p>
+          </li>
+          <li class="tarjeta">
+            <span class="icono icono-circulo material-symbols-rounded" aria-hidden="true">person</span>
+            <h3>Personal y visitantes</h3>
+            <p>Personas con dificultades de visión que van al campus de forma ocasional y pueden usar la app sin registrarse.</p>
+          </li>
+          <li class="tarjeta">
+            <span class="icono icono-circulo material-symbols-rounded" aria-hidden="true">account_balance</span>
+            <h3>Universidades</h3>
+            <p>Oficinas de inclusión, bienestar e infraestructura que quieren un campus accesible y datos para mejorarlo.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Equipo -->
+    <section class="seccion" id="equipo" aria-labelledby="titulo-equipo">
+      <div class="contenedor">
+        <h2 id="titulo-equipo">Equipo</h2>
+        <p class="seccion-intro"><strong>AccessTech Solutions</strong> · Grupo 3 del curso HCI for UX Design (1ASI0784), Universidad Peruana de Ciencias Aplicadas, ciclo 2026-02.</p>
+        <ul class="equipo">
+          <li>Contreras Chumbirayco, Aldair Kenedy</li>
+          <li>Juarez Zapata, Gonzalo Alonso</li>
+          <li>Quillca Berrocal, Alvaro Waldo</li>
+          <li>Rubio Román, Fabrizio Alonso</li>
+          <li>Toribio Romero, Jeanbeth Jeferi</li>
+          <li>Vegas Campomanes, Carlos Antonio</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="pie">
+    <div class="contenedor pie-fila">
+      <p>InclusiveSight · AccessTech Solutions · 2026</p>
+      <ul class="pie-enlaces">
+        <li><a href="estudiante/index.html">Probar la app</a></li>
+        <li><a href="https://www.figma.com/design/mAMd9yocUOIolmdB7gkmNK">Prototipo en Figma</a></li>
+        <li><a href="https://github.com/JethTR/InclusiveSight">Código en GitHub</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <div class="anuncios" role="status" aria-live="polite" aria-atomic="true"></div>
+  <script type="module" src="landing/landing.js"></script>
+</body>
+</html>

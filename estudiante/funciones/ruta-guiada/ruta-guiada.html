@@ -1,0 +1,227 @@
+<!--
+  Fragmento de estudiante/app.html: vistas ruta (W4), guia (M3 y estados 4.1 a 4.7) y contacto-emergencia (4.8). Las ve todo el mundo.
+  No lleva <!DOCTYPE>, <html> ni <body>. El router lo carga con fetch, lo inserta en <main id="vista">
+  y lo guarda en memoria. Sus estilos y su lógica están en ruta-guiada.css y ruta-guiada.js.
+  Las rutas que contiene son relativas a estudiante/app.html.
+-->
+
+<!-- ============ ruta · W4 (#ruta/<id>) ============ -->
+<section class="vista" id="vista-ruta" data-vista="ruta" data-barra-movil="oculta" aria-labelledby="titulo-ruta" hidden>
+  <header class="barra-superior">
+    <a class="boton-icono" href="#destino" aria-label="Volver al destino" data-accion="volver-destino"><span class="icono material-symbols-rounded" aria-hidden="true">arrow_back</span></a>
+    <h1 id="titulo-ruta" tabindex="-1">Ruta a <span data-dato="destino-nombre"></span></h1>
+    <button class="boton-icono boton-ayuda" type="button" data-accion="abrir-ayuda" aria-controls="ayuda-ruta" aria-haspopup="dialog" aria-label="Ayuda de esta pantalla"><span class="icono material-symbols-rounded" aria-hidden="true">help</span></button>
+  </header>
+  <div class="contenido">
+    <div class="columnas">
+      <div class="columna">
+        <section class="tarjeta" aria-labelledby="titulo-pasos">
+          <h2 class="tarjeta-titulo" id="titulo-pasos"><span class="icono material-symbols-rounded" aria-hidden="true">format_list_numbered</span> Paso a paso · <span data-dato="ruta-resumen"></span></h2>
+          <ol class="pasos" data-lista="pasos"></ol>
+        </section>
+        <section class="alerta alerta-info" aria-labelledby="titulo-celular">
+          <span class="icono material-symbols-rounded" aria-hidden="true">smartphone</span>
+          <h2 class="alerta-titulo" id="titulo-celular">La guía por voz y vibración funciona en tu celular</h2>
+          <p>Envía la ruta y ábrela cuando estés en el campus.</p>
+        </section>
+        <button class="boton boton-principal" type="button" data-accion="enviar-al-celular"><span class="icono material-symbols-rounded" aria-hidden="true">send_to_mobile</span> Enviar al celular</button>
+      </div>
+      <section class="tarjeta tarjeta-mapa" aria-labelledby="titulo-mapa-ruta">
+        <h2 class="tarjeta-titulo" id="titulo-mapa-ruta"><span class="icono material-symbols-rounded" aria-hidden="true">map</span> Ruta en el mapa</h2>
+        <figure class="mapa">
+          <div class="mapa-lienzo" aria-hidden="true"></div>
+          <figcaption data-dato="mapa-descripcion"></figcaption>
+        </figure>
+      </section>
+    </div>
+  </div>
+  <dialog class="ayuda-contextual" id="ayuda-ruta" aria-labelledby="titulo-ayuda-ruta">
+    <span class="icono material-symbols-rounded" aria-hidden="true">help</span>
+    <h2 id="titulo-ayuda-ruta">Ayuda de esta pantalla</h2>
+    <p>Revisa los pasos de la ruta. La guía por voz y vibración se usa desde tu celular.</p>
+    <form method="dialog" class="acciones">
+      <button class="boton boton-principal" type="button" data-accion="escuchar-ayuda"><span class="icono material-symbols-rounded" aria-hidden="true">volume_up</span> Escuchar ayuda</button>
+      <button class="boton boton-secundario" type="submit">Cerrar</button>
+    </form>
+  </dialog>
+</section>
+
+<!-- ============ guia · M3 y estados 4.1 a 4.7 (#guia/<id>) ============
+     Nunca recarga la página entre pasos: los estados se cambian con data-estado y hidden. -->
+<section class="vista" id="vista-guia" data-vista="guia" data-pantalla-completa aria-labelledby="titulo-guia" hidden>
+  <header class="ruta-cabecera">
+    <h1 id="titulo-guia" tabindex="-1">Ruta a <span data-dato="destino-nombre"></span></h1>
+    <p class="ruta-progreso-texto" id="guia-progreso" data-dato="ruta-progreso"></p>
+    <progress class="progreso" aria-labelledby="guia-progreso"></progress>
+  </header>
+
+  <!-- M3 · En curso y 4.1 · Instrucción de giro -->
+  <div class="guia-estado" data-estado="en-curso">
+    <section class="tarjeta instruccion" aria-labelledby="titulo-ahora">
+      <h2 class="instruccion-etiqueta" id="titulo-ahora">Ahora</h2>
+      <span class="icono material-symbols-rounded" aria-hidden="true" data-dato="instruccion-icono"></span>
+      <p class="instruccion-texto" aria-live="assertive" aria-atomic="true" data-dato="instruccion-texto"></p>
+      <p class="instruccion-voz" data-dato="instruccion-voz" hidden></p>
+      <ul class="canales">
+        <li class="canal" data-canal="voz"><span class="icono material-symbols-rounded" aria-hidden="true">volume_up</span> Voz activa</li>
+        <li class="canal" data-canal="vibracion"><span class="icono material-symbols-rounded" aria-hidden="true">vibration</span> Vibración<span data-dato="instruccion-vibracion"></span></li>
+      </ul>
+    </section>
+    <!-- Zona de riesgo próxima: solo si hay una -->
+    <button class="alerta alerta-enlace" type="button" data-accion="ver-alerta-riesgo" data-mensaje="riesgo-proximo" hidden>
+      <span class="icono material-symbols-rounded" aria-hidden="true">stairs</span>
+      <span class="alerta-texto"><span class="alerta-titulo" data-dato="riesgo-proximo-titulo"></span> <span data-dato="riesgo-proximo-texto"></span></span>
+      <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span>
+    </button>
+    <div class="controles-ruta">
+      <button class="boton boton-principal" type="button" data-accion="repetir-instruccion"><span class="icono material-symbols-rounded" aria-hidden="true">replay</span> Repetir instrucción</button>
+      <button class="boton boton-secundario" type="button" data-accion="pausar-ruta"><span class="icono material-symbols-rounded" aria-hidden="true">pause</span> Pausar</button>
+      <button class="boton boton-secundario" type="button" data-accion="pedir-ayuda"><span class="icono material-symbols-rounded" aria-hidden="true">sos</span> Ayuda</button>
+    </div>
+    <button class="enlace-peligro" type="button" data-accion="cancelar-ruta" aria-haspopup="dialog" aria-controls="dialogo-cancelar">Cancelar ruta</button>
+  </div>
+
+  <!-- 4.2 · Recalculando la ruta -->
+  <div class="guia-estado" data-estado="recalculando" hidden>
+    <section class="alerta" aria-labelledby="titulo-saliste">
+      <span class="icono material-symbols-rounded" aria-hidden="true">wrong_location</span>
+      <h2 class="alerta-titulo" id="titulo-saliste">Te saliste de la ruta</h2>
+      <p>Detente un momento. Estoy recalculando.</p>
+    </section>
+    <section class="estado" aria-labelledby="titulo-recalculando">
+      <span class="icono material-symbols-rounded" aria-hidden="true">sync</span>
+      <h3 id="titulo-recalculando">Recalculando…</h3>
+      <p class="nota">Aviso por voz y vibración</p>
+      <p>Cuando termine, la app dirá:</p>
+      <p class="instruccion-voz" data-dato="instruccion-siguiente"></p>
+    </section>
+    <button class="enlace-peligro" type="button" data-accion="cancelar-ruta" aria-haspopup="dialog" aria-controls="dialogo-cancelar">Cancelar ruta</button>
+  </div>
+
+  <!-- 4.3 · Alerta de riesgo (no se puede desactivar) -->
+  <div class="guia-estado" data-estado="alerta-riesgo" hidden>
+    <section class="alerta alerta-riesgo" role="alert" aria-labelledby="titulo-riesgo" aria-describedby="texto-riesgo">
+      <span class="icono material-symbols-rounded" aria-hidden="true" data-dato="riesgo-icono"></span>
+      <p class="alerta-titulo" id="titulo-riesgo" data-dato="riesgo-titulo"></p>
+      <p id="texto-riesgo" data-dato="riesgo-texto"></p>
+      <p class="canal"><span class="icono material-symbols-rounded" aria-hidden="true">vibration</span> Voz de alerta + vibración continua</p>
+    </section>
+    <div class="acciones">
+      <button class="boton boton-principal" type="button" data-accion="continuar-ruta"><span class="icono material-symbols-rounded" aria-hidden="true">check</span> Entendido, continuar</button>
+      <button class="boton boton-secundario" type="button" data-accion="buscar-otra-ruta"><span class="icono material-symbols-rounded" aria-hidden="true">alt_route</span> Buscar otra ruta</button>
+    </div>
+  </div>
+
+  <!-- 4.4 · Ruta en pausa -->
+  <div class="guia-estado" data-estado="pausa" hidden>
+    <section class="estado" aria-labelledby="titulo-pausa">
+      <span class="icono material-symbols-rounded" aria-hidden="true">pause_circle</span>
+      <h2 id="titulo-pausa">Ruta en pausa</h2>
+      <p class="ruta-progreso-texto" data-dato="pausa-resumen"></p>
+      <p class="estado-titulo">En pausa</p>
+      <p>La guía no hablará ni vibrará hasta que reanudes.</p>
+    </section>
+    <div class="acciones">
+      <button class="boton boton-principal" type="button" data-accion="reanudar-ruta"><span class="icono material-symbols-rounded" aria-hidden="true">play_arrow</span> Reanudar ruta</button>
+      <button class="boton boton-secundario" type="button" data-accion="cancelar-ruta" aria-haspopup="dialog" aria-controls="dialogo-cancelar">Cancelar ruta</button>
+    </div>
+  </div>
+
+  <!-- 4.6 · Pedir ayuda -->
+  <div class="guia-estado" data-estado="pedir-ayuda" hidden>
+    <header class="encabezado">
+      <button class="boton-icono" type="button" data-accion="volver-a-ruta" aria-label="Volver a la ruta"><span class="icono material-symbols-rounded" aria-hidden="true">arrow_back</span></button>
+      <h2 id="titulo-pedir-ayuda">Pedir ayuda</h2>
+    </header>
+    <p class="introduccion">Compartiremos tu ubicación con el personal de apoyo para que sepa dónde estás.</p>
+    <section class="tarjeta ubicacion" aria-labelledby="titulo-tu-ubicacion">
+      <span class="icono material-symbols-rounded" aria-hidden="true">my_location</span>
+      <h3 class="tarjeta-subtitulo" id="titulo-tu-ubicacion">Tu ubicación</h3>
+      <p class="ubicacion-texto" data-dato="ubicacion-actual"></p>
+    </section>
+    <form class="formulario" data-formulario="pedir-ayuda">
+      <fieldset class="opciones">
+        <legend>¿Qué pasa?</legend>
+        <label class="opcion">
+          <input type="radio" name="motivo" value="perdido" checked>
+          <span class="opcion-texto"><span class="opcion-titulo">Me perdí</span></span>
+        </label>
+        <label class="opcion">
+          <input type="radio" name="motivo" value="obstaculo">
+          <span class="opcion-texto"><span class="opcion-titulo">Hay un obstáculo</span></span>
+        </label>
+        <label class="opcion">
+          <input type="radio" name="motivo" value="salud">
+          <span class="opcion-texto"><span class="opcion-titulo">No me siento bien</span></span>
+        </label>
+      </fieldset>
+      <button class="boton boton-principal" type="submit"><span class="icono material-symbols-rounded" aria-hidden="true">sos</span> Pedir ayuda ahora</button>
+    </form>
+  </div>
+
+  <!-- 4.7 · Llegada al destino -->
+  <div class="guia-estado" data-estado="llegada" hidden>
+    <section class="llegada" aria-labelledby="titulo-llegada">
+      <span class="icono material-symbols-rounded" aria-hidden="true">where_to_vote</span>
+      <h2 id="titulo-llegada" aria-live="assertive">Llegaste a <span data-dato="destino-nombre"></span></h2>
+      <p data-dato="llegada-indicacion"></p>
+      <p class="canal"><span class="icono material-symbols-rounded" aria-hidden="true">vibration</span> Voz + tres pulsos de vibración</p>
+    </section>
+    <div class="acciones">
+      <a class="boton boton-principal" href="#buscar" data-accion="terminar-ruta"><span class="icono material-symbols-rounded" aria-hidden="true">check</span> Terminar</a>
+      <button class="boton boton-secundario" type="button" data-accion="repetir-instruccion"><span class="icono material-symbols-rounded" aria-hidden="true">replay</span> Repetir indicación</button>
+      <button class="boton boton-secundario" type="button" data-requiere-cuenta data-accion="guardar-favorito">Guardar en favoritos</button>
+    </div>
+  </div>
+
+  <!-- 4.5 · Confirmar cancelación -->
+  <dialog class="confirmar" id="dialogo-cancelar" aria-labelledby="titulo-cancelar" aria-describedby="texto-cancelar">
+    <span class="icono material-symbols-rounded" aria-hidden="true">wrong_location</span>
+    <h2 id="titulo-cancelar">¿Cancelar la ruta?</h2>
+    <p id="texto-cancelar">Dejarás de recibir instrucciones hacia <span data-dato="destino-nombre"></span>.</p>
+    <form method="dialog" class="acciones">
+      <button class="boton boton-principal" type="submit" value="seguir" autofocus>Seguir con la ruta</button>
+      <button class="boton boton-secundario" type="submit" value="cancelar">Sí, cancelar ruta</button>
+    </form>
+  </dialog>
+</section>
+
+<!-- ============ contacto-emergencia · 4.8 ============ -->
+<section class="vista" id="vista-contacto-emergencia" data-vista="contacto-emergencia" aria-labelledby="titulo-contacto-emergencia" hidden>
+  <header class="barra-superior">
+    <a class="boton-icono" href="#ajustes" aria-label="Volver a ajustes"><span class="icono material-symbols-rounded" aria-hidden="true">arrow_back</span></a>
+    <h1 id="titulo-contacto-emergencia" tabindex="-1">Contacto de emergencia</h1>
+  </header>
+  <div class="contenido">
+    <p class="introduccion">Durante una ruta podrás avisarle con una acción rápida.</p>
+    <form class="formulario" data-formulario="emergencia">
+      <div class="campo">
+        <label class="campo-etiqueta" for="contacto-nombre">Nombre</label>
+        <div class="campo-control">
+          <span class="icono material-symbols-rounded" aria-hidden="true">person</span>
+          <input id="contacto-nombre" name="contacto-nombre" type="text" autocomplete="off">
+        </div>
+      </div>
+      <div class="campo">
+        <label class="campo-etiqueta" for="contacto-telefono">Teléfono</label>
+        <div class="campo-control">
+          <span class="icono material-symbols-rounded" aria-hidden="true">call</span>
+          <input id="contacto-telefono" name="contacto-telefono" type="tel" autocomplete="tel">
+        </div>
+      </div>
+      <div class="interruptor">
+        <span class="interruptor-texto" id="aviso-rapido-et">Aviso rápido en la ruta <span class="interruptor-detalle">Envía tu ubicación a tu contacto</span></span>
+        <button class="interruptor-boton" type="button" role="switch" aria-checked="true" aria-labelledby="aviso-rapido-et" data-accion="alternar">Sí</button>
+      </div>
+      <div class="acciones">
+        <button class="boton boton-principal" type="submit">Guardar contacto</button>
+        <button class="boton boton-secundario" type="button" data-accion="probar-aviso"><span class="icono material-symbols-rounded" aria-hidden="true">send</span> Probar aviso</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- Plantillas de las listas de este fragmento -->
+<template data-plantilla="paso">
+  <li class="paso"><span class="icono material-symbols-rounded" aria-hidden="true" data-dato="icono"></span> <span data-dato="texto"></span></li>
+</template>

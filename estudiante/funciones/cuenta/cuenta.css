@@ -1,0 +1,15 @@
+/* Estilos de la vista cuenta (1.4). El perfil y las filas usan los componentes compartidos. */
+
+/* Filas de la tarjeta de cuenta: sin fondo propio, separadas por una línea */
+#vista-cuenta .tarjeta .item-lista {
+  padding: var(--espacio-3) 0;
+  border: 0;
+  border-top: 2px solid var(--color-suave);
+  border-radius: 0;
+}
+
+@media (min-width: 900px) {
+  #vista-cuenta .contenido {
+    max-width: 560px;
+  }
+}

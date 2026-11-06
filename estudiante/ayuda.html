@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ayuda · InclusiveSight</title>
+  <meta name="description" content="InclusiveSight: rutas guiadas por voz y vibración para estudiantes con discapacidad visual.">
+  <!-- Fuentes del diseño: Atkinson Hyperlegible (texto) y Material Symbols Rounded (iconos, solo los usados). -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&amp;display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&amp;icon_names=account_balance,add,add_alarm,alt_route,arrow_back,arrow_forward,badge,block,call,category,check,chevron_right,closed_caption,delete,directions_walk,door_open,edit,elevator,emergency,flag,format_list_numbered,help,history,info,keyboard,local_cafe,local_library,location_on,lock,lock_reset,login,logout,mail,map,mark_email_read,meeting_room,menu_book,mic,my_location,navigation,near_me,notifications,pause,pause_circle,person,play_arrow,record_voice_over,remove,replay,route,schedule,science,search,send,send_to_mobile,settings,smartphone,sos,stairs,star,straighten,support_agent,sync,tune,turn_left,turn_right,vibration,volume_up,warning,wc,where_to_vote,wrong_location&amp;display=block">
+  <link rel="stylesheet" href="../compartido/estilos/variables.css">
+  <link rel="stylesheet" href="../compartido/estilos/base.css">
+  <link rel="stylesheet" href="../compartido/estilos/componentes.css">
+  <link rel="stylesheet" href="funciones/ayuda/ayuda.css">
+</head>
+<!-- Ayuda (se abre desde el enlace "Ayuda" de M1). Reúne los textos de los cuadros de ayuda contextual (2.4)
+     de cada pantalla. Dentro de la aplicación, cada vista sigue teniendo su propio cuadro de ayuda.
+     data-modo: "invitado" o "registrado"; con "invitado" no aparece la ayuda de Mis rutas ni de Avisos. -->
+<body data-modo="invitado">
+  <a class="saltar" href="#contenido">Saltar al contenido principal</a>
+  <main class="pantalla-completa" id="contenido" tabindex="-1">
+    <header class="encabezado">
+      <a class="boton-icono" href="index.html" aria-label="Volver al inicio"><span class="icono material-symbols-rounded" aria-hidden="true">arrow_back</span></a>
+      <h1>Ayuda</h1>
+    </header>
+
+    <section class="tarjeta" aria-labelledby="ayuda-buscar-titulo">
+      <h2 class="tarjeta-titulo" id="ayuda-buscar-titulo"><span class="icono material-symbols-rounded" aria-hidden="true">search</span> Buscar destino</h2>
+      <p>Puedes decir o escribir el nombre de tu destino.<span data-requiere-cuenta> Toca «Favoritos» para ver tus lugares guardados.</span></p>
+      <button class="boton boton-secundario" type="button" data-accion="escuchar-ayuda" aria-describedby="ayuda-buscar-titulo"><span class="icono material-symbols-rounded" aria-hidden="true">volume_up</span> Escuchar ayuda</button>
+    </section>
+
+    <section class="tarjeta" aria-labelledby="ayuda-destino-titulo">
+      <h2 class="tarjeta-titulo" id="ayuda-destino-titulo"><span class="icono material-symbols-rounded" aria-hidden="true">info</span> Información del destino</h2>
+      <p>Aquí ves la distancia, el tiempo, el acceso y las zonas de riesgo del destino. Usa «Iniciar ruta» para empezar la guía.</p>
+      <button class="boton boton-secundario" type="button" data-accion="escuchar-ayuda" aria-describedby="ayuda-destino-titulo"><span class="icono material-symbols-rounded" aria-hidden="true">volume_up</span> Escuchar ayuda</button>
+    </section>
+
+    <section class="tarjeta" aria-labelledby="ayuda-ruta-titulo">
+      <h2 class="tarjeta-titulo" id="ayuda-ruta-titulo"><span class="icono material-symbols-rounded" aria-hidden="true">route</span> Vista previa de la ruta</h2>
+      <p>Revisa los pasos de la ruta. La guía por voz y vibración se usa desde tu celular.</p>
+      <button class="boton boton-secundario" type="button" data-accion="escuchar-ayuda" aria-describedby="ayuda-ruta-titulo"><span class="icono material-symbols-rounded" aria-hidden="true">volume_up</span> Escuchar ayuda</button>
+    </section>
+
+    <section class="tarjeta" aria-labelledby="ayuda-mis-rutas-titulo" data-requiere-cuenta>
+      <h2 class="tarjeta-titulo" id="ayuda-mis-rutas-titulo"><span class="icono material-symbols-rounded" aria-hidden="true">star</span> Mis rutas</h2>
+      <p>Aquí están tus favoritos y tus rutas recientes. Usa «Ver ruta» o «Repetir» para empezar más rápido.</p>
+      <button class="boton boton-secundario" type="button" data-accion="escuchar-ayuda" aria-describedby="ayuda-mis-rutas-titulo"><span class="icono material-symbols-rounded" aria-hidden="true">volume_up</span> Escuchar ayuda</button>
+    </section>
+
+    <section class="tarjeta" aria-labelledby="ayuda-avisos-titulo" data-requiere-cuenta>
+      <h2 class="tarjeta-titulo" id="ayuda-avisos-titulo"><span class="icono material-symbols-rounded" aria-hidden="true">notifications</span> Avisos</h2>
+      <p>Aquí aparecen las zonas cerradas, los cambios de ruta y tus recordatorios.</p>
+      <button class="boton boton-secundario" type="button" data-accion="escuchar-ayuda" aria-describedby="ayuda-avisos-titulo"><span class="icono material-symbols-rounded" aria-hidden="true">volume_up</span> Escuchar ayuda</button>
+    </section>
+
+    <section class="tarjeta" aria-labelledby="ayuda-ajustes-titulo">
+      <h2 class="tarjeta-titulo" id="ayuda-ajustes-titulo"><span class="icono material-symbols-rounded" aria-hidden="true">settings</span> Ajustes</h2>
+      <p>Elige cómo quieres recibir la guía: voz, vibración o ambas. Estos ajustes están disponibles con o sin cuenta.</p>
+      <button class="boton boton-secundario" type="button" data-accion="escuchar-ayuda" aria-describedby="ayuda-ajustes-titulo"><span class="icono material-symbols-rounded" aria-hidden="true">volume_up</span> Escuchar ayuda</button>
+    </section>
+
+    <nav class="acciones" aria-label="Tutorial">
+      <a class="boton boton-principal" href="app.html#tutorial"><span class="icono material-symbols-rounded" aria-hidden="true">record_voice_over</span> Tutorial</a>
+      <a class="boton boton-secundario" href="app.html#tutorial/3"><span class="icono material-symbols-rounded" aria-hidden="true">vibration</span> Practica las vibraciones</a>
+    </nav>
+  </main>
+  <div class="anuncios" role="status" aria-live="polite" aria-atomic="true"></div>
+  <script type="module" src="funciones/ayuda/ayuda.js"></script>
+</body>
+</html>

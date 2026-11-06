@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Buscar destino · InclusiveSight</title>
+  <meta name="description" content="InclusiveSight: rutas guiadas por voz y vibración para estudiantes con discapacidad visual.">
+  <!-- Fuentes del diseño: Atkinson Hyperlegible (texto) y Material Symbols Rounded (iconos, solo los usados). -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&amp;display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&amp;icon_names=account_balance,add,add_alarm,alt_route,arrow_back,arrow_forward,badge,block,call,category,check,chevron_right,closed_caption,delete,directions_walk,door_open,edit,elevator,emergency,flag,format_list_numbered,help,history,info,keyboard,local_cafe,local_library,location_on,lock,lock_reset,login,logout,mail,map,mark_email_read,meeting_room,menu_book,mic,my_location,navigation,near_me,notifications,pause,pause_circle,person,play_arrow,record_voice_over,remove,replay,route,schedule,science,search,send,send_to_mobile,settings,smartphone,sos,stairs,star,straighten,support_agent,sync,tune,turn_left,turn_right,vibration,volume_up,warning,wc,where_to_vote,wrong_location&amp;display=block">
+  <link rel="stylesheet" href="../compartido/estilos/variables.css">
+  <link rel="stylesheet" href="../compartido/estilos/base.css">
+  <link rel="stylesheet" href="../compartido/estilos/componentes.css">
+  <!-- El CSS y el JS de cada función (funciones/<función>/) los carga el router al entrar a ella -->
+</head>
+<!--
+  Esqueleto de la aplicación del estudiante y sus vistas de uso general: tutorial, buscar, destino, ajustes,
+  modo-guia e instrucciones. Cada vista es una <section class="vista"> con hidden y se muestra según el hash.
+  Formato del hash: #vista o #vista/parte (ej. #mis-rutas/recientes, #destino/<id>). Sin hash: #buscar.
+
+  Las demás vistas están en fragmentos que el router carga con fetch dentro de <main id="vista">:
+  - funciones/ruta-guiada/ruta-guiada.html: ruta, guia y contacto-emergencia (todos).
+  - funciones/registrado/registrado.html: mis-rutas, avisos y cuenta (solo registrado; el visitante no lo descarga).
+
+  Marcas para el JavaScript (fase 3):
+  - data-modo en <body>: "invitado" o "registrado".
+  - data-requiere-cuenta: no aparece en modo invitado. En una vista, además, el router redirige a auth.html#iniciar-sesion.
+  - data-solo-invitado: solo aparece en modo invitado.
+  - data-pantalla-completa: vista sin menú (tutorial y guía). data-barra-movil="oculta": en celular no muestra la barra inferior.
+  - data-dispositivo="movil" | "escritorio": contenido que solo aparece en uno de los dos.
+  - data-parte: estado o sección dentro de una vista (segundo segmento del hash). data-estado: estados de la guía.
+  - data-dato: texto que llena el JavaScript. data-lista + <template data-plantilla>: listas.
+  - data-mensaje: mensajes que dependen de un resultado; quedan ocultos hasta que hacen falta.
+  - data-accion: botones que conecta el JavaScript.
+-->
+<body data-modo="invitado">
+  <a class="saltar" href="#vista">Saltar al contenido principal</a>
+  <div class="app">
+
+    <!-- Menú lateral (escritorio, W1–W6). En celular la lista se muestra como barra de navegación inferior. -->
+    <aside class="menu-lateral">
+      <a class="marca" href="#buscar">
+        <img class="logo" src="../compartido/img/logo-inclusivesight.svg" alt="" width="52" height="52">
+        <span class="marca-nombre">InclusiveSight</span>
+        <span class="marca-lema">Rutas guiadas en el campus</span>
+      </a>
+      <nav class="barra-navegacion" aria-label="Navegación principal">
+        <ul>
+          <li><a class="menu-item" href="#buscar"><span class="icono material-symbols-rounded" aria-hidden="true">search</span> <span>Buscar</span></a></li>
+          <li data-requiere-cuenta><a class="menu-item" href="#mis-rutas"><span class="icono material-symbols-rounded" aria-hidden="true">route</span> <span>Mis rutas</span></a></li>
+          <li data-requiere-cuenta><a class="menu-item" href="#avisos"><span class="icono material-symbols-rounded" aria-hidden="true">notifications</span> <span>Avisos</span></a></li>
+          <li><a class="menu-item" href="#ajustes"><span class="icono material-symbols-rounded" aria-hidden="true">settings</span> <span>Ajustes</span></a></li>
+        </ul>
+      </nav>
+      <section class="sesion" aria-label="Sesión">
+        <div class="usuario" data-requiere-cuenta>
+          <span class="icono material-symbols-rounded" aria-hidden="true">person</span>
+          <p><span class="usuario-nombre" data-dato="usuario-nombre"></span> <span class="usuario-rol">Estudiante</span></p>
+        </div>
+        <button class="boton boton-secundario" type="button" data-requiere-cuenta data-accion="cerrar-sesion"><span class="icono material-symbols-rounded" aria-hidden="true">logout</span> Cerrar sesión</button>
+        <div class="usuario" data-solo-invitado>
+          <span class="icono material-symbols-rounded" aria-hidden="true">person</span>
+          <p><span class="usuario-nombre">Invitado</span> <span class="usuario-rol">Sin cuenta</span></p>
+        </div>
+        <a class="boton boton-secundario" href="auth.html#iniciar-sesion" data-solo-invitado><span class="icono material-symbols-rounded" aria-hidden="true">login</span> Iniciar sesión</a>
+      </section>
+    </aside>
+
+    <main class="principal" id="vista" tabindex="-1">
+
+      <!-- Si falla la carga de un fragmento, el router muestra este mensaje -->
+      <div class="mensaje-carga" data-mensaje="error-carga" role="alert" hidden>
+        <p>No se pudo cargar esta sección. Revisa tu conexión e inténtalo de nuevo.</p>
+        <button class="boton boton-secundario" type="button" data-accion="reintentar-carga"><span class="icono material-symbols-rounded" aria-hidden="true">replay</span> Reintentar</button>
+      </div>
+
+      <!-- ============ tutorial · 2.1, 2.2 y 2.3 ============ -->
+      <section class="vista" id="vista-tutorial" data-vista="tutorial" data-pantalla-completa aria-labelledby="titulo-tutorial" hidden>
+        <h1 class="visualmente-oculto" id="titulo-tutorial" tabindex="-1">Tutorial</h1>
+
+        <!-- 2.1 · Tutorial: buscar (#tutorial) -->
+        <section class="tutorial-paso" data-parte="1" aria-labelledby="titulo-tutorial-1">
+          <header class="tutorial-cabecera">
+            <p class="tutorial-paso-texto" id="tutorial-paso-1">Paso 1 de 3</p>
+            <a class="enlace-saltar" href="#buscar">Saltar</a>
+          </header>
+          <progress class="progreso" max="3" value="1" aria-labelledby="tutorial-paso-1">1 de 3</progress>
+          <div class="tutorial">
+            <span class="icono material-symbols-rounded" aria-hidden="true">record_voice_over</span>
+            <h2 id="titulo-tutorial-1">Así buscas un destino</h2>
+            <p class="subtitulos"><span class="icono material-symbols-rounded" aria-hidden="true">closed_caption</span> «Di en voz alta el nombre de tu destino o escríbelo. Te mostraré los lugares que coincidan.»</p>
+            <div class="controles-audio">
+              <button class="boton-icono" type="button" data-accion="repetir-audio" aria-label="Repetir audio"><span class="icono material-symbols-rounded" aria-hidden="true">replay</span></button>
+              <button class="boton-icono" type="button" data-accion="pausar-audio" aria-label="Pausar audio" aria-pressed="false"><span class="icono material-symbols-rounded" aria-hidden="true">pause</span></button>
+            </div>
+          </div>
+          <div class="acciones">
+            <a class="boton boton-principal" href="#tutorial/2"><span class="icono material-symbols-rounded" aria-hidden="true">arrow_forward</span> Siguiente</a>
+            <a class="boton boton-secundario" href="#buscar">Saltar tutorial</a>
+          </div>
+        </section>
+
+        <!-- 2.2 · Tutorial: seguir ruta (#tutorial/2) -->
+        <section class="tutorial-paso" data-parte="2" aria-labelledby="titulo-tutorial-2" hidden>
+          <header class="tutorial-cabecera">
+            <p class="tutorial-paso-texto" id="tutorial-paso-2">Paso 2 de 3</p>
+            <a class="enlace-saltar" href="#buscar">Saltar</a>
+          </header>
+          <progress class="progreso" max="3" value="2" aria-labelledby="tutorial-paso-2">2 de 3</progress>
+          <div class="tutorial">
+            <span class="icono material-symbols-rounded" aria-hidden="true">directions_walk</span>
+            <h2 id="titulo-tutorial-2">Así sigues una ruta</h2>
+            <p class="subtitulos"><span class="icono material-symbols-rounded" aria-hidden="true">closed_caption</span> «Te daré instrucciones cortas por voz. En cada giro sentirás una vibración distinta.»</p>
+            <div class="controles-audio">
+              <button class="boton-icono" type="button" data-accion="repetir-audio" aria-label="Repetir audio"><span class="icono material-symbols-rounded" aria-hidden="true">replay</span></button>
+              <button class="boton-icono" type="button" data-accion="pausar-audio" aria-label="Pausar audio" aria-pressed="false"><span class="icono material-symbols-rounded" aria-hidden="true">pause</span></button>
+            </div>
+          </div>
+          <div class="acciones">
+            <a class="boton boton-principal" href="#tutorial/3"><span class="icono material-symbols-rounded" aria-hidden="true">arrow_forward</span> Siguiente</a>
+            <a class="boton boton-secundario" href="#buscar">Saltar tutorial</a>
+          </div>
+        </section>
+
+        <!-- 2.3 · Práctica de vibración (#tutorial/3) -->
+        <section class="tutorial-paso" data-parte="3" aria-labelledby="titulo-tutorial-3" hidden>
+          <header class="tutorial-cabecera">
+            <p class="tutorial-paso-texto" id="tutorial-paso-3">Paso 3 de 3</p>
+          </header>
+          <progress class="progreso" max="3" value="3" aria-labelledby="tutorial-paso-3">3 de 3</progress>
+          <h2 id="titulo-tutorial-3">Practica las vibraciones</h2>
+          <p class="introduccion">Toca «Probar» para sentir cada patrón y escuchar su significado.</p>
+          <ul class="lista patrones">
+            <li class="patron">
+              <span class="icono material-symbols-rounded" aria-hidden="true">turn_left</span>
+              <span class="item-texto"><span class="item-nombre" id="patron-izquierda">Giro a la izquierda</span> <span class="item-detalle">Dos pulsos cortos</span></span>
+              <button class="boton boton-pequeno" type="button" data-patron="izquierda" aria-describedby="patron-izquierda">Probar</button>
+            </li>
+            <li class="patron">
+              <span class="icono material-symbols-rounded" aria-hidden="true">turn_right</span>
+              <span class="item-texto"><span class="item-nombre" id="patron-derecha">Giro a la derecha</span> <span class="item-detalle">Un pulso largo</span></span>
+              <button class="boton boton-pequeno" type="button" data-patron="derecha" aria-describedby="patron-derecha">Probar</button>
+            </li>
+            <li class="patron">
+              <span class="icono material-symbols-rounded" aria-hidden="true">flag</span>
+              <span class="item-texto"><span class="item-nombre" id="patron-llegada">Llegada al destino</span> <span class="item-detalle">Tres pulsos</span></span>
+              <button class="boton boton-pequeno" type="button" data-patron="llegada" aria-describedby="patron-llegada">Probar</button>
+            </li>
+            <li class="patron">
+              <span class="icono material-symbols-rounded" aria-hidden="true">warning</span>
+              <span class="item-texto"><span class="item-nombre" id="patron-riesgo">Alerta de riesgo</span> <span class="item-detalle">Vibración continua fuerte</span></span>
+              <button class="boton boton-pequeno" type="button" data-patron="riesgo" aria-describedby="patron-riesgo">Probar</button>
+            </li>
+          </ul>
+          <div class="acciones">
+            <a class="boton boton-principal" href="#buscar"><span class="icono material-symbols-rounded" aria-hidden="true">check</span> Listo, empezar</a>
+            <a class="boton boton-secundario" href="#tutorial">Repetir tutorial</a>
+          </div>
+        </section>
+      </section>
+
+      <!-- ============ buscar · W1, M2, 3.1, 3.2, 3.3 y 3.4 ============ -->
+      <section class="vista" id="vista-buscar" data-vista="buscar" aria-labelledby="titulo-buscar">
+        <header class="barra-superior">
+          <h1 id="titulo-buscar" tabindex="-1">Buscar destino</h1>
+          <button class="boton-icono boton-ayuda" type="button" data-accion="abrir-ayuda" aria-controls="ayuda-buscar" aria-haspopup="dialog" aria-label="Ayuda de esta pantalla"><span class="icono material-symbols-rounded" aria-hidden="true">help</span></button>
+        </header>
+        <div class="contenido">
+          <div class="columnas">
+            <div class="columna">
+              <!-- W1 / M2 / 3.2 · Buscador con sugerencias -->
+              <search class="buscador">
+                <form action="#buscar" method="get" data-formulario="busqueda">
+                  <label class="visualmente-oculto" for="busqueda">Buscar aula, edificio o servicio</label>
+                  <button class="boton-icono" type="submit" aria-label="Buscar"><span class="icono material-symbols-rounded" aria-hidden="true">search</span></button>
+                  <input id="busqueda" name="q" type="search" placeholder="Buscar aula, edificio o servicio" aria-describedby="busqueda-ayuda" autocomplete="off">
+                  <a class="boton-icono boton-voz" href="#buscar/voz" aria-label="Buscar por voz"><span class="icono material-symbols-rounded" aria-hidden="true">mic</span></a>
+                  <button class="boton boton-pequeno" type="reset">Borrar</button>
+                  <p class="campo-ayuda" id="busqueda-ayuda">Las sugerencias cambian mientras escribes</p>
+                </form>
+              </search>
+
+              <nav class="chips" aria-label="Atajos de búsqueda">
+                <ul>
+                  <li data-requiere-cuenta><a class="chip" href="#mis-rutas/favoritos"><span class="icono material-symbols-rounded" aria-hidden="true">star</span> Favoritos</a></li>
+                  <li data-requiere-cuenta><a class="chip" href="#mis-rutas/recientes"><span class="icono material-symbols-rounded" aria-hidden="true">history</span> Recientes</a></li>
+                  <li><a class="chip" href="#buscar/cerca"><span class="icono material-symbols-rounded" aria-hidden="true">near_me</span> Cerca</a></li>
+                  <li><a class="chip" href="#buscar/categorias"><span class="icono material-symbols-rounded" aria-hidden="true">category</span> Categorías</a></li>
+                </ul>
+              </nav>
+
+              <section aria-labelledby="titulo-resultados">
+                <h2 class="seccion-titulo" id="titulo-resultados">Resultados</h2>
+                <!-- Categoría elegida en 3.3: se muestra mientras filtra los resultados -->
+                <p class="filtro" data-mensaje="filtro-categoria" hidden>Categoría: <strong data-dato="categoria-nombre"></strong> <button class="enlace-secundario" type="button" data-accion="quitar-categoria">Quitar filtro</button></p>
+                <p class="visualmente-oculto" aria-live="polite" data-dato="conteo-resultados"></p>
+                <ul class="lista lista-resultados" data-lista="resultados"></ul>
+                <!-- Sin resultados (HU-0022): lo informa y sugiere buscar por categoría -->
+                <p class="mensaje" data-mensaje="sin-resultados" hidden>Sin resultados. Prueba con otro nombre o <a href="#buscar/categorias">explora por categoría</a>.</p>
+              </section>
+            </div>
+
+            <!-- W1 · Mapa del campus (solo escritorio) -->
+            <section class="tarjeta tarjeta-mapa" aria-labelledby="titulo-mapa-buscar" data-dispositivo="escritorio">
+              <h2 class="tarjeta-titulo" id="titulo-mapa-buscar"><span class="icono material-symbols-rounded" aria-hidden="true">map</span> Mapa del campus</h2>
+              <!-- El mapa es un complemento: lo que muestra también está en texto -->
+              <figure class="mapa">
+                <div class="mapa-lienzo" aria-hidden="true"></div>
+                <figcaption data-dato="mapa-descripcion"></figcaption>
+              </figure>
+              <div class="destino-elegido" data-mensaje="destino-elegido" hidden>
+                <p><span class="item-nombre" data-dato="destino-nombre"></span> <span class="item-detalle" data-dato="destino-detalle"></span></p>
+                <a class="boton boton-principal" href="#destino" data-accion="ver-detalle"><span class="icono material-symbols-rounded" aria-hidden="true">info</span> Ver detalle</a>
+              </div>
+            </section>
+          </div>
+
+          <!-- 3.1 · Búsqueda por voz (#buscar/voz) -->
+          <section class="parte" data-parte="voz" aria-labelledby="titulo-buscar-voz" hidden>
+            <header class="barra-superior">
+              <a class="boton-icono" href="#buscar" aria-label="Volver a buscar destino"><span class="icono material-symbols-rounded" aria-hidden="true">arrow_back</span></a>
+              <h2 id="titulo-buscar-voz" tabindex="-1">Buscar por voz</h2>
+            </header>
+            <div class="escucha">
+              <span class="icono material-symbols-rounded" aria-hidden="true">mic</span>
+              <p class="escucha-estado" aria-live="polite" data-dato="escucha-estado">Escuchando…</p>
+              <p class="nota">La app también lo dice en voz alta</p>
+            </div>
+            <section class="tarjeta" aria-labelledby="titulo-escuche" data-mensaje="transcripcion" hidden>
+              <h3 class="tarjeta-subtitulo" id="titulo-escuche">Escuché:</h3>
+              <p class="transcripcion" data-dato="transcripcion"></p>
+              <ul class="lista" data-lista="sugerencias-voz"></ul>
+            </section>
+            <a class="boton boton-secundario" href="#buscar" data-accion="escribir-en-su-lugar"><span class="icono material-symbols-rounded" aria-hidden="true">keyboard</span> Escribir en su lugar</a>
+          </section>
+
+          <!-- 3.3 · Explorar por categoría (#buscar/categorias) -->
+          <section class="parte" data-parte="categorias" aria-labelledby="titulo-categorias" hidden>
+            <header class="barra-superior">
+              <a class="boton-icono" href="#buscar" aria-label="Volver a buscar destino"><span class="icono material-symbols-rounded" aria-hidden="true">arrow_back</span></a>
+              <h2 id="titulo-categorias" tabindex="-1">Explorar por categoría</h2>
+            </header>
+            <!-- Las categorías salen de los datos registrados -->
+            <ul class="cuadricula-categorias" data-lista="categorias"></ul>
+            <p class="mensaje" data-mensaje="sin-categorias" hidden>Todavía no hay categorías registradas. Puedes buscar tu destino por su nombre.</p>
+          </section>
+
+          <!-- 3.4 · Cerca de mí (#buscar/cerca) -->
+          <section class="parte" data-parte="cerca" aria-labelledby="titulo-cerca" hidden>
+            <header class="barra-superior">
+              <a class="boton-icono" href="#buscar" aria-label="Volver a buscar destino"><span class="icono material-symbols-rounded" aria-hidden="true">arrow_back</span></a>
+              <h2 id="titulo-cerca" tabindex="-1">Cerca de mí</h2>
+            </header>
+            <section class="tarjeta ubicacion" aria-labelledby="titulo-estas">
+              <span class="icono material-symbols-rounded" aria-hidden="true">my_location</span>
+              <h3 class="tarjeta-subtitulo" id="titulo-estas">Estás en</h3>
+              <p class="ubicacion-texto" data-dato="ubicacion-actual"></p>
+              <button class="boton boton-secundario" type="button" data-accion="repetir-ubicacion"><span class="icono material-symbols-rounded" aria-hidden="true">volume_up</span> Repetir mi ubicación por voz</button>
+            </section>
+            <section aria-labelledby="titulo-cercanos">
+              <h3 class="seccion-titulo" id="titulo-cercanos">Destinos cercanos</h3>
+              <ul class="lista lista-resultados" data-lista="cercanos"></ul>
+              <!-- Sin puntos de referencia cerca (HU-0024): lo informa y sugiere qué hacer -->
+              <p class="mensaje" data-mensaje="sin-ubicacion" hidden>No pudimos detectar tu ubicación. Acércate a un ingreso o a un pasillo principal e inténtalo de nuevo.</p>
+            </section>
+          </section>
+        </div>
+
+        <!-- 2.4 · Ayuda contextual de Buscar -->
+        <dialog class="ayuda-contextual" id="ayuda-buscar" aria-labelledby="titulo-ayuda-buscar">
+          <span class="icono material-symbols-rounded" aria-hidden="true">help</span>
+          <h2 id="titulo-ayuda-buscar">Ayuda de esta pantalla</h2>
+          <p>Puedes decir o escribir el nombre de tu destino.<span data-requiere-cuenta> Toca «Favoritos» para ver tus lugares guardados.</span></p>
+          <form method="dialog" class="acciones">
+            <button class="boton boton-principal" type="button" data-accion="escuchar-ayuda"><span class="icono material-symbols-rounded" aria-hidden="true">volume_up</span> Escuchar ayuda</button>
+            <button class="boton boton-secundario" type="submit">Cerrar</button>
+          </form>
+        </dialog>
+      </section>
+
+      <!-- ============ destino · W2 y 3.5 (#destino/<id>) ============ -->
+      <section class="vista" id="vista-destino" data-vista="destino" data-barra-movil="oculta" aria-labelledby="titulo-destino" hidden>
+        <header class="barra-superior">
+          <a class="boton-icono" href="#buscar" aria-label="Volver a buscar destino"><span class="icono material-symbols-rounded" aria-hidden="true">arrow_back</span></a>
+          <!-- El JavaScript cambia el texto por el nombre del destino -->
+          <h1 id="titulo-destino" tabindex="-1" data-dato="destino-nombre">Información del destino</h1>
+          <button class="boton-icono boton-ayuda" type="button" data-accion="abrir-ayuda" aria-controls="ayuda-destino" aria-haspopup="dialog" aria-label="Ayuda de esta pantalla"><span class="icono material-symbols-rounded" aria-hidden="true">help</span></button>
+        </header>
+        <div class="contenido">
+          <div class="columnas">
+            <div class="columna">
+              <section class="tarjeta" aria-label="Datos del destino">
+                <p class="tarjeta-titulo"><span class="icono material-symbols-rounded" aria-hidden="true" data-dato="destino-icono"></span> <span data-dato="destino-ubicacion"></span></p>
+                <dl class="datos">
+                  <div class="dato"><span class="icono material-symbols-rounded" aria-hidden="true">straighten</span> <dt>Distancia</dt> <dd data-dato="destino-distancia"></dd></div>
+                  <div class="dato"><span class="icono material-symbols-rounded" aria-hidden="true">schedule</span> <dt>Tiempo estimado</dt> <dd data-dato="destino-tiempo"></dd></div>
+                  <div class="dato"><span class="icono material-symbols-rounded" aria-hidden="true">elevator</span> <dt>Acceso</dt> <dd data-dato="destino-acceso"></dd></div>
+                  <div class="dato"><span class="icono material-symbols-rounded" aria-hidden="true">stairs</span> <dt>Zonas de riesgo</dt> <dd data-dato="destino-riesgos"></dd></div>
+                </dl>
+              </section>
+              <!-- Aviso de zona de riesgo en el camino: solo si la ruta tiene una -->
+              <section class="alerta" aria-labelledby="titulo-destino-riesgo" data-mensaje="riesgo" hidden>
+                <span class="icono material-symbols-rounded" aria-hidden="true">warning</span>
+                <p class="alerta-titulo" id="titulo-destino-riesgo" data-dato="riesgo-titulo"></p>
+                <p data-dato="riesgo-texto"></p>
+              </section>
+              <div class="acciones">
+                <a class="boton boton-principal" href="#guia" data-dispositivo="movil" data-accion="iniciar-ruta"><span class="icono material-symbols-rounded" aria-hidden="true">navigation</span> Iniciar ruta</a>
+                <a class="boton boton-principal" href="#ruta" data-dispositivo="escritorio" data-accion="ver-ruta"><span class="icono material-symbols-rounded" aria-hidden="true">route</span> Ver ruta en el mapa</a>
+                <button class="boton boton-secundario" type="button" data-requiere-cuenta data-accion="guardar-favorito"><span class="icono material-symbols-rounded" aria-hidden="true">star</span> Guardar en favoritos</button>
+              </div>
+            </div>
+            <section class="tarjeta tarjeta-mapa" aria-labelledby="titulo-mapa-destino">
+              <h2 class="tarjeta-titulo" id="titulo-mapa-destino"><span class="icono material-symbols-rounded" aria-hidden="true">map</span> Ubicación</h2>
+              <figure class="mapa">
+                <div class="mapa-lienzo" aria-hidden="true"></div>
+                <figcaption data-dato="mapa-descripcion"></figcaption>
+              </figure>
+            </section>
+          </div>
+        </div>
+        <dialog class="ayuda-contextual" id="ayuda-destino" aria-labelledby="titulo-ayuda-destino">
+          <span class="icono material-symbols-rounded" aria-hidden="true">help</span>
+          <h2 id="titulo-ayuda-destino">Ayuda de esta pantalla</h2>
+          <p>Aquí ves la distancia, el tiempo, el acceso y las zonas de riesgo del destino. Usa «Iniciar ruta» para empezar la guía.</p>
+          <form method="dialog" class="acciones">
+            <button class="boton boton-principal" type="button" data-accion="escuchar-ayuda"><span class="icono material-symbols-rounded" aria-hidden="true">volume_up</span> Escuchar ayuda</button>
+            <button class="boton boton-secundario" type="submit">Cerrar</button>
+          </form>
+        </dialog>
+      </section>
+
+      <!-- ============ ajustes · W6 y 7.1 ============ -->
+      <section class="vista" id="vista-ajustes" data-vista="ajustes" aria-labelledby="titulo-ajustes" hidden>
+        <header class="barra-superior">
+          <h1 id="titulo-ajustes" tabindex="-1">Ajustes</h1>
+          <button class="boton-icono boton-ayuda" type="button" data-accion="abrir-ayuda" aria-controls="ayuda-ajustes" aria-haspopup="dialog" aria-label="Ayuda de esta pantalla"><span class="icono material-symbols-rounded" aria-hidden="true">help</span></button>
+        </header>
+        <div class="contenido">
+          <div class="columnas">
+            <!-- W6 · Tarjeta Cuenta (escritorio) -->
+            <section class="tarjeta" aria-labelledby="titulo-ajustes-cuenta" data-dispositivo="escritorio">
+              <h2 class="tarjeta-titulo" id="titulo-ajustes-cuenta"><span class="icono material-symbols-rounded" aria-hidden="true">person</span> Cuenta</h2>
+              <div data-requiere-cuenta>
+                <div class="perfil"><span class="icono material-symbols-rounded" aria-hidden="true">person</span> <p><span class="perfil-nombre" data-dato="usuario-nombre"></span> <span class="perfil-correo" data-dato="usuario-correo"></span></p></div>
+                <a class="boton boton-secundario" href="auth.html#recuperar"><span class="icono material-symbols-rounded" aria-hidden="true">lock_reset</span> Cambiar contraseña</a>
+                <button class="boton boton-principal" type="button" data-accion="cerrar-sesion"><span class="icono material-symbols-rounded" aria-hidden="true">logout</span> Cerrar sesión</button>
+                <p class="nota">Tus favoritos y preferencias se guardan en tu cuenta.</p>
+              </div>
+              <div data-solo-invitado>
+                <div class="perfil"><span class="icono material-symbols-rounded" aria-hidden="true">person</span> <p><span class="perfil-nombre">Invitado</span> <span class="perfil-correo">Sin cuenta</span></p></div>
+                <a class="boton boton-principal" href="auth.html#iniciar-sesion"><span class="icono material-symbols-rounded" aria-hidden="true">login</span> Iniciar sesión o crear cuenta</a>
+                <p class="nota">Estás usando InclusiveSight como invitado. Tus ajustes se guardan solo en este dispositivo.</p>
+              </div>
+            </section>
+
+            <!-- W6 · Tarjeta Preferencias de la guía (escritorio) -->
+            <section class="tarjeta" aria-labelledby="titulo-preferencias" data-dispositivo="escritorio">
+              <h2 class="tarjeta-titulo" id="titulo-preferencias"><span class="icono material-symbols-rounded" aria-hidden="true">tune</span> Preferencias de la guía</h2>
+              <p class="nota"><span data-requiere-cuenta>Se aplican también en tu celular.</span><span data-solo-invitado>Se guardan solo en este dispositivo.</span></p>
+              <form class="formulario" data-formulario="preferencias">
+                <fieldset class="opciones">
+                  <legend class="visualmente-oculto">Modo de guía</legend>
+                  <label class="opcion">
+                    <input type="radio" name="modo" value="voz-vibracion" checked>
+                    <span class="opcion-texto"><span class="opcion-titulo">Voz y vibración</span> <span class="opcion-detalle">Instrucciones habladas y vibración en los giros</span></span>
+                  </label>
+                  <label class="opcion">
+                    <input type="radio" name="modo" value="vibracion">
+                    <span class="opcion-texto"><span class="opcion-titulo">Solo vibración</span> <span class="opcion-detalle">Para lugares ruidosos</span></span>
+                  </label>
+                  <label class="opcion">
+                    <input type="radio" name="modo" value="voz">
+                    <span class="opcion-texto"><span class="opcion-titulo">Solo voz</span> <span class="opcion-detalle">Sin vibración</span></span>
+                  </label>
+                </fieldset>
+                <div data-requiere-cuenta>
+                  <div class="interruptor">
+                    <span class="interruptor-texto" id="pref-zonas-et">Avisos de zonas cerradas</span>
+                    <button class="interruptor-boton" type="button" role="switch" aria-checked="true" aria-labelledby="pref-zonas-et" data-accion="alternar">Sí</button>
+                  </div>
+                  <div class="interruptor">
+                    <span class="interruptor-texto" id="pref-recordatorios-et">Recordatorios de ruta</span>
+                    <button class="interruptor-boton" type="button" role="switch" aria-checked="true" aria-labelledby="pref-recordatorios-et" data-accion="alternar">Sí</button>
+                  </div>
+                </div>
+                <button class="boton boton-principal" type="submit">Guardar preferencias</button>
+              </form>
+            </section>
+
+            <!-- 7.1 · Lista de ajustes (celular) -->
+            <nav class="lista-ajustes" aria-label="Ajustes" data-dispositivo="movil">
+              <ul class="lista">
+                <li><a class="item-lista" href="#modo-guia"><span class="icono material-symbols-rounded" aria-hidden="true">record_voice_over</span> <span class="item-texto"><span class="item-nombre">Modo de guía</span> <span class="item-detalle" data-dato="ajuste-modo"></span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
+                <li><a class="item-lista" href="#modo-guia/intensidad"><span class="icono material-symbols-rounded" aria-hidden="true">vibration</span> <span class="item-texto"><span class="item-nombre">Intensidad de vibración</span> <span class="item-detalle" data-dato="ajuste-intensidad"></span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
+                <li><a class="item-lista" href="#instrucciones"><span class="icono material-symbols-rounded" aria-hidden="true">record_voice_over</span> <span class="item-texto"><span class="item-nombre">Instrucciones</span> <span class="item-detalle" data-dato="ajuste-instrucciones"></span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
+                <li data-requiere-cuenta><a class="item-lista" href="#avisos/notificaciones"><span class="icono material-symbols-rounded" aria-hidden="true">notifications</span> <span class="item-texto"><span class="item-nombre">Notificaciones</span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
+                <li><a class="item-lista" href="#contacto-emergencia"><span class="icono material-symbols-rounded" aria-hidden="true">emergency</span> <span class="item-texto"><span class="item-nombre">Contacto de emergencia</span> <span class="item-detalle" data-dato="ajuste-contacto"></span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
+                <li><a class="item-lista" href="#tutorial"><span class="icono material-symbols-rounded" aria-hidden="true">help</span> <span class="item-texto"><span class="item-nombre">Ayuda y tutorial</span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
+                <li data-requiere-cuenta><a class="item-lista" href="#cuenta"><span class="icono material-symbols-rounded" aria-hidden="true">person</span> <span class="item-texto"><span class="item-nombre">Cuenta</span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
+                <li data-solo-invitado><a class="item-lista" href="auth.html#iniciar-sesion"><span class="icono material-symbols-rounded" aria-hidden="true">login</span> <span class="item-texto"><span class="item-nombre">Iniciar sesión o crear cuenta</span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+        <dialog class="ayuda-contextual" id="ayuda-ajustes" aria-labelledby="titulo-ayuda-ajustes">
+          <span class="icono material-symbols-rounded" aria-hidden="true">help</span>
+          <h2 id="titulo-ayuda-ajustes">Ayuda de esta pantalla</h2>
+          <p>Elige cómo quieres recibir la guía: voz, vibración o ambas. Estos ajustes están disponibles con o sin cuenta.</p>
+          <form method="dialog" class="acciones">
+            <button class="boton boton-principal" type="button" data-accion="escuchar-ayuda"><span class="icono material-symbols-rounded" aria-hidden="true">volume_up</span> Escuchar ayuda</button>
+            <button class="boton boton-secundario" type="submit">Cerrar</button>
+          </form>
+        </dialog>
+      </section>
+
+      <!-- ============ modo-guia · 7.2 ============ -->
+      <section class="vista" id="vista-modo-guia" data-vista="modo-guia" data-barra-movil="oculta" aria-labelledby="titulo-modo-guia" hidden>
+        <header class="barra-superior">
+          <a class="boton-icono" href="#ajustes" aria-label="Volver a ajustes"><span class="icono material-symbols-rounded" aria-hidden="true">arrow_back</span></a>
+          <h1 id="titulo-modo-guia" tabindex="-1">Modo de guía</h1>
+        </header>
+        <div class="contenido">
+          <form class="formulario" data-formulario="modo-guia">
+            <fieldset class="opciones">
+              <legend class="visualmente-oculto">Modo de guía</legend>
+              <label class="opcion">
+                <input type="radio" name="modo" value="voz-vibracion" checked>
+                <span class="opcion-texto"><span class="opcion-titulo">Voz y vibración</span> <span class="opcion-detalle">Instrucciones habladas y vibración en los giros</span></span>
+              </label>
+              <label class="opcion">
+                <input type="radio" name="modo" value="vibracion">
+                <span class="opcion-texto"><span class="opcion-titulo">Solo vibración</span> <span class="opcion-detalle">Para lugares ruidosos o si no usas auriculares</span></span>
+              </label>
+              <label class="opcion">
+                <input type="radio" name="modo" value="voz">
+                <span class="opcion-texto"><span class="opcion-titulo">Solo voz</span> <span class="opcion-detalle">Sin vibración</span></span>
+              </label>
+            </fieldset>
+            <!-- Intensidad (#modo-guia/intensidad). Valor por defecto: Media -->
+            <div class="ajuste-nivel" data-parte="intensidad">
+              <label class="campo-etiqueta" for="nivel-intensidad">Intensidad de vibración</label>
+              <output class="nivel-valor" for="nivel-intensidad">Media</output>
+              <div class="nivel-control">
+                <button class="boton-icono" type="button" data-accion="bajar" aria-controls="nivel-intensidad" aria-label="Bajar intensidad"><span class="icono material-symbols-rounded" aria-hidden="true">remove</span></button>
+                <input id="nivel-intensidad" name="intensidad" type="range" min="1" max="3" step="1" value="2" aria-valuetext="Media">
+                <button class="boton-icono" type="button" data-accion="subir" aria-controls="nivel-intensidad" aria-label="Subir intensidad"><span class="icono material-symbols-rounded" aria-hidden="true">add</span></button>
+              </div>
+            </div>
+            <button class="boton boton-secundario" type="button" data-accion="probar-vibracion"><span class="icono material-symbols-rounded" aria-hidden="true">vibration</span> Probar vibración</button>
+            <button class="boton boton-principal" type="submit">Guardar</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- ============ instrucciones · 7.3 ============ -->
+      <section class="vista" id="vista-instrucciones" data-vista="instrucciones" data-barra-movil="oculta" aria-labelledby="titulo-instrucciones" hidden>
+        <header class="barra-superior">
+          <a class="boton-icono" href="#ajustes" aria-label="Volver a ajustes"><span class="icono material-symbols-rounded" aria-hidden="true">arrow_back</span></a>
+          <h1 id="titulo-instrucciones" tabindex="-1">Instrucciones</h1>
+        </header>
+        <div class="contenido">
+          <form class="formulario" data-formulario="instrucciones">
+            <fieldset class="opciones">
+              <legend class="visualmente-oculto">Nivel de detalle</legend>
+              <label class="opcion">
+                <input type="radio" name="detalle" value="breves" checked>
+                <span class="opcion-texto"><span class="opcion-titulo">Breves</span> <span class="opcion-detalle">Ej.: «Gira a la derecha»</span></span>
+              </label>
+              <label class="opcion">
+                <input type="radio" name="detalle" value="detalladas">
+                <span class="opcion-texto"><span class="opcion-titulo">Detalladas</span> <span class="opcion-detalle">Ej.: «Gira a la derecha y avanza 20 metros por el pasillo»</span></span>
+              </label>
+            </fieldset>
+            <div class="ajuste-nivel">
+              <label class="campo-etiqueta" for="nivel-velocidad">Velocidad de la voz</label>
+              <output class="nivel-valor" for="nivel-velocidad">Normal</output>
+              <div class="nivel-control">
+                <button class="boton-icono" type="button" data-accion="bajar" aria-controls="nivel-velocidad" aria-label="Bajar velocidad"><span class="icono material-symbols-rounded" aria-hidden="true">remove</span></button>
+                <input id="nivel-velocidad" name="velocidad" type="range" min="1" max="3" step="1" value="2" aria-valuetext="Normal">
+                <button class="boton-icono" type="button" data-accion="subir" aria-controls="nivel-velocidad" aria-label="Subir velocidad"><span class="icono material-symbols-rounded" aria-hidden="true">add</span></button>
+              </div>
+            </div>
+            <button class="boton boton-secundario" type="button" data-accion="escuchar-ejemplo"><span class="icono material-symbols-rounded" aria-hidden="true">volume_up</span> Escuchar ejemplo</button>
+            <button class="boton boton-principal" type="submit">Guardar</button>
+          </form>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ============ Plantillas de las listas (el JavaScript las clona y llena los data-dato) ============ -->
+  <template data-plantilla="resultado">
+    <li>
+      <a class="item-lista" href="#destino">
+        <span class="icono material-symbols-rounded" aria-hidden="true" data-dato="icono"></span>
+        <span class="item-texto"><span class="item-nombre" data-dato="nombre"></span> <span class="item-detalle" data-dato="detalle"></span></span>
+        <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span>
+      </a>
+    </li>
+  </template>
+
+  <template data-plantilla="categoria">
+    <li><button class="categoria" type="button" data-accion="elegir-categoria"><span class="icono material-symbols-rounded" aria-hidden="true" data-dato="icono"></span> <span data-dato="nombre"></span></button></li>
+  </template>
+
+  <template data-plantilla="sugerencia-voz">
+    <li class="sugerencia">
+      <span class="icono material-symbols-rounded" aria-hidden="true" data-dato="icono"></span>
+      <p><span class="item-nombre">¿Quisiste decir <span data-dato="nombre"></span>?</span> <span class="item-detalle" data-dato="detalle"></span></p>
+      <a class="boton boton-pequeno" href="#destino" data-dato-aria-label="Sí, ir a">Sí</a>
+    </li>
+  </template>
+
+  <div class="anuncios" role="status" aria-live="polite" aria-atomic="true"></div>
+  <script type="module" src="nucleo/app.js"></script>
+</body>
+</html>

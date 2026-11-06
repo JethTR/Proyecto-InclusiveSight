@@ -1,0 +1,244 @@
+/* Estilos de ruta-guiada.html: vista previa de la ruta (W4), guía en curso y sus estados (M3, 4.1 a 4.7)
+   y contacto de emergencia (4.8). */
+
+/* ===== W4 · Paso a paso ===== */
+.pasos {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  counter-reset: paso;
+}
+
+.paso {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-3);
+  counter-increment: paso;
+}
+
+.paso::before {
+  content: counter(paso) ".";
+  min-width: 1.5em;
+  font-weight: 700;
+}
+
+.paso .icono {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-suave);
+}
+
+/* ===== Guía en curso: cabecera ===== */
+.ruta-cabecera {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+}
+
+.ruta-cabecera h1 {
+  font-size: var(--texto-3xl);
+}
+
+/* Los estados ocupan el alto disponible y dejan los botones al final */
+.guia-estado {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--espacio-4);
+}
+
+.guia-estado > .controles-ruta,
+.guia-estado > .acciones {
+  margin-top: auto;
+}
+
+/* ===== M3 / 4.1 · Instrucción actual ===== */
+.instruccion {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  align-items: center;
+  gap: var(--espacio-3) 14px;
+}
+
+.instruccion > :not(.icono, .instruccion-texto) {
+  grid-column: 1 / -1;
+}
+
+.instruccion-etiqueta {
+  font-size: var(--texto-s);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.instruccion > .icono {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--color-fondo);
+  color: var(--color-acento);
+  font-size: 48px;
+}
+
+.instruccion-texto {
+  font-size: var(--texto-2xl);
+  font-weight: 700;
+}
+
+.instruccion-voz {
+  font-size: var(--texto-base);
+}
+
+.canales {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+}
+
+.canal {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--texto-m);
+  font-weight: 700;
+}
+
+.canales .canal {
+  padding: var(--espacio-2) var(--espacio-3);
+  border-radius: var(--radio-pildora);
+  background: var(--color-suave);
+}
+
+.canal .icono {
+  font-size: var(--espacio-5);
+}
+
+/* ===== Botones de la guía ===== */
+.controles-ruta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--espacio-3);
+}
+
+.controles-ruta > :first-child {
+  grid-column: 1 / -1;
+}
+
+/* ===== 4.2 · Recalculando y 4.4 · Pausa ===== */
+.estado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--espacio-3);
+  padding: var(--espacio-6) 0;
+  text-align: center;
+}
+
+.estado > .icono {
+  display: grid;
+  place-items: center;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: var(--color-superficie);
+  color: var(--color-texto-superficie);
+  font-size: 56px;
+}
+
+.estado h2,
+.estado h3 {
+  font-size: var(--texto-3xl);
+}
+
+.estado-titulo {
+  font-size: var(--texto-xl);
+  font-weight: 700;
+}
+
+.estado .nota {
+  font-size: var(--texto-m);
+}
+
+.estado .instruccion-voz {
+  padding: var(--espacio-3) var(--espacio-4);
+  border-radius: var(--radio-l);
+  background: var(--color-superficie);
+  color: var(--color-texto-superficie);
+  font-weight: 700;
+}
+
+/* ===== 4.3 · Alerta de riesgo: grande y centrada ===== */
+.alerta-riesgo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin: auto 0;
+  padding: 26px;
+  text-align: center;
+}
+
+.alerta-riesgo > .icono {
+  display: grid;
+  place-items: center;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--color-superficie);
+  font-size: 76px;
+}
+
+.alerta-riesgo .alerta-titulo {
+  font-size: var(--texto-5xl);
+}
+
+.alerta-riesgo p:not(.canal, .alerta-titulo) {
+  font-size: 1.1875rem;
+}
+
+.alerta-riesgo .canal {
+  font-size: var(--texto-base);
+}
+
+/* En la alerta, "Entendido" es blanco y "Buscar otra ruta" lleva borde blanco */
+[data-estado="alerta-riesgo"] .boton-principal {
+  background: var(--color-superficie);
+}
+
+/* ===== 4.7 · Llegada ===== */
+.llegada {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin: auto 0;
+  text-align: center;
+}
+
+.llegada > .icono {
+  display: grid;
+  place-items: center;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--color-acento);
+  color: var(--color-texto-superficie);
+  font-size: 76px;
+}
+
+.llegada h2 {
+  font-size: var(--texto-5xl);
+}
+
+.llegada p {
+  font-size: 1.1875rem;
+}
+
+/* ===== W4 · Aviso de usar el celular ===== */
+.alerta-info .alerta-titulo {
+  font-size: var(--texto-base);
+}

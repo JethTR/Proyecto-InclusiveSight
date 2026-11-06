@@ -1,0 +1,62 @@
+/* Variables del diseño tomadas del Figma (archivo mAMd9yocUOIolmdB7gkmNK), comunes a las dos aplicaciones.
+   El Figma no define variables: estos valores salen de las capas de las pantallas W y M. */
+
+:root {
+  /* Colores */
+  --color-fondo: #12307a;                       /* azul de todas las pantallas */
+  --color-superficie: #ffffff;                  /* tarjetas, campos, barra inferior */
+  --color-acento: #ffc83d;                      /* botón principal, alertas, foco, elemento elegido */
+  --color-suave: #e7ebf4;                       /* círculos de íconos, chips de canal, filas */
+  --color-texto: #ffffff;                       /* texto sobre el azul */
+  --color-texto-superficie: #12307a;            /* texto sobre blanco o amarillo */
+  --color-texto-secundario: rgba(255, 255, 255, 0.9);
+  --color-marcador: rgba(18, 48, 122, 0.65);    /* texto de ejemplo de los campos */
+  --color-borde-menu: rgba(255, 255, 255, 0.18);
+  --color-pista: rgba(255, 255, 255, 0.25);     /* barras de progreso y de nivel */
+  --color-pista-superficie: #c5cde0;            /* interruptor apagado sobre blanco */
+  --color-mapa: #eef0e8;
+  --color-telon: rgba(6, 16, 45, 0.88);         /* fondo detrás de los diálogos */
+
+  /* Tipografía */
+  --fuente: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --interlineado: 1.3;
+  --texto-xs: 0.8125rem;   /* 13px: lema, rol del usuario */
+  --texto-s: 0.875rem;     /* 14px: notas, detalles en escritorio, etiqueta "Ahora" */
+  --texto-m: 0.9375rem;    /* 15px: detalles de lista en celular, chips de canal */
+  --texto-base: 1.0625rem; /* 17px: texto normal, menú, enlaces */
+  --texto-l: 1.125rem;     /* 18px: botones, nombres de lista, campos */
+  --texto-xl: 1.25rem;     /* 20px: títulos de tarjeta, lema del inicio */
+  --texto-2xl: 1.5rem;     /* 24px: instrucción de la guía */
+  --texto-3xl: 1.625rem;   /* 26px: título con botón de volver */
+  --texto-4xl: 1.875rem;   /* 30px: título de pantalla en celular */
+  --texto-5xl: 2rem;       /* 32px: título de pantalla en escritorio, alerta de riesgo */
+  --texto-6xl: 2.25rem;    /* 36px: nombre de la app en el inicio */
+
+  /* Íconos */
+  --icono: 24px;
+  --icono-l: 28px;
+
+  /* Espacios */
+  --espacio-1: 4px;
+  --espacio-2: 8px;
+  --espacio-3: 12px;
+  --espacio-4: 16px;
+  --espacio-5: 20px;
+  --espacio-6: 24px;
+  --espacio-7: 28px;
+  --espacio-8: 40px;
+
+  /* Radios */
+  --radio-s: 12px;
+  --radio-m: 14px;
+  --radio-l: 16px;
+  --radio-xl: 20px;
+  --radio-barra: 24px;
+  --radio-pildora: 999px;
+
+  /* Tamaños */
+  --tactil: 48px;                 /* área táctil mínima */
+  --menu-ancho: 280px;
+  --contenido-movil: 480px;       /* ancho máximo de las pantallas de una columna */
+  --foco: 4px solid var(--color-acento);
+}

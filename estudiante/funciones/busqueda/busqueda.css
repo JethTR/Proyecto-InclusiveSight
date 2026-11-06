@@ -1,0 +1,264 @@
+/* Estilos de las vistas buscar (W1, M2, 3.1 voz, 3.2 texto, 3.3 categorías, 3.4 cerca de mí) y destino (W2, 3.5). */
+
+/* ===== Buscador (W1, M2 y 3.2) =====
+   Fila blanca con lupa, campo, micrófono y "Borrar". La indicación de abajo queda fuera de la caja blanca.
+   "Borrar" y la indicación solo se ven mientras hay texto escrito (3.2). */
+.buscador form {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  column-gap: 10px;
+  row-gap: var(--espacio-2);
+  padding: 0 var(--espacio-2) 0 var(--espacio-1);
+}
+
+.buscador form::before {
+  content: "";
+  grid-row: 1;
+  grid-column: 1 / -1;
+  align-self: stretch;
+  z-index: -1;
+  border-radius: var(--radio-l);
+  background: var(--color-superficie);
+}
+
+.buscador form:focus-within::before {
+  outline: 4px solid var(--color-acento);
+}
+
+.buscador .boton-icono {
+  grid-row: 1;
+  width: 44px;
+  height: 44px;
+}
+
+.buscador button[type="submit"] {
+  grid-column: 1;
+  background: none;
+}
+
+.buscador .boton-voz {
+  grid-column: 3;
+}
+
+.buscador input {
+  grid-row: 1;
+  grid-column: 2;
+  min-width: 0;
+  min-height: 60px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-texto-superficie);
+  font-size: var(--texto-l);
+}
+
+.buscador input:focus {
+  outline: none;
+}
+
+.buscador input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.boton-voz {
+  background: var(--color-fondo);
+  color: var(--color-acento);
+}
+
+.buscador button[type="reset"] {
+  grid-row: 1;
+  grid-column: 4;
+  margin-right: var(--espacio-1);
+}
+
+.buscador .campo-ayuda {
+  grid-row: 2;
+  grid-column: 1 / -1;
+}
+
+.buscador input:placeholder-shown ~ button[type="reset"],
+.buscador input:placeholder-shown ~ .campo-ayuda {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .buscador input {
+    min-height: 56px;
+    font-size: var(--texto-base);
+  }
+}
+
+/* Categoría elegida que filtra los resultados */
+.filtro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--espacio-3);
+}
+
+/* ===== Mapa del campus (W1) ===== */
+.destino-elegido {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-2);
+  padding: 18px;
+  border: 2px solid var(--color-suave);
+  border-radius: var(--radio-l);
+}
+
+.destino-elegido .item-nombre {
+  display: block;
+  font-size: var(--texto-xl);
+}
+
+.destino-elegido .item-detalle {
+  display: block;
+  font-size: var(--texto-s);
+}
+
+/* ===== 3.1 · Búsqueda por voz ===== */
+.escucha {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--espacio-3);
+  padding: var(--espacio-6) 0;
+  text-align: center;
+}
+
+.escucha > .icono {
+  display: grid;
+  place-items: center;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--color-acento);
+  color: var(--color-texto-superficie);
+  font-size: 64px;
+}
+
+.escucha-estado {
+  font-size: var(--texto-2xl);
+  font-weight: 700;
+}
+
+.transcripcion {
+  font-size: var(--texto-xl);
+}
+
+.sugerencia {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-3);
+  padding: var(--espacio-3);
+  border-radius: var(--radio-m);
+  background: var(--color-suave);
+}
+
+.sugerencia > .icono {
+  font-size: 26px;
+}
+
+.sugerencia p {
+  flex: 1;
+}
+
+.sugerencia .item-nombre,
+.sugerencia .item-detalle {
+  display: block;
+}
+
+/* ===== 3.3 · Explorar por categoría ===== */
+.cuadricula-categorias {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--espacio-3);
+}
+
+.categoria {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 120px;
+  padding: var(--espacio-4);
+  border: 0;
+  border-radius: var(--radio-xl);
+  background: var(--color-superficie);
+  color: var(--color-texto-superficie);
+  font-size: var(--texto-base);
+  font-weight: 700;
+}
+
+.categoria .icono {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--color-suave);
+  font-size: var(--icono-l);
+}
+
+@media (min-width: 900px) {
+  .cuadricula-categorias {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ===== 3.4 · Cerca de mí y 4.6 · Tu ubicación ===== */
+.ubicacion {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: var(--espacio-3);
+}
+
+.ubicacion > .icono {
+  grid-row: span 2;
+  display: grid;
+  place-items: center;
+  width: var(--tactil);
+  height: var(--tactil);
+  border-radius: 50%;
+  background: var(--color-suave);
+}
+
+.ubicacion-texto {
+  font-size: var(--texto-xl);
+  font-weight: 700;
+}
+
+.ubicacion .boton {
+  grid-column: 1 / -1;
+  margin-top: var(--espacio-2);
+}
+
+/* ===== W2 / 3.5 · Información del destino ===== */
+/* En celular (3.5) no hay mapa: solo en escritorio (W2) */
+@media (max-width: 899px) {
+  #vista-destino .tarjeta-mapa {
+    display: none;
+  }
+}
+
+.datos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+}
+
+.datos .dato dd {
+  margin-left: auto;
+  font-weight: 700;
+  text-align: right;
+}
+
+.datos .dato .icono {
+  font-size: 22px;
+}

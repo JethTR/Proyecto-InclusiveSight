@@ -1,0 +1,83 @@
+/* Estilos de la vista mis-rutas (W3, 5.1 favoritos, 5.2 recientes, 5.3 editar favorito, 5.4 confirmar eliminación). */
+
+/* Pestañas y "Agregar favorito" (W3) */
+.fila-herramientas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-4);
+}
+
+.fila-herramientas .boton {
+  width: auto;
+}
+
+/* En escritorio, "Agregar favorito" es amarillo */
+.fila-herramientas .boton-secundario {
+  border-color: transparent;
+  background: var(--color-acento);
+  color: var(--color-texto-superficie);
+}
+
+/* Fila de favorito o reciente: fondo gris claro dentro de la tarjeta */
+.fila-ruta {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-3);
+  padding: 10px var(--espacio-3);
+  border-radius: var(--radio-m);
+  background: var(--color-suave);
+}
+
+.fila-ruta > .icono:first-child {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-fondo);
+  color: var(--color-acento);
+  font-size: 22px;
+}
+
+.fila-ruta .item-nombre {
+  font-size: var(--texto-base);
+}
+
+.fila-ruta .item-detalle {
+  font-size: var(--texto-s);
+}
+
+.fila-ruta .boton-icono {
+  background: var(--color-superficie);
+}
+
+.fila-ruta .boton-icono .icono {
+  font-size: 22px;
+}
+
+/* Recientes: ícono claro en vez de azul */
+[data-lista="recientes"] .fila-ruta > .icono:first-child {
+  background: var(--color-superficie);
+  color: var(--color-texto-superficie);
+}
+
+/* En escritorio, favoritos ocupa más que recientes (W3) */
+@media (min-width: 900px) {
+  [data-parte="favoritos"] {
+    flex: 3 1 0;
+  }
+
+  [data-parte="recientes"] {
+    flex: 2 1 0;
+  }
+}
+
+/* 5.3 · Editar favorito */
+[data-parte="editar"] .dato {
+  padding: var(--espacio-3) var(--espacio-4);
+  border-radius: var(--radio-l);
+  background: var(--color-superficie);
+  color: var(--color-texto-superficie);
+}

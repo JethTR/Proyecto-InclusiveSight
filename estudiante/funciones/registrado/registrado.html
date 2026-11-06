@@ -1,0 +1,274 @@
+<!--
+  Fragmento de estudiante/app.html: vistas mis-rutas (W3, 5.1 a 5.4), avisos (W5, 6.1 a 6.4) y cuenta (1.4). Solo para usuarios registrados.
+  No lleva <!DOCTYPE>, <html> ni <body>. El router lo carga con fetch, lo inserta en <main id="vista">
+  y lo guarda en memoria. Sus estilos y su lógica están en mis-rutas/, avisos/ y cuenta/ y sus .js.
+  Las rutas que contiene son relativas a estudiante/app.html.
+  El visitante no descarga este archivo: el router lo manda a auth.html#iniciar-sesion.
+-->
+
+<!-- ============ mis-rutas · W3, 5.1, 5.2, 5.3 y 5.4 (solo registrado) ============ -->
+<section class="vista" id="vista-mis-rutas" data-vista="mis-rutas" data-requiere-cuenta aria-labelledby="titulo-mis-rutas" hidden>
+  <header class="barra-superior">
+    <h1 id="titulo-mis-rutas" tabindex="-1">Mis rutas</h1>
+    <button class="boton-icono boton-ayuda" type="button" data-accion="abrir-ayuda" aria-controls="ayuda-mis-rutas" aria-haspopup="dialog" aria-label="Ayuda de esta pantalla"><span class="icono material-symbols-rounded" aria-hidden="true">help</span></button>
+  </header>
+  <div class="contenido">
+    <div class="fila-herramientas">
+      <!-- En celular son pestañas (5.1 y 5.2). En escritorio (W3) se ven las dos tarjetas -->
+      <nav class="pestanas" aria-label="Secciones de mis rutas">
+        <ul>
+          <li><a class="pestana" href="#mis-rutas/favoritos">Favoritos</a></li>
+          <li><a class="pestana" href="#mis-rutas/recientes">Recientes</a></li>
+        </ul>
+      </nav>
+      <a class="boton boton-secundario" href="#buscar" data-dispositivo="escritorio"><span class="icono material-symbols-rounded" aria-hidden="true">add</span> Agregar favorito</a>
+    </div>
+    <div class="columnas">
+      <!-- W3 / 5.1 · Favoritos (#mis-rutas/favoritos) -->
+      <section class="tarjeta" data-parte="favoritos" aria-labelledby="titulo-favoritos">
+        <h2 class="tarjeta-titulo" id="titulo-favoritos"><span class="icono material-symbols-rounded" aria-hidden="true">star</span> Favoritos</h2>
+        <p class="nota" data-dispositivo="movil">Toca «Iniciar» para empezar la ruta más rápido.</p>
+        <ul class="lista" data-lista="favoritos"></ul>
+        <button class="boton boton-secundario" type="button" data-accion="editar-favoritos" data-dispositivo="movil"><span class="icono material-symbols-rounded" aria-hidden="true">edit</span> Editar favoritos</button>
+      </section>
+      <!-- W3 / 5.2 · Recientes (#mis-rutas/recientes) -->
+      <section class="tarjeta" data-parte="recientes" aria-labelledby="titulo-recientes">
+        <h2 class="tarjeta-titulo" id="titulo-recientes"><span class="icono material-symbols-rounded" aria-hidden="true">history</span> Recientes</h2>
+        <p class="nota" data-dispositivo="movil">Repite una ruta sin buscar de nuevo.</p>
+        <ul class="lista" data-lista="recientes"></ul>
+      </section>
+    </div>
+
+    <!-- 5.3 · Editar favorito (#mis-rutas/editar) -->
+    <section class="parte" data-parte="editar" data-barra-movil="oculta" aria-labelledby="titulo-editar-favorito" hidden>
+      <header class="barra-superior">
+        <a class="boton-icono" href="#mis-rutas" aria-label="Volver a mis rutas"><span class="icono material-symbols-rounded" aria-hidden="true">arrow_back</span></a>
+        <h2 id="titulo-editar-favorito" tabindex="-1">Editar favorito</h2>
+      </header>
+      <form class="formulario" data-formulario="editar-favorito">
+        <div class="campo">
+          <label class="campo-etiqueta" for="favorito-nombre">Nombre del favorito</label>
+          <div class="campo-control">
+            <span class="icono material-symbols-rounded" aria-hidden="true">edit</span>
+            <input id="favorito-nombre" name="favorito-nombre" type="text" aria-describedby="favorito-nombre-ayuda" autocomplete="off">
+          </div>
+          <p class="campo-ayuda" id="favorito-nombre-ayuda">Ponle un nombre que reconozcas fácilmente.</p>
+        </div>
+        <div class="dato"><span class="icono material-symbols-rounded" aria-hidden="true">meeting_room</span> <span class="item-texto"><span class="item-nombre">Destino</span> <span class="item-detalle" data-dato="favorito-destino"></span></span></div>
+        <div class="acciones">
+          <button class="boton boton-principal" type="submit"><span class="icono material-symbols-rounded" aria-hidden="true">check</span> Guardar cambios</button>
+          <button class="boton boton-peligro" type="button" data-accion="eliminar-favorito" aria-haspopup="dialog" aria-controls="dialogo-eliminar-favorito"><span class="icono material-symbols-rounded" aria-hidden="true">delete</span> Eliminar favorito</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <!-- 5.4 · Confirmar eliminación -->
+  <dialog class="confirmar" id="dialogo-eliminar-favorito" aria-labelledby="titulo-eliminar" aria-describedby="texto-eliminar">
+    <span class="icono material-symbols-rounded" aria-hidden="true">delete</span>
+    <h2 id="titulo-eliminar">¿Eliminar este favorito?</h2>
+    <p id="texto-eliminar">«<span data-dato="favorito-nombre"></span>» dejará de aparecer en tus favoritos. Podrás volver a guardarlo.</p>
+    <form method="dialog" class="acciones">
+      <button class="boton boton-principal" type="submit" value="mantener" autofocus>Mantener favorito</button>
+      <button class="boton boton-peligro" type="submit" value="eliminar">Sí, eliminar</button>
+    </form>
+  </dialog>
+
+  <dialog class="ayuda-contextual" id="ayuda-mis-rutas" aria-labelledby="titulo-ayuda-mis-rutas">
+    <span class="icono material-symbols-rounded" aria-hidden="true">help</span>
+    <h2 id="titulo-ayuda-mis-rutas">Ayuda de esta pantalla</h2>
+    <p>Aquí están tus favoritos y tus rutas recientes. Usa «Ver ruta» o «Repetir» para empezar más rápido.</p>
+    <form method="dialog" class="acciones">
+      <button class="boton boton-principal" type="button" data-accion="escuchar-ayuda"><span class="icono material-symbols-rounded" aria-hidden="true">volume_up</span> Escuchar ayuda</button>
+      <button class="boton boton-secundario" type="submit">Cerrar</button>
+    </form>
+  </dialog>
+</section>
+
+<!-- ============ avisos · W5, 6.1, 6.2, 6.3 y 6.4 (solo registrado) ============ -->
+<section class="vista" id="vista-avisos" data-vista="avisos" data-requiere-cuenta aria-labelledby="titulo-avisos" hidden>
+  <header class="barra-superior">
+    <h1 id="titulo-avisos" tabindex="-1">Avisos</h1>
+    <button class="boton-icono boton-ayuda" type="button" data-accion="abrir-ayuda" aria-controls="ayuda-avisos" aria-haspopup="dialog" aria-label="Ayuda de esta pantalla"><span class="icono material-symbols-rounded" aria-hidden="true">help</span></button>
+  </header>
+  <div class="contenido">
+    <div class="columnas">
+      <!-- W5 / 6.1 · Avisos -->
+      <section class="columna" aria-labelledby="titulo-avisos-recientes">
+        <h2 class="visualmente-oculto" id="titulo-avisos-recientes">Avisos recientes</h2>
+        <ul class="lista lista-avisos" data-lista="avisos"></ul>
+      </section>
+      <!-- W5 (tarjeta) / 6.3 · Programar recordatorio (#avisos/programar) -->
+      <section class="tarjeta" data-parte="programar" aria-labelledby="titulo-programar">
+        <h2 class="tarjeta-titulo" id="titulo-programar"><span class="icono material-symbols-rounded" aria-hidden="true">add_alarm</span> Programar recordatorio</h2>
+        <form class="formulario" data-formulario="recordatorio">
+          <div class="campo">
+            <label class="campo-etiqueta" for="recordatorio-destino">Destino</label>
+            <div class="campo-control">
+              <span class="icono material-symbols-rounded" aria-hidden="true">location_on</span>
+              <select id="recordatorio-destino" name="destino" data-lista="destinos"></select>
+            </div>
+          </div>
+          <div class="campo">
+            <label class="campo-etiqueta" for="recordatorio-hora">Hora de llegada</label>
+            <div class="campo-control">
+              <span class="icono material-symbols-rounded" aria-hidden="true">schedule</span>
+              <input id="recordatorio-hora" name="hora" type="time">
+            </div>
+          </div>
+          <div class="campo">
+            <label class="campo-etiqueta" for="recordatorio-aviso">Avisarme</label>
+            <div class="campo-control">
+              <span class="icono material-symbols-rounded" aria-hidden="true">notifications</span>
+              <select id="recordatorio-aviso" name="aviso" aria-describedby="recordatorio-aviso-ayuda">
+                <option value="5">5 minutos antes</option>
+                <option value="10" selected>10 minutos antes</option>
+                <option value="15">15 minutos antes</option>
+              </select>
+            </div>
+            <p class="campo-ayuda" id="recordatorio-aviso-ayuda">Te avisaremos por voz o vibración, según tus preferencias.</p>
+          </div>
+          <div class="interruptor">
+            <span class="interruptor-texto" id="recordatorio-repetir-et">Repetir de lunes a viernes</span>
+            <button class="interruptor-boton" type="button" role="switch" aria-checked="true" aria-labelledby="recordatorio-repetir-et" data-accion="alternar">Sí</button>
+          </div>
+          <button class="boton boton-principal" type="submit"><span class="icono material-symbols-rounded" aria-hidden="true">check</span> Guardar recordatorio</button>
+        </form>
+      </section>
+    </div>
+
+    <!-- 6.2 · Aviso de zona cerrada (#avisos/zona-cerrada) -->
+    <section class="parte" data-parte="zona-cerrada" data-barra-movil="oculta" aria-labelledby="titulo-zona-cerrada" hidden>
+      <header class="barra-superior">
+        <a class="boton-icono" href="#avisos" aria-label="Volver a avisos"><span class="icono material-symbols-rounded" aria-hidden="true">arrow_back</span></a>
+        <h2 id="titulo-zona-cerrada" tabindex="-1">Zona cerrada</h2>
+      </header>
+      <section class="alerta" aria-labelledby="titulo-zona">
+        <span class="icono material-symbols-rounded" aria-hidden="true">block</span>
+        <p class="alerta-titulo" id="titulo-zona" data-dato="zona-nombre"></p>
+        <p data-dato="zona-detalle"></p>
+      </section>
+      <section class="tarjeta" aria-labelledby="titulo-alternativa" data-mensaje="ruta-alternativa" hidden>
+        <h3 class="tarjeta-subtitulo" id="titulo-alternativa">Ruta alternativa</h3>
+        <div class="dato"><span class="icono material-symbols-rounded" aria-hidden="true">elevator</span> <span class="item-texto"><span class="item-nombre" data-dato="alternativa-nombre"></span> <span class="item-detalle" data-dato="alternativa-detalle"></span></span></div>
+      </section>
+      <div class="acciones">
+        <a class="boton boton-principal" href="#guia" data-accion="usar-ruta-alternativa"><span class="icono material-symbols-rounded" aria-hidden="true">alt_route</span> Usar ruta alternativa</a>
+        <a class="boton boton-secundario" href="#avisos">Verlo más tarde</a>
+      </div>
+    </section>
+
+    <!-- 6.4 · Preferencias de notificación (#avisos/notificaciones) -->
+    <section class="parte" data-parte="notificaciones" aria-labelledby="titulo-notificaciones" hidden>
+      <header class="barra-superior">
+        <a class="boton-icono" href="#ajustes" aria-label="Volver a ajustes"><span class="icono material-symbols-rounded" aria-hidden="true">arrow_back</span></a>
+        <h2 id="titulo-notificaciones" tabindex="-1">Notificaciones</h2>
+      </header>
+      <form class="formulario" data-formulario="notificaciones">
+        <section class="tarjeta" aria-labelledby="titulo-tipos-aviso">
+          <h3 class="visualmente-oculto" id="titulo-tipos-aviso">Tipos de aviso</h3>
+          <div class="interruptor">
+            <span class="interruptor-texto" id="notif-zonas-et">Zonas cerradas y cambios de ruta</span>
+            <button class="interruptor-boton" type="button" role="switch" aria-checked="true" aria-labelledby="notif-zonas-et" data-accion="alternar">Sí</button>
+          </div>
+          <div class="interruptor">
+            <span class="interruptor-texto" id="notif-recordatorios-et">Recordatorios de ruta</span>
+            <button class="interruptor-boton" type="button" role="switch" aria-checked="true" aria-labelledby="notif-recordatorios-et" data-accion="alternar">Sí</button>
+          </div>
+          <div class="interruptor">
+            <span class="interruptor-texto" id="notif-sistema-et">Mensajes del sistema</span>
+            <button class="interruptor-boton" type="button" role="switch" aria-checked="false" aria-labelledby="notif-sistema-et" data-accion="alternar">No</button>
+          </div>
+        </section>
+        <fieldset class="opciones">
+          <legend>¿Cómo quieres que te avisemos?</legend>
+          <label class="opcion">
+            <input type="radio" name="canal-aviso" value="voz" checked>
+            <span class="opcion-texto"><span class="opcion-titulo">Por voz</span></span>
+          </label>
+          <label class="opcion">
+            <input type="radio" name="canal-aviso" value="vibracion">
+            <span class="opcion-texto"><span class="opcion-titulo">Solo vibración</span></span>
+          </label>
+          <label class="opcion">
+            <input type="radio" name="canal-aviso" value="pantalla">
+            <span class="opcion-texto"><span class="opcion-titulo">Solo en pantalla</span></span>
+          </label>
+        </fieldset>
+        <button class="boton boton-principal" type="submit">Guardar</button>
+      </form>
+    </section>
+  </div>
+
+  <dialog class="ayuda-contextual" id="ayuda-avisos" aria-labelledby="titulo-ayuda-avisos">
+    <span class="icono material-symbols-rounded" aria-hidden="true">help</span>
+    <h2 id="titulo-ayuda-avisos">Ayuda de esta pantalla</h2>
+    <p>Aquí aparecen las zonas cerradas, los cambios de ruta y tus recordatorios.</p>
+    <form method="dialog" class="acciones">
+      <button class="boton boton-principal" type="button" data-accion="escuchar-ayuda"><span class="icono material-symbols-rounded" aria-hidden="true">volume_up</span> Escuchar ayuda</button>
+      <button class="boton boton-secundario" type="submit">Cerrar</button>
+    </form>
+  </dialog>
+</section>
+
+<!-- ============ cuenta · 1.4 (solo registrado) ============ -->
+<section class="vista" id="vista-cuenta" data-vista="cuenta" data-requiere-cuenta aria-labelledby="titulo-cuenta" hidden>
+  <header class="barra-superior">
+    <h1 id="titulo-cuenta" tabindex="-1">Cuenta</h1>
+  </header>
+  <div class="contenido">
+    <section class="tarjeta" aria-label="Datos de la cuenta">
+      <div class="perfil">
+        <span class="icono material-symbols-rounded" aria-hidden="true">person</span>
+        <p><span class="perfil-nombre" data-dato="usuario-nombre"></span> <span class="perfil-correo" data-dato="usuario-correo"></span></p>
+      </div>
+      <ul class="lista">
+        <li><button class="item-lista" type="button" data-accion="ver-mis-datos"><span class="icono material-symbols-rounded" aria-hidden="true">badge</span> <span class="item-nombre">Mis datos</span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></button></li>
+        <li><a class="item-lista" href="auth.html#recuperar"><span class="icono material-symbols-rounded" aria-hidden="true">lock_reset</span> <span class="item-nombre">Cambiar contraseña</span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
+      </ul>
+    </section>
+    <p class="nota">Al cerrar sesión, tus favoritos y preferencias quedan guardados en tu cuenta.</p>
+    <button class="boton boton-secundario" type="button" data-accion="cerrar-sesion"><span class="icono material-symbols-rounded" aria-hidden="true">logout</span> Cerrar sesión</button>
+  </div>
+</section>
+
+<!-- Plantillas de las listas de este fragmento -->
+<template data-plantilla="favorito">
+  <li class="fila-ruta">
+    <span class="icono material-symbols-rounded" aria-hidden="true">star</span>
+    <span class="item-texto"><span class="item-nombre" data-dato="nombre"></span> <span class="item-detalle" data-dato="detalle"></span></span>
+    <a class="boton boton-pequeno" href="#ruta" data-dispositivo="escritorio" data-dato-aria-label="Ver ruta a">Ver ruta</a>
+    <a class="boton boton-pequeno" href="#guia" data-dispositivo="movil" data-dato-aria-label="Iniciar ruta a">Iniciar</a>
+    <a class="boton-icono" href="#mis-rutas/editar" data-dispositivo="escritorio" aria-label="Editar favorito" data-dato-aria-label="Editar"><span class="icono material-symbols-rounded" aria-hidden="true">edit</span></a>
+    <button class="boton-icono" type="button" data-dispositivo="escritorio" data-accion="eliminar-favorito" aria-haspopup="dialog" aria-controls="dialogo-eliminar-favorito" aria-label="Eliminar favorito" data-dato-aria-label="Eliminar"><span class="icono material-symbols-rounded" aria-hidden="true">delete</span></button>
+  </li>
+</template>
+
+<template data-plantilla="reciente">
+  <li class="fila-ruta">
+    <span class="icono material-symbols-rounded" aria-hidden="true">history</span>
+    <span class="item-texto"><span class="item-nombre" data-dato="nombre"></span> <time class="item-detalle" data-dato="fecha"></time></span>
+    <a class="boton boton-pequeno" href="#ruta" data-dato-aria-label="Repetir ruta a">Repetir</a>
+  </li>
+</template>
+
+<!-- Aviso destacado (zona cerrada) y aviso normal (cambio de ruta, recordatorio) -->
+<template data-plantilla="aviso-destacado">
+  <li>
+    <a class="alerta alerta-enlace" href="#avisos/zona-cerrada">
+      <span class="icono material-symbols-rounded" aria-hidden="true" data-dato="icono"></span>
+      <span class="alerta-texto"><span class="alerta-titulo" data-dato="titulo"></span> <span data-dato="detalle"></span></span>
+      <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span>
+    </a>
+  </li>
+</template>
+
+<template data-plantilla="aviso">
+  <li>
+    <a class="item-lista" href="#avisos">
+      <span class="icono material-symbols-rounded" aria-hidden="true" data-dato="icono"></span>
+      <span class="item-texto"><span class="item-nombre" data-dato="titulo"></span> <span class="item-detalle" data-dato="detalle"></span></span>
+      <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span>
+    </a>
+  </li>
+</template>

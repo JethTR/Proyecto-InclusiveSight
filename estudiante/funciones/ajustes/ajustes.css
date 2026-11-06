@@ -1,0 +1,85 @@
+/* Estilos de las vistas ajustes (W6, 7.1), modo-guia (7.2) e instrucciones (7.3). */
+
+/* W6: tarjeta Cuenta a la izquierda (420px) y Preferencias a la derecha */
+@media (min-width: 900px) {
+  #vista-ajustes .columnas > .tarjeta:first-child {
+    flex: 0 0 420px;
+  }
+
+  #vista-ajustes .tarjeta [data-requiere-cuenta],
+  #vista-ajustes .tarjeta [data-solo-invitado] {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+}
+
+/* 7.2 y 7.3: el formulario ocupa el alto y "Guardar" queda al final */
+#vista-modo-guia .formulario,
+#vista-instrucciones .formulario {
+  max-width: var(--contenido-movil);
+}
+
+/* ===== Nivel (intensidad de vibración y velocidad de la voz) ===== */
+.ajuste-nivel {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+}
+
+.nivel-valor {
+  font-weight: 700;
+}
+
+.nivel-control {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: center;
+  gap: var(--espacio-3);
+}
+
+.nivel-control input[type="range"] {
+  flex: 1;
+  min-width: 0;
+  height: var(--tactil);
+  margin: 0;
+  background: none;
+  appearance: none;
+  accent-color: var(--color-acento);
+}
+
+.nivel-control input[type="range"]::-webkit-slider-runnable-track {
+  height: 12px;
+  border-radius: 6px;
+  background: var(--color-pista);
+}
+
+.nivel-control input[type="range"]::-moz-range-track {
+  height: 12px;
+  border-radius: 6px;
+  background: var(--color-pista);
+}
+
+.nivel-control input[type="range"]::-moz-range-progress {
+  height: 12px;
+  border-radius: 6px;
+  background: var(--color-acento);
+}
+
+.nivel-control input[type="range"]::-webkit-slider-thumb {
+  width: 28px;
+  height: 28px;
+  margin-top: -8px;
+  border: 3px solid var(--color-superficie);
+  border-radius: 50%;
+  background: var(--color-acento);
+  appearance: none;
+}
+
+.nivel-control input[type="range"]::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border: 3px solid var(--color-superficie);
+  border-radius: 50%;
+  background: var(--color-acento);
+}
