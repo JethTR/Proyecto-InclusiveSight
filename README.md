@@ -2,7 +2,7 @@
 
 Sistema de orientación por voz y vibración para que estudiantes universitarios ciegos o con baja visión se muevan con autonomía dentro del campus. Proyecto del curso **HCI for UX Design (1ASI0784)** de la UPC, Grupo 3 · AccessTech Solutions.
 
-**Sitio publicado:** https://jethtr.github.io/InclusiveSight/
+**Sitio publicado:** https://jethtr.github.io/Proyecto-InclusiveSight/
 
 El repositorio tiene la landing page y dos aplicaciones web, hechas con HTML, CSS y JavaScript puros, sin frameworks ni herramientas de compilación:
 
