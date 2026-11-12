@@ -19,7 +19,7 @@ El repositorio tiene la landing page y dos aplicaciones web, hechas con HTML, CS
 ├── landing/           ← landing.css y landing.js
 ├── README.md
 ├── .gitignore
-├── docs/              ← documento del proyecto, prompts y enlaces
+├── docs/              ← documento del proyecto y enlaces
 ├── compartido/        ← lo que usan las dos aplicaciones
 │   ├── estilos/       ← variables.css, base.css, componentes.css
 │   ├── componentes/   ← dialogo.js, campo.js, interruptor.js
