@@ -1,0 +1,77 @@
+/* 1.5 · Acceso institucional: marca a la izquierda y tarjeta de acceso a la derecha (en celular, una debajo de otra). */
+
+.acceso-panel {
+  display: grid;
+  gap: var(--espacio-8);
+  align-items: center;
+  max-width: 1120px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: var(--espacio-6);
+}
+
+.acceso-panel-marca {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+}
+
+.acceso-panel-marca .logo {
+  width: 96px;
+  height: 96px;
+}
+
+.acceso-panel-nombre {
+  font-size: var(--texto-5xl);
+  font-weight: 700;
+}
+
+.acceso-panel-tarjeta {
+  gap: var(--espacio-4);
+  max-width: 520px;
+}
+
+.acceso-panel-tarjeta h1 {
+  font-size: var(--texto-2xl);
+}
+
+.logo-tarjeta {
+  width: 52px;
+  height: 52px;
+  padding: 6px;
+  border-radius: var(--radio-m);
+  background: var(--color-fondo);
+}
+
+/* Aviso de cuenta no autorizada: azul, como en el mockup */
+.aviso-panel {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espacio-3);
+  padding: var(--espacio-3) var(--espacio-4);
+  border-radius: var(--radio-m);
+  background: var(--color-fondo);
+  color: var(--color-superficie);
+  font-size: var(--texto-s);
+}
+
+.aviso-panel .icono {
+  color: var(--color-acento);
+}
+
+.aviso-panel strong {
+  display: block;
+  font-size: var(--texto-m);
+}
+
+.acceso-panel-tarjeta .enlace-secundario {
+  justify-content: flex-start;
+  padding: 0;
+}
+
+@media (min-width: 900px) {
+  .acceso-panel {
+    grid-template-columns: 1fr 520px;
+  }
+}

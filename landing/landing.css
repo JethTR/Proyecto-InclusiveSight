@@ -210,6 +210,11 @@
   font-size: var(--texto-xl);
 }
 
+/* Botón al final de una tarjeta (ej. "Abrir el panel de control") */
+.tarjetas .tarjeta > .boton {
+  margin-top: auto;
+}
+
 .icono-circulo {
   display: grid;
   place-items: center;

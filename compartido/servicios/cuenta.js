@@ -21,6 +21,11 @@ async function hash(texto) {
   return [...new Uint8Array(resumen)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
+// Cada aplicación tiene su propia sesión e intentos: entrar al panel no deja la sesión abierta en la app.
+// ambito: 'estudiante' (por defecto) o 'panel'.
+const claveSesion = (ambito) => (ambito === 'panel' ? `${SESION}-panel` : SESION);
+const claveIntentos = (ambito) => (ambito === 'panel' ? `${INTENTOS}-panel` : INTENTOS);
+
 function usuarios() {
   return leer(USUARIOS, []);
 }
@@ -31,51 +36,60 @@ function buscarUsuario(correo) {
 }
 
 /** Usuario con sesión iniciada ({ nombre, correo, rol }) o null si es visitante. */
-export function usuarioActual() {
-  const sesion = leer(SESION);
+export function usuarioActual(ambito = 'estudiante') {
+  const sesion = leer(claveSesion(ambito));
   if (!sesion) return null;
   const usuario = buscarUsuario(sesion.correo);
   return usuario ? { nombre: usuario.nombre, correo: usuario.correo, rol: usuario.rol } : null;
 }
 
-export function intentosRestantes() {
-  return Math.max(0, MAX_INTENTOS - leer(INTENTOS, 0));
+export function intentosRestantes(ambito = 'estudiante') {
+  return Math.max(0, MAX_INTENTOS - leer(claveIntentos(ambito), 0));
 }
 
-export function estaBloqueado() {
-  return intentosRestantes() === 0;
+export function estaBloqueado(ambito = 'estudiante') {
+  return intentosRestantes(ambito) === 0;
 }
 
-/** Crea la cuenta e inicia sesión. Devuelve { ok: true } o { error: 'correo-existe' }. */
-export async function crearCuenta({ nombre, correo, clave, rol = 'estudiante' }) {
+/** Crea la cuenta e inicia sesión en la app. Devuelve { ok: true } o { error: 'correo-existe' }. */
+export async function crearCuenta({ nombre, correo, clave, rol = 'estudiante' }, { iniciar = true } = {}) {
   if (buscarUsuario(correo)) return { error: 'correo-existe' };
   const lista = usuarios();
   lista.push({ nombre: nombre.trim(), correo: normalizarCorreo(correo), clave: await hash(clave), rol });
   guardar(USUARIOS, lista);
-  guardar(SESION, { correo: normalizarCorreo(correo) });
-  borrar(INTENTOS);
+  if (iniciar) {
+    guardar(SESION, { correo: normalizarCorreo(correo) });
+    borrar(INTENTOS);
+  }
   return { ok: true };
 }
 
+/** Crea la cuenta si no existe, sin iniciar sesión (cuenta de prueba del panel). */
+export async function asegurarCuenta(datos) {
+  if (!buscarUsuario(datos.correo)) await crearCuenta(datos, { iniciar: false });
+}
+
 /**
- * Inicia sesión. Devuelve { ok: true }, { error: 'credenciales', restantes } o { error: 'bloqueado' }.
+ * Inicia sesión. Devuelve { ok: true }, { error: 'credenciales', restantes }, { error: 'bloqueado' }
+ * o { error: 'no-autorizada' } si la cuenta existe pero no tiene el rol que pide la aplicación (1.5).
  * No dice si falló el correo o la contraseña (HU-0003). Al tercer fallo se bloquea.
  */
-export async function iniciarSesion(correo, clave) {
-  if (estaBloqueado()) return { error: 'bloqueado' };
+export async function iniciarSesion(correo, clave, { ambito = 'estudiante', rol = null } = {}) {
+  if (estaBloqueado(ambito)) return { error: 'bloqueado' };
   const usuario = buscarUsuario(correo);
   if (usuario && usuario.clave === (await hash(clave))) {
-    guardar(SESION, { correo: usuario.correo });
-    borrar(INTENTOS);
+    if (rol && usuario.rol !== rol) return { error: 'no-autorizada' };
+    guardar(claveSesion(ambito), { correo: usuario.correo });
+    borrar(claveIntentos(ambito));
     return { ok: true };
   }
-  guardar(INTENTOS, leer(INTENTOS, 0) + 1);
-  const restantes = intentosRestantes();
+  guardar(claveIntentos(ambito), leer(claveIntentos(ambito), 0) + 1);
+  const restantes = intentosRestantes(ambito);
   return restantes === 0 ? { error: 'bloqueado' } : { error: 'credenciales', restantes };
 }
 
-export function cerrarSesion() {
-  borrar(SESION);
+export function cerrarSesion(ambito = 'estudiante') {
+  borrar(claveSesion(ambito));
 }
 
 /**
@@ -85,5 +99,6 @@ export function cerrarSesion() {
 export function recuperarClave(correo) {
   if (!buscarUsuario(correo)) return { error: 'no-registrado' };
   borrar(INTENTOS);
+  borrar(claveIntentos('panel'));
   return { ok: true };
 }

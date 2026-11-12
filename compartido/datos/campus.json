@@ -1,0 +1,72 @@
+{
+  "_nota": "Datos de ejemplo SOLO para desarrollo. El mapa está en campus.geojson; el administrador puede reemplazarlo desde el panel.",
+  "categorias": [
+    {
+      "id": "aulas",
+      "nombre": "Aulas",
+      "icono": "meeting_room"
+    },
+    {
+      "id": "laboratorios",
+      "nombre": "Laboratorios",
+      "icono": "science"
+    },
+    {
+      "id": "servicios",
+      "nombre": "Servicios",
+      "icono": "support_agent"
+    },
+    {
+      "id": "banos",
+      "nombre": "Baños",
+      "icono": "wc"
+    },
+    {
+      "id": "biblioteca",
+      "nombre": "Biblioteca",
+      "icono": "local_library"
+    },
+    {
+      "id": "cafeterias",
+      "nombre": "Cafeterías",
+      "icono": "local_cafe"
+    },
+    {
+      "id": "administracion",
+      "nombre": "Administración",
+      "icono": "account_balance"
+    },
+    {
+      "id": "salidas",
+      "nombre": "Salidas",
+      "icono": "door_open"
+    }
+  ],
+  "avisos": [
+    {
+      "id": "pasillo-b-1",
+      "tipo": "zona-cerrada",
+      "titulo": "Zona cerrada en tu ruta habitual",
+      "detalle": "Pasillo B, piso 1, cerrado por obras hasta las 6 pm.",
+      "zona": {
+        "nombre": "Pasillo B · Piso 1",
+        "detalle": "Cerrado por obras hasta las 6:00 pm. Tu ruta a Aula B-302 pasaba por aquí."
+      },
+      "alternativa": {
+        "nombre": "Por el ascensor del Edificio A",
+        "detalle": "Añade 2 minutos"
+      },
+      "afecta": "aula-b-302"
+    },
+    {
+      "id": "cambio-aula-b-302",
+      "tipo": "cambio-ruta",
+      "titulo": "Tu ruta a Aula B-302 cambió",
+      "detalle": "Hay un camino alternativo · +2 min",
+      "zonaId": "pasillo-b-1"
+    }
+  ],
+  "ubicacionSimulada": {
+    "punto": "BLE-0023"
+  }
+}

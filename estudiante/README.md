@@ -2,7 +2,20 @@
 
 Rutas guiadas por voz y vibración dentro del campus, para estudiantes ciegos o con baja visión. Tiene dos modos: **registrado** (con cuenta, puede usar todo) y **visitante** (sin cuenta; lo que depende de una cuenta no aparece).
 
-**Estado:** fase 1 terminada (estructura HTML y archivos vacíos con un comentario). Faltan la fase 2 (CSS fiel al mockup, escritorio y celular), la fase 3 (router, modo invitado/registrado, cuenta simulada y vistas) y la fase 4 (voz, vibración, ruta y mapa).
+**Estado:** HTML, CSS y JavaScript completos para todas las vistas. Sin backend: la cuenta se simula con `localStorage`. Los destinos, los puntos de referencia y los caminos salen del mapa GeoJSON del campus (el que carga el administrador o, si no cargó ninguno, `compartido/datos/campus.geojson`). Las distancias, los tiempos, los avisos de escaleras y los pasos de la guía se calculan con el algoritmo A* (`compartido/mapa/`). Mientras no haya balizas, `servicios/ubicacion.js` simula la ubicación (un punto de referencia fijo) y el avance por la ruta (un paso cada 8 segundos). El mapa se dibuja en SVG como complemento: su información también está en texto.
+
+### Servicios del estudiante (`servicios/`)
+
+| Archivo | Qué hace |
+|---|---|
+| `voz.js` | Síntesis de voz (respeta modo y velocidad) y reconocimiento para la búsqueda por voz |
+| `vibracion.js` | Patrones de vibración (respeta modo e intensidad; la alerta de riesgo siempre vibra al máximo) |
+| `ubicacion.js` | Ubicación actual y avance por la ruta (simulados) |
+| `preferencias.js` | Modo de guía, intensidad, detalle, velocidad y notificaciones |
+| `rutas-guardadas.js` | Favoritos y recientes (últimas 10) |
+| `recordatorios.js` | Recordatorios de ruta y aviso a la hora calculada |
+| `contacto-emergencia.js` | Contacto de emergencia |
+| `datos-usuario.js` | Guarda cada dato a nombre del usuario, o solo en el dispositivo si es visitante |
 
 ## Carpetas
 
@@ -113,7 +126,7 @@ body[data-modo="registrado"] [data-solo-invitado] { display: none; }
 | `data-barra-movil="oculta"` | En celular no se muestra la barra inferior |
 | `data-dispositivo="movil"` / `"escritorio"` | Contenido que solo aparece en uno de los dos |
 
-No hay datos inventados en el HTML. Los únicos datos de ejemplo permitidos irán en `compartido/datos/destinos.json`.
+No hay datos inventados en el HTML. Los únicos datos de ejemplo están en `compartido/datos/` (`campus.geojson` y `campus.json`).
 
 ## Íconos y tipografía
 

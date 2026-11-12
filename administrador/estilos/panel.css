@@ -1,0 +1,324 @@
+/* Estilos propios del panel (9.1 a 9.5) que usan varias funciones: barra de alertas, indicadores, tablas,
+   estados, filtros y campos que la app del estudiante no tiene. El resto viene de compartido/estilos/. */
+
+/* Alertas y usuario, arriba a la derecha */
+.principal {
+  position: relative;
+}
+
+.panel-cuenta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--espacio-3);
+  padding: var(--espacio-4) var(--espacio-6) 0;
+}
+
+.boton-alertas {
+  width: auto;
+  padding: 10px var(--espacio-4);
+  font-size: var(--texto-m);
+}
+
+.panel-usuario {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  min-height: var(--tactil);
+  padding: 0 var(--espacio-4);
+  border: 2px solid var(--color-superficie);
+  border-radius: var(--radio-pildora);
+  font-size: var(--texto-m);
+  font-weight: 700;
+}
+
+@media (min-width: 900px) {
+  .panel-cuenta {
+    position: absolute;
+    top: var(--espacio-6);
+    right: var(--espacio-8);
+    padding: 0;
+  }
+}
+
+/* Indicadores (9.1 y 9.4) */
+.indicadores {
+  display: grid;
+  gap: var(--espacio-4);
+}
+
+.indicador {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-2);
+  padding: var(--espacio-5);
+  border-radius: var(--radio-xl);
+  background: var(--color-superficie);
+  color: var(--color-texto-superficie);
+}
+
+.indicador-alerta {
+  background: var(--color-acento);
+}
+
+.indicador-titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  font-weight: 700;
+}
+
+.indicador-titulo .icono {
+  font-size: var(--espacio-5);
+}
+
+.indicador-valor {
+  font-size: var(--texto-5xl);
+  font-weight: 700;
+}
+
+.indicador-detalle {
+  font-size: var(--texto-s);
+}
+
+@media (min-width: 600px) {
+  .indicadores {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1100px) {
+  .indicadores:not(.indicadores-dos) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Alerta con botón a la derecha (9.1) */
+.alerta-accion {
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+}
+
+.alerta-accion > .icono {
+  grid-row: span 2;
+}
+
+.alerta-accion > .boton {
+  grid-column: 3;
+  grid-row: 1 / span 2;
+}
+
+.fila-izquierda {
+  justify-content: flex-start;
+}
+
+.fila-izquierda .boton {
+  width: auto;
+}
+
+/* Tablas (9.1 y 9.2) */
+.tabla-contenedor {
+  overflow-x: auto;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--texto-m);
+}
+
+.tabla th {
+  padding: 10px var(--espacio-3);
+  background: var(--color-suave);
+  font-weight: 700;
+  text-align: left;
+}
+
+.tabla th:first-child {
+  border-radius: var(--radio-s) 0 0 var(--radio-s);
+}
+
+.tabla th:last-child {
+  border-radius: 0 var(--radio-s) var(--radio-s) 0;
+}
+
+.tabla td {
+  padding: var(--espacio-3);
+  border-bottom: 1px solid var(--color-suave);
+}
+
+.enlace-tabla {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tactil);
+  font-weight: 700;
+}
+
+/* Estado del punto: texto + ícono, no solo color (CA150) */
+.estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px var(--espacio-3);
+  border-radius: var(--radio-pildora);
+  background: var(--color-suave);
+  font-size: var(--texto-s);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.estado .icono {
+  font-size: 18px;
+}
+
+.estado[data-estado="inactivo"],
+.estado[data-estado="bateria"] {
+  background: var(--color-fondo);
+  color: var(--color-superficie);
+}
+
+.estado[data-estado="inactivo"] .icono,
+.estado[data-estado="bateria"] .icono {
+  color: var(--color-acento);
+}
+
+/* Filtros (9.2): chips con estado elegido */
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filtros .chip {
+  background: none;
+  color: var(--color-texto);
+  cursor: pointer;
+}
+
+.filtros .chip[aria-pressed="true"] {
+  background: var(--color-superficie);
+  color: var(--color-texto-superficie);
+}
+
+.buscador-panel {
+  flex: 1;
+  min-width: 240px;
+}
+
+/* Campos que solo usa el panel */
+.campo-control textarea {
+  flex: 1;
+  min-width: 0;
+  padding: var(--espacio-3) 0;
+  border: 0;
+  background: none;
+  font-size: var(--texto-base);
+  resize: vertical;
+}
+
+.campo-control textarea:focus {
+  outline: none;
+}
+
+.campo-archivo {
+  min-height: var(--tactil);
+  font-size: var(--texto-m);
+}
+
+.campo-archivo::file-selector-button {
+  min-height: 44px;
+  margin-right: var(--espacio-3);
+  padding: 0 var(--espacio-4);
+  border: 2px solid var(--color-fondo);
+  border-radius: var(--radio-s);
+  background: var(--color-superficie);
+  color: var(--color-texto-superficie);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.casilla {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  min-height: var(--tactil);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.casilla input {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--color-fondo);
+}
+
+/* Tipo de punto (BLE / NFC) como chips (9.3) */
+.opciones-chip {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.opciones-chip legend {
+  width: 100%;
+}
+
+.opcion-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--tactil);
+  padding: 0 var(--espacio-4);
+  border: 2px solid var(--color-fondo);
+  border-radius: var(--radio-pildora);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.opcion-chip input {
+  position: absolute;
+  opacity: 0;
+}
+
+.opcion-chip:has(input:checked) {
+  background: var(--color-fondo);
+  color: var(--color-superficie);
+}
+
+.opcion-chip:has(input:focus-visible) {
+  outline: var(--foco);
+  outline-offset: 3px;
+}
+
+.coordenadas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--espacio-2) var(--espacio-3);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.coordenadas legend {
+  margin-bottom: var(--espacio-2);
+  font-weight: 700;
+}
+
+.coordenadas > p {
+  grid-column: 1 / -1;
+}
+
+.acciones-fila {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.acciones-fila .boton {
+  width: auto;
+}
+
+/* Mensaje de confirmación dentro de una tarjeta blanca */
+.mensaje-borde {
+  border: 2px solid var(--color-fondo);
+}

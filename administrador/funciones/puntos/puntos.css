@@ -1,0 +1,23 @@
+/* Puntos de referencia (9.2, 9.3 y 9.4). */
+
+/* 9.3: datos del punto a la izquierda y mapa a la derecha */
+@media (min-width: 900px) {
+  [data-parte="registrar"] .columnas > .tarjeta:first-child,
+  [data-parte="editar"] .columnas > .tarjeta:first-child {
+    flex: 0 1 460px;
+  }
+
+  [data-parte="editar"] .estado-punto {
+    flex: 1;
+  }
+}
+
+.estado-punto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+}
+
+[data-mapa="registrar"] {
+  min-height: 420px;
+}

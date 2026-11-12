@@ -1,0 +1,670 @@
+{
+  "type": "FeatureCollection",
+  "name": "Campus de ejemplo InclusiveSight",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "edificio",
+        "id": "A",
+        "nombre": "Edificio A",
+        "pisos": [
+          1,
+          2
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -76.9706,
+              -12.1029572
+            ],
+            [
+              -76.9702325,
+              -12.1029572
+            ],
+            [
+              -76.9702325,
+              -12.1025954
+            ],
+            [
+              -76.9706,
+              -12.1025954
+            ],
+            [
+              -76.9706,
+              -12.1029572
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "edificio",
+        "id": "B",
+        "nombre": "Edificio B",
+        "pisos": [
+          1,
+          2,
+          3
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -76.9699569,
+              -12.1030477
+            ],
+            [
+              -76.9695894,
+              -12.1030477
+            ],
+            [
+              -76.9695894,
+              -12.1025049
+            ],
+            [
+              -76.9699569,
+              -12.1025049
+            ],
+            [
+              -76.9699569,
+              -12.1030477
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "edificio",
+        "id": "C",
+        "nombre": "Edificio C",
+        "pisos": [
+          1
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -76.9706,
+              -12.1035
+            ],
+            [
+              -76.9702325,
+              -12.1035
+            ],
+            [
+              -76.9702325,
+              -12.1031381
+            ],
+            [
+              -76.9706,
+              -12.1031381
+            ],
+            [
+              -76.9706,
+              -12.1035
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "pasillo",
+        "piso": 1
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -76.9700947,
+            -12.1035
+          ],
+          [
+            -76.9700947,
+            -12.1033191
+          ],
+          [
+            -76.9700947,
+            -12.1027763
+          ],
+          [
+            -76.9700947,
+            -12.1025049
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "pasillo",
+        "piso": 1
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -76.9702325,
+            -12.1027763
+          ],
+          [
+            -76.9700947,
+            -12.1027763
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "pasillo",
+        "piso": 1
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -76.9702325,
+            -12.1033191
+          ],
+          [
+            -76.9700947,
+            -12.1033191
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "pasillo",
+        "piso": 1
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -76.9700947,
+            -12.1027763
+          ],
+          [
+            -76.9699569,
+            -12.1027763
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "pasillo",
+        "piso": 1,
+        "edificio": "A"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -76.9702325,
+            -12.1027763
+          ],
+          [
+            -76.9704163,
+            -12.1027763
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "pasillo",
+        "piso": 1,
+        "edificio": "C"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -76.9702325,
+            -12.1033191
+          ],
+          [
+            -76.9704163,
+            -12.1033191
+          ],
+          [
+            -76.9704163,
+            -12.1034095
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "pasillo",
+        "piso": 1,
+        "edificio": "B"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -76.9699569,
+            -12.1027763
+          ],
+          [
+            -76.9698191,
+            -12.1027763
+          ],
+          [
+            -76.9696813,
+            -12.1027763
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "pasillo",
+        "piso": 1,
+        "edificio": "B"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -76.9699385,
+            -12.1027763
+          ],
+          [
+            -76.9699385,
+            -12.102731
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "pasillo",
+        "piso": 3,
+        "edificio": "B"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -76.9699385,
+            -12.102731
+          ],
+          [
+            -76.9699385,
+            -12.1026406
+          ],
+          [
+            -76.9698191,
+            -12.1026406
+          ],
+          [
+            -76.9696813,
+            -12.1026406
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "escalera",
+        "desde_piso": 1,
+        "hasta_piso": 3,
+        "edificio": "B"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -76.9698191,
+            -12.1027763
+          ],
+          [
+            -76.9698191,
+            -12.1026406
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "ascensor",
+        "pisos": [
+          1,
+          2,
+          3
+        ],
+        "edificio": "B"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.9699385,
+          -12.102731
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "destino",
+        "id": "aula-b-302",
+        "nombre": "Aula B-302",
+        "categoria": "aulas",
+        "edificio": "B",
+        "piso": 3,
+        "llegada": "La entrada está a tu derecha, puerta 2.",
+        "punto": "BLE-0045"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.9696813,
+          -12.1026044
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "destino",
+        "id": "aula-b-301",
+        "nombre": "Aula B-301",
+        "categoria": "aulas",
+        "edificio": "B",
+        "piso": 3
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.969865,
+          -12.1026044
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "destino",
+        "id": "aula-b-101",
+        "nombre": "Aula B-101",
+        "categoria": "aulas",
+        "edificio": "B",
+        "piso": 1
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.9696813,
+          -12.1028125
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "destino",
+        "id": "banos-b1",
+        "nombre": "Baños",
+        "categoria": "banos",
+        "edificio": "B",
+        "piso": 1
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.9697548,
+          -12.1028125
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "destino",
+        "id": "biblioteca-central",
+        "nombre": "Biblioteca central",
+        "categoria": "biblioteca",
+        "edificio": "A",
+        "piso": 1,
+        "llegada": "La entrada está al frente.",
+        "punto": "NFC-0007"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.9704163,
+          -12.1027401
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "destino",
+        "id": "cafeteria-norte",
+        "nombre": "Cafetería Norte",
+        "categoria": "cafeterias",
+        "edificio": "C",
+        "piso": 1,
+        "punto": "BLE-0031"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.9704163,
+          -12.1032829
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "destino",
+        "id": "laboratorio-c-101",
+        "nombre": "Laboratorio C-101",
+        "categoria": "laboratorios",
+        "edificio": "C",
+        "piso": 1,
+        "punto": "NFC-0019"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.9703795,
+          -12.1034095
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "destino",
+        "id": "salida-principal",
+        "nombre": "Salida principal",
+        "categoria": "salidas",
+        "edificio": null,
+        "piso": 1
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.9700947,
+          -12.1034819
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "punto",
+        "id": "BLE-0004",
+        "tecnologia": "BLE",
+        "edificio": "A",
+        "piso": 1,
+        "referencia": "Entrada A",
+        "mensaje": "",
+        "activo": true,
+        "bateria": 88
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.9702325,
+          -12.1027582
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "punto",
+        "id": "BLE-0012",
+        "tecnologia": "BLE",
+        "edificio": "B",
+        "piso": 1,
+        "referencia": "Pasillo B",
+        "mensaje": "Estás en el pasillo B, piso 1. El aula B-302 queda al fondo, a la derecha.",
+        "activo": false,
+        "bateria": 54
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.9698834,
+          -12.1027672
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "punto",
+        "id": "BLE-0023",
+        "tecnologia": "BLE",
+        "edificio": "B",
+        "piso": 1,
+        "referencia": "Entrada B",
+        "mensaje": "Estás en la entrada del Edificio B.",
+        "activo": true,
+        "bateria": 82
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.9699569,
+          -12.1027582
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "punto",
+        "id": "NFC-0007",
+        "tecnologia": "NFC",
+        "edificio": "A",
+        "piso": 1,
+        "referencia": "Biblioteca",
+        "mensaje": "",
+        "activo": true,
+        "bateria": 18
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.9703979,
+          -12.1027582
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "punto",
+        "id": "BLE-0031",
+        "tecnologia": "BLE",
+        "edificio": "C",
+        "piso": 1,
+        "referencia": "Cafetería Norte",
+        "mensaje": "",
+        "activo": true,
+        "bateria": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.9703979,
+          -12.103301
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "punto",
+        "id": "BLE-0045",
+        "tecnologia": "BLE",
+        "edificio": "B",
+        "piso": 3,
+        "referencia": "Aula B-302",
+        "mensaje": "Estás frente al aula B-302.",
+        "activo": true,
+        "bateria": 91
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.9696996,
+          -12.1026315
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "punto",
+        "id": "NFC-0019",
+        "tecnologia": "NFC",
+        "edificio": "C",
+        "piso": 1,
+        "referencia": "Laboratorio C-101",
+        "mensaje": "",
+        "activo": true,
+        "bateria": 67
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.9703979,
+          -12.1033914
+        ]
+      }
+    }
+  ]
+}

@@ -1099,3 +1099,97 @@ dialog h2 {
     min-height: 560px;
   }
 }
+
+/* Mapa dibujado (compartido/mapa/dibujar.js): mismos colores que el mockup (W1, 9.3) */
+.mapa-lienzo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.mapa-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-height: 560px;
+}
+
+.mapa-tocable {
+  cursor: crosshair;
+}
+
+.mapa-edificio {
+  fill: #dde3ef;
+  stroke: #9faac4;
+  stroke-width: 1;
+}
+
+.mapa-edificio.mapa-destacado {
+  fill: var(--color-superficie);
+  stroke: var(--color-acento);
+  stroke-width: 2.5;
+}
+
+.mapa-pasillo {
+  fill: none;
+  stroke: #c9cfdb;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mapa-escalera {
+  fill: none;
+  stroke: var(--color-fondo);
+  stroke-width: 3;
+  stroke-dasharray: 2 2;
+}
+
+.mapa-ruta {
+  fill: none;
+  stroke: var(--color-acento);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mapa-destino {
+  fill: var(--color-superficie);
+  stroke: var(--color-fondo);
+  stroke-width: 1.5;
+}
+
+.mapa-destino.mapa-destacado {
+  fill: var(--color-acento);
+}
+
+.mapa-punto {
+  fill: var(--color-superficie);
+  stroke: var(--color-fondo);
+  stroke-width: 2;
+}
+
+.mapa-punto-inactivo {
+  fill: var(--color-acento);
+}
+
+.mapa-marcador {
+  fill: var(--color-acento);
+  stroke: var(--color-fondo);
+  stroke-width: 2;
+}
+
+.mapa-etiqueta {
+  fill: var(--color-texto-superficie);
+  font-family: var(--fuente);
+  font-size: 5px;
+  font-weight: 700;
+  paint-order: stroke;
+  stroke: var(--color-superficie);
+  stroke-width: 1.5px;
+}
+
+.mapa-etiqueta-punto {
+  font-size: 4px;
+}

@@ -25,6 +25,7 @@
           <p>Envía la ruta y ábrela cuando estés en el campus.</p>
         </section>
         <button class="boton boton-principal" type="button" data-accion="enviar-al-celular"><span class="icono material-symbols-rounded" aria-hidden="true">send_to_mobile</span> Enviar al celular</button>
+        <p class="nota" data-mensaje="ruta-enviada" role="status" hidden></p>
       </div>
       <section class="tarjeta tarjeta-mapa" aria-labelledby="titulo-mapa-ruta">
         <h2 class="tarjeta-titulo" id="titulo-mapa-ruta"><span class="icono material-symbols-rounded" aria-hidden="true">map</span> Ruta en el mapa</h2>
@@ -157,6 +158,8 @@
       </fieldset>
       <button class="boton boton-principal" type="submit"><span class="icono material-symbols-rounded" aria-hidden="true">sos</span> Pedir ayuda ahora</button>
     </form>
+    <!-- Confirmación del envío y aviso cuando la ayuda está en camino (CA124) -->
+    <p class="mensaje" data-mensaje="ayuda-enviada" role="status" hidden></p>
   </div>
 
   <!-- 4.7 · Llegada al destino -->
@@ -194,20 +197,22 @@
   </header>
   <div class="contenido">
     <p class="introduccion">Durante una ruta podrás avisarle con una acción rápida.</p>
-    <form class="formulario" data-formulario="emergencia">
+    <form class="formulario" novalidate data-formulario="emergencia">
       <div class="campo">
         <label class="campo-etiqueta" for="contacto-nombre">Nombre</label>
         <div class="campo-control">
           <span class="icono material-symbols-rounded" aria-hidden="true">person</span>
-          <input id="contacto-nombre" name="contacto-nombre" type="text" autocomplete="off">
+          <input id="contacto-nombre" name="contacto-nombre" type="text" autocomplete="off" required>
         </div>
+        <p class="error-campo" id="contacto-nombre-error" data-mensaje="error" hidden></p>
       </div>
       <div class="campo">
         <label class="campo-etiqueta" for="contacto-telefono">Teléfono</label>
         <div class="campo-control">
           <span class="icono material-symbols-rounded" aria-hidden="true">call</span>
-          <input id="contacto-telefono" name="contacto-telefono" type="tel" autocomplete="tel">
+          <input id="contacto-telefono" name="contacto-telefono" type="tel" autocomplete="tel" required>
         </div>
+        <p class="error-campo" id="contacto-telefono-error" data-mensaje="error" hidden></p>
       </div>
       <div class="interruptor">
         <span class="interruptor-texto" id="aviso-rapido-et">Aviso rápido en la ruta <span class="interruptor-detalle">Envía tu ubicación a tu contacto</span></span>
@@ -218,6 +223,7 @@
         <button class="boton boton-secundario" type="button" data-accion="probar-aviso"><span class="icono material-symbols-rounded" aria-hidden="true">send</span> Probar aviso</button>
       </div>
     </form>
+    <p class="mensaje" data-mensaje="contacto" role="status" hidden></p>
   </div>
 </section>
 

@@ -1,0 +1,5 @@
+/* 9.1 · Resumen: los indicadores, la tabla y la alerta usan los estilos de estilos/panel.css. */
+
+#vista-resumen .tabla td:first-child {
+  white-space: nowrap;
+}

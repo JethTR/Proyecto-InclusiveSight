@@ -30,3 +30,17 @@
     flex: 1 1 480px;
   }
 }
+
+/* Recordatorio en la lista: el botón de eliminar se distingue del fondo blanco */
+.lista-avisos .item-lista .boton-icono {
+  margin-left: auto;
+  background: var(--color-suave);
+}
+
+/* 6.1 y 6.3 en celular: el formulario se ve solo en #avisos/programar y entonces reemplaza la lista */
+@media (max-width: 899px) {
+  #vista-avisos:not([data-parte-visible="programar"]) [data-parte="programar"],
+  #vista-avisos[data-parte-visible="programar"] .columnas > .columna {
+    display: none;
+  }
+}

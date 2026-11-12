@@ -1,0 +1,97 @@
+/* Mapa del campus (9.5): archivo GeoJSON, árbol de edificios y pisos, destinos y mapa del piso. */
+
+.resumen-mapa {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--espacio-2);
+}
+
+.resumen-mapa .dato {
+  justify-content: space-between;
+  padding: var(--espacio-2) var(--espacio-3);
+  border-radius: var(--radio-s);
+  background: var(--color-suave);
+}
+
+.resumen-mapa dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.formulario-fila {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.formulario-fila .campo {
+  flex: 1;
+  min-width: 260px;
+}
+
+.formulario-fila .boton {
+  width: auto;
+}
+
+.lista-errores {
+  padding-left: 1.2em;
+  list-style: disc;
+  font-size: var(--texto-m);
+}
+
+/* Árbol de edificios y pisos */
+.arbol,
+.arbol ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+}
+
+.arbol ul {
+  padding-left: var(--espacio-5);
+}
+
+.arbol-edificio {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  min-height: 40px;
+  font-weight: 700;
+}
+
+.arbol-piso {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  width: 100%;
+  min-height: var(--tactil);
+  padding: 0 var(--espacio-3);
+  border: 0;
+  border-radius: var(--radio-s);
+  background: none;
+  text-align: left;
+}
+
+.arbol-piso[aria-pressed="true"] {
+  background: var(--color-fondo);
+  color: var(--color-superficie);
+  font-weight: 700;
+}
+
+.arbol-piso[aria-pressed="true"] .icono {
+  color: var(--color-acento);
+}
+
+@media (min-width: 900px) {
+  .columnas-mapa > .tarjeta:first-child {
+    flex: 0 0 240px;
+  }
+
+  .columnas-mapa > .tarjeta:nth-child(2) {
+    flex: 0 1 340px;
+  }
+}
+
+[data-mapa="piso"] {
+  min-height: 420px;
+}

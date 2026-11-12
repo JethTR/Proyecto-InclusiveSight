@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Acceso institucional · Panel InclusiveSight</title>
+  <meta name="description" content="Panel de gestión de InclusiveSight para la coordinación de inclusión y bienestar universitario.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&amp;display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&amp;icon_names=account_balance,account_circle,add,apartment,arrow_back,battery_alert,battery_full,block,bluetooth,check,check_circle,dashboard,door_open,download,history,layers,local_cafe,local_library,location_on,lock,login,logout,mail,map,meeting_room,nfc,notifications_active,replay,restart_alt,route,science,search,sensors,sensors_off,support_agent,upload,upload_file,volume_up,warning,wc&amp;display=block">
+  <link rel="stylesheet" href="../compartido/estilos/variables.css">
+  <link rel="stylesheet" href="../compartido/estilos/base.css">
+  <link rel="stylesheet" href="../compartido/estilos/componentes.css">
+  <link rel="stylesheet" href="funciones/acceso/acceso.css">
+</head>
+<!-- 1.5 · Acceso institucional. Solo entran cuentas con rol "administrador". -->
+<body>
+  <a class="saltar" href="#contenido">Saltar al contenido principal</a>
+  <main class="acceso-panel" id="contenido" tabindex="-1">
+    <section class="acceso-panel-marca" aria-label="InclusiveSight">
+      <img class="logo" src="../compartido/img/logo-inclusivesight.svg" alt="" width="96" height="96">
+      <p class="acceso-panel-nombre">InclusiveSight</p>
+      <p class="lema">Panel de gestión para coordinación de inclusión y bienestar universitario.</p>
+    </section>
+
+    <section class="tarjeta acceso-panel-tarjeta" aria-labelledby="titulo-acceso">
+      <img class="logo logo-tarjeta" src="../compartido/img/logo-inclusivesight.svg" alt="" width="52" height="52">
+      <h1 id="titulo-acceso">Ingresa con tu cuenta institucional</h1>
+      <form class="formulario" novalidate data-formulario="acceso-panel">
+        <!-- 1.5: cuenta que existe pero no es de coordinación -->
+        <div class="aviso-panel" id="acceso-no-autorizada" role="alert" hidden>
+          <span class="icono material-symbols-rounded" aria-hidden="true">warning</span>
+          <p><strong>Esta cuenta no está autorizada para el panel</strong> Usa tu correo @universidad.edu.pe.</p>
+        </div>
+        <p class="error-formulario" id="acceso-error" role="alert" hidden>Correo o contraseña incorrectos. Intentos restantes: <span data-dato="intentos-restantes"></span>.</p>
+        <p class="error-formulario" id="acceso-bloqueo" role="alert" hidden>Fallaste 3 intentos y el acceso quedó bloqueado. <a href="../estudiante/auth.html#recuperar">Recupera tu contraseña</a> para volver a entrar.</p>
+        <div class="campo">
+          <label class="campo-etiqueta" for="acceso-correo">Correo institucional</label>
+          <div class="campo-control">
+            <span class="icono material-symbols-rounded" aria-hidden="true">mail</span>
+            <input id="acceso-correo" name="correo" type="email" placeholder="usuario@universidad.edu.pe" autocomplete="username" required>
+          </div>
+          <p class="error-campo" id="acceso-correo-error" hidden></p>
+        </div>
+        <div class="campo">
+          <label class="campo-etiqueta" for="acceso-clave">Contraseña</label>
+          <div class="campo-control">
+            <span class="icono material-symbols-rounded" aria-hidden="true">lock</span>
+            <input id="acceso-clave" name="clave" type="password" autocomplete="current-password" required>
+            <button class="campo-accion" type="button" data-accion="mostrar-clave" aria-controls="acceso-clave" aria-pressed="false">Mostrar<span class="visualmente-oculto"> contraseña</span></button>
+          </div>
+          <p class="error-campo" id="acceso-clave-error" hidden></p>
+        </div>
+        <button class="boton boton-principal" type="submit"><span class="icono material-symbols-rounded" aria-hidden="true">login</span> Ingresar</button>
+      </form>
+      <p><a class="enlace-secundario" href="../estudiante/auth.html#recuperar">¿Olvidaste tu contraseña?</a></p>
+    </section>
+  </main>
+  <div class="anuncios" role="status" aria-live="polite" aria-atomic="true"></div>
+  <script type="module" src="funciones/acceso/acceso.js"></script>
+</body>
+</html>

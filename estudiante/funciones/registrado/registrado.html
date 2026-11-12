@@ -29,13 +29,15 @@
         <h2 class="tarjeta-titulo" id="titulo-favoritos"><span class="icono material-symbols-rounded" aria-hidden="true">star</span> Favoritos</h2>
         <p class="nota" data-dispositivo="movil">Toca «Iniciar» para empezar la ruta más rápido.</p>
         <ul class="lista" data-lista="favoritos"></ul>
-        <button class="boton boton-secundario" type="button" data-accion="editar-favoritos" data-dispositivo="movil"><span class="icono material-symbols-rounded" aria-hidden="true">edit</span> Editar favoritos</button>
+        <p class="nota" data-mensaje="sin-favoritos" hidden>Todavía no tienes favoritos. Guárdalos desde la información de un destino.</p>
+        <button class="boton boton-secundario" type="button" data-accion="editar-favoritos" data-dispositivo="movil" aria-pressed="false"><span class="icono material-symbols-rounded" aria-hidden="true">edit</span> Editar favoritos</button>
       </section>
       <!-- W3 / 5.2 · Recientes (#mis-rutas/recientes) -->
       <section class="tarjeta" data-parte="recientes" aria-labelledby="titulo-recientes">
         <h2 class="tarjeta-titulo" id="titulo-recientes"><span class="icono material-symbols-rounded" aria-hidden="true">history</span> Recientes</h2>
         <p class="nota" data-dispositivo="movil">Repite una ruta sin buscar de nuevo.</p>
         <ul class="lista" data-lista="recientes"></ul>
+        <p class="nota" data-mensaje="sin-recientes" hidden>Todavía no tienes rutas recientes.</p>
       </section>
     </div>
 
@@ -97,11 +99,14 @@
       <section class="columna" aria-labelledby="titulo-avisos-recientes">
         <h2 class="visualmente-oculto" id="titulo-avisos-recientes">Avisos recientes</h2>
         <ul class="lista lista-avisos" data-lista="avisos"></ul>
+        <p class="mensaje" data-mensaje="sin-avisos" hidden>No tienes avisos por ahora.</p>
+        <!-- 6.1 (celular): el formulario de recordatorio se abre en su propia pantalla (6.3) -->
+        <a class="boton boton-secundario" href="#avisos/programar" data-dispositivo="movil"><span class="icono material-symbols-rounded" aria-hidden="true">add_alarm</span> Programar recordatorio</a>
       </section>
       <!-- W5 (tarjeta) / 6.3 · Programar recordatorio (#avisos/programar) -->
       <section class="tarjeta" data-parte="programar" aria-labelledby="titulo-programar">
         <h2 class="tarjeta-titulo" id="titulo-programar"><span class="icono material-symbols-rounded" aria-hidden="true">add_alarm</span> Programar recordatorio</h2>
-        <form class="formulario" data-formulario="recordatorio">
+        <form class="formulario" novalidate data-formulario="recordatorio">
           <div class="campo">
             <label class="campo-etiqueta" for="recordatorio-destino">Destino</label>
             <div class="campo-control">
@@ -113,8 +118,9 @@
             <label class="campo-etiqueta" for="recordatorio-hora">Hora de llegada</label>
             <div class="campo-control">
               <span class="icono material-symbols-rounded" aria-hidden="true">schedule</span>
-              <input id="recordatorio-hora" name="hora" type="time">
+              <input id="recordatorio-hora" name="hora" type="time" required>
             </div>
+            <p class="error-campo" id="recordatorio-hora-error" data-mensaje="error" hidden></p>
           </div>
           <div class="campo">
             <label class="campo-etiqueta" for="recordatorio-aviso">Avisarme</label>
@@ -167,6 +173,8 @@
       <form class="formulario" data-formulario="notificaciones">
         <section class="tarjeta" aria-labelledby="titulo-tipos-aviso">
           <h3 class="visualmente-oculto" id="titulo-tipos-aviso">Tipos de aviso</h3>
+          <!-- CA036: las alertas críticas de seguridad no se pueden desactivar -->
+          <p class="nota">Las alertas de peligro durante la ruta siempre se avisan con voz y vibración.</p>
           <div class="interruptor">
             <span class="interruptor-texto" id="notif-zonas-et">Zonas cerradas y cambios de ruta</span>
             <button class="interruptor-boton" type="button" role="switch" aria-checked="true" aria-labelledby="notif-zonas-et" data-accion="alternar">Sí</button>
@@ -223,9 +231,14 @@
         <p><span class="perfil-nombre" data-dato="usuario-nombre"></span> <span class="perfil-correo" data-dato="usuario-correo"></span></p>
       </div>
       <ul class="lista">
-        <li><button class="item-lista" type="button" data-accion="ver-mis-datos"><span class="icono material-symbols-rounded" aria-hidden="true">badge</span> <span class="item-nombre">Mis datos</span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></button></li>
+        <li><button class="item-lista" type="button" data-accion="ver-mis-datos" aria-expanded="false" aria-controls="mis-datos"><span class="icono material-symbols-rounded" aria-hidden="true">badge</span> <span class="item-nombre">Mis datos</span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></button></li>
         <li><a class="item-lista" href="auth.html#recuperar"><span class="icono material-symbols-rounded" aria-hidden="true">lock_reset</span> <span class="item-nombre">Cambiar contraseña</span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
       </ul>
+      <dl class="datos" id="mis-datos" hidden>
+        <div class="dato"><dt>Nombre</dt> <dd data-dato="usuario-nombre"></dd></div>
+        <div class="dato"><dt>Correo</dt> <dd data-dato="usuario-correo"></dd></div>
+        <div class="dato"><dt>Tipo de cuenta</dt> <dd>Estudiante</dd></div>
+      </dl>
     </section>
     <p class="nota">Al cerrar sesión, tus favoritos y preferencias quedan guardados en tu cuenta.</p>
     <button class="boton boton-secundario" type="button" data-accion="cerrar-sesion"><span class="icono material-symbols-rounded" aria-hidden="true">logout</span> Cerrar sesión</button>
@@ -270,5 +283,14 @@
       <span class="item-texto"><span class="item-nombre" data-dato="titulo"></span> <span class="item-detalle" data-dato="detalle"></span></span>
       <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span>
     </a>
+  </li>
+</template>
+
+<!-- Recordatorio programado (6.1): se puede eliminar (CA029) -->
+<template data-plantilla="recordatorio">
+  <li class="item-lista">
+    <span class="icono material-symbols-rounded" aria-hidden="true">alarm</span>
+    <span class="item-texto"><span class="item-nombre" data-dato="titulo"></span> <span class="item-detalle" data-dato="detalle"></span></span>
+    <button class="boton-icono" type="button" data-accion="eliminar-recordatorio" aria-label="Eliminar recordatorio" data-dato-aria-label="Eliminar recordatorio de"><span class="icono material-symbols-rounded" aria-hidden="true">delete</span></button>
   </li>
 </template>

@@ -81,3 +81,22 @@
   background: var(--color-superficie);
   color: var(--color-texto-superficie);
 }
+
+/* Pestañas en celular (5.1 y 5.2): solo se ve la tarjeta elegida. En escritorio (W3) se ven las dos */
+@media (max-width: 899px) {
+  #vista-mis-rutas[data-pestana="favoritos"] [data-parte="recientes"],
+  #vista-mis-rutas[data-pestana="recientes"] [data-parte="favoritos"] {
+    display: none;
+  }
+
+  /* "Editar favoritos" muestra los botones de editar y eliminar de cada fila */
+  [data-parte="favoritos"][data-editando] .fila-ruta .boton-icono[data-dispositivo="escritorio"] {
+    display: inline-grid !important;
+  }
+}
+
+/* Botón activo de "Editar favoritos" */
+[data-accion="editar-favoritos"][aria-pressed="true"] {
+  background: var(--color-fondo);
+  color: var(--color-superficie);
+}

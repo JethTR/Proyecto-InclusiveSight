@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Resumen · Panel InclusiveSight</title>
+  <meta name="description" content="Panel de gestión de InclusiveSight: mapas del campus y puntos de referencia.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&amp;display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&amp;icon_names=account_balance,account_circle,add,apartment,arrow_back,battery_alert,battery_full,block,bluetooth,check,check_circle,dashboard,door_open,download,history,layers,local_cafe,local_library,location_on,lock,login,logout,mail,map,meeting_room,nfc,notifications_active,replay,restart_alt,route,science,search,sensors,sensors_off,support_agent,upload,upload_file,volume_up,warning,wc&amp;display=block">
+  <link rel="stylesheet" href="../compartido/estilos/variables.css">
+  <link rel="stylesheet" href="../compartido/estilos/base.css">
+  <link rel="stylesheet" href="../compartido/estilos/componentes.css">
+  <link rel="stylesheet" href="estilos/panel.css">
+  <!-- El CSS y el JS de cada función (funciones/<función>/) los carga el router al entrar a ella -->
+</head>
+<!--
+  Panel del coordinador: Resumen (9.1), Puntos de referencia (9.2, 9.3 y 9.4) y Mapa del campus (9.5 + carga del GeoJSON).
+  Mismo sistema que la app del estudiante: una <section class="vista"> por hash (#resumen, #puntos, #mapa),
+  partes con #vista/parte (#puntos/registrar, #puntos/editar/<código>) y textos con data-dato.
+  Lo que se guarda aquí lo usa la app del estudiante (compartido/servicios/campus.js).
+-->
+<body>
+  <a class="saltar" href="#vista">Saltar al contenido principal</a>
+  <div class="app">
+
+    <aside class="menu-lateral">
+      <a class="marca" href="#resumen">
+        <img class="logo" src="../compartido/img/logo-inclusivesight.svg" alt="" width="52" height="52">
+        <span class="marca-nombre">InclusiveSight</span>
+        <span class="marca-lema">Panel del coordinador</span>
+      </a>
+      <nav class="barra-navegacion" aria-label="Navegación del panel">
+        <ul>
+          <li><a class="menu-item" href="#resumen"><span class="icono material-symbols-rounded" aria-hidden="true">dashboard</span> <span>Resumen</span></a></li>
+          <li><a class="menu-item" href="#puntos"><span class="icono material-symbols-rounded" aria-hidden="true">sensors</span> <span>Puntos de referencia</span></a></li>
+          <li><a class="menu-item" href="#mapa"><span class="icono material-symbols-rounded" aria-hidden="true">map</span> <span>Mapa del campus</span></a></li>
+        </ul>
+      </nav>
+      <section class="sesion" aria-label="Sesión">
+        <button class="boton boton-secundario" type="button" data-accion="cerrar-sesion"><span class="icono material-symbols-rounded" aria-hidden="true">logout</span> Cerrar sesión</button>
+      </section>
+    </aside>
+
+    <main class="principal" id="vista" tabindex="-1">
+      <!-- Alertas y usuario (arriba a la derecha en todas las pantallas del panel) -->
+      <div class="panel-cuenta">
+        <a class="boton boton-principal boton-alertas" href="#puntos/inactivos"><span class="icono material-symbols-rounded" aria-hidden="true">notifications_active</span> <span>Alertas (<span data-dato="alertas">0</span>)</span></a>
+        <p class="panel-usuario"><span class="icono material-symbols-rounded" aria-hidden="true">account_circle</span> <span data-dato="usuario-nombre"></span></p>
+      </div>
+
+      <div class="mensaje-carga" data-mensaje="error-carga" role="alert" hidden>
+        <p>No se pudo cargar esta sección. Revisa tu conexión e inténtalo de nuevo.</p>
+        <button class="boton boton-secundario" type="button" data-accion="reintentar-carga"><span class="icono material-symbols-rounded" aria-hidden="true">replay</span> Reintentar</button>
+      </div>
+
+      <!-- ============ resumen · 9.1 ============ -->
+      <section class="vista" id="vista-resumen" data-vista="resumen" aria-labelledby="titulo-resumen">
+        <header class="barra-superior">
+          <h1 id="titulo-resumen" tabindex="-1">Resumen</h1>
+        </header>
+        <div class="contenido">
+          <ul class="indicadores">
+            <li class="indicador">
+              <p class="indicador-titulo"><span class="icono material-symbols-rounded" aria-hidden="true">sensors</span> Puntos activos</p>
+              <p class="indicador-valor" data-dato="activos"></p>
+              <p class="indicador-detalle" data-dato="activos-detalle"></p>
+            </li>
+            <li class="indicador" data-indicador="bateria">
+              <p class="indicador-titulo"><span class="icono material-symbols-rounded" aria-hidden="true">battery_alert</span> Batería baja</p>
+              <p class="indicador-valor" data-dato="bateria"></p>
+              <p class="indicador-detalle" data-dato="bateria-detalle"></p>
+            </li>
+            <li class="indicador" data-indicador="inactivos">
+              <p class="indicador-titulo"><span class="icono material-symbols-rounded" aria-hidden="true">sensors_off</span> Inactivos</p>
+              <p class="indicador-valor" data-dato="inactivos"></p>
+              <p class="indicador-detalle" data-dato="inactivos-detalle"></p>
+            </li>
+            <li class="indicador">
+              <p class="indicador-titulo"><span class="icono material-symbols-rounded" aria-hidden="true">block</span> Zonas cerradas</p>
+              <p class="indicador-valor" data-dato="zonas"></p>
+              <p class="indicador-detalle" data-dato="zonas-detalle"></p>
+            </li>
+          </ul>
+
+          <!-- Primer punto inactivo -->
+          <section class="alerta alerta-accion" aria-labelledby="titulo-punto-inactivo" data-mensaje="punto-inactivo" hidden>
+            <span class="icono material-symbols-rounded" aria-hidden="true">warning</span>
+            <p class="alerta-titulo" id="titulo-punto-inactivo" data-dato="inactivo-titulo"></p>
+            <p data-dato="inactivo-texto"></p>
+            <a class="boton boton-pequeno" href="#puntos" data-accion="revisar-punto">Revisar punto</a>
+          </section>
+
+          <div class="fila-herramientas fila-izquierda">
+            <a class="boton boton-principal" href="#puntos/inactivos"><span class="icono material-symbols-rounded" aria-hidden="true">sensors_off</span> Ver puntos inactivos</a>
+            <a class="boton boton-secundario" href="#puntos/registrar"><span class="icono material-symbols-rounded" aria-hidden="true">add</span> Registrar punto</a>
+          </div>
+
+          <section class="tarjeta" aria-labelledby="titulo-actividad">
+            <h2 class="tarjeta-titulo" id="titulo-actividad"><span class="icono material-symbols-rounded" aria-hidden="true">history</span> Actividad reciente</h2>
+            <div class="tabla-contenedor">
+              <table class="tabla">
+                <thead><tr><th scope="col">Hora</th><th scope="col">Evento</th><th scope="col">Punto o archivo</th></tr></thead>
+                <tbody data-lista="actividad"></tbody>
+              </table>
+            </div>
+            <p class="nota" data-mensaje="sin-actividad" hidden>Todavía no hay actividad. Aquí aparecerán los puntos que registres o edites y los mapas que cargues.</p>
+          </section>
+        </div>
+      </section>
+
+      <!-- ============ puntos · 9.2, 9.3 y 9.4 ============ -->
+      <section class="vista" id="vista-puntos" data-vista="puntos" aria-labelledby="titulo-puntos" hidden>
+        <header class="barra-superior">
+          <h1 id="titulo-puntos" tabindex="-1">Puntos de referencia</h1>
+        </header>
+        <div class="contenido">
+          <!-- 9.2 · Lista (#puntos, #puntos/inactivos) -->
+          <div class="fila-herramientas">
+            <search class="buscador-panel">
+              <label class="visualmente-oculto" for="buscar-punto">Buscar por nombre o código</label>
+              <div class="campo-control">
+                <span class="icono material-symbols-rounded" aria-hidden="true">search</span>
+                <input id="buscar-punto" type="search" placeholder="Buscar por nombre o código" autocomplete="off">
+              </div>
+            </search>
+            <a class="boton boton-principal" href="#puntos/registrar"><span class="icono material-symbols-rounded" aria-hidden="true">add</span> Registrar punto</a>
+          </div>
+          <div class="chips filtros" role="group" aria-label="Filtrar por estado">
+            <button class="chip" type="button" data-filtro="todos" aria-pressed="true"><span>Todos (<span data-dato="total-todos"></span>)</span></button>
+            <button class="chip" type="button" data-filtro="activo" aria-pressed="false"><span>Activos (<span data-dato="total-activo"></span>)</span></button>
+            <button class="chip" type="button" data-filtro="inactivo" aria-pressed="false"><span>Inactivos (<span data-dato="total-inactivo"></span>)</span></button>
+            <button class="chip" type="button" data-filtro="bateria" aria-pressed="false"><span>Batería baja (<span data-dato="total-bateria"></span>)</span></button>
+          </div>
+          <p class="visualmente-oculto" aria-live="polite" data-dato="conteo-puntos"></p>
+          <section class="tarjeta" aria-labelledby="titulo-tabla-puntos">
+            <h2 class="visualmente-oculto" id="titulo-tabla-puntos">Lista de puntos</h2>
+            <div class="tabla-contenedor">
+              <table class="tabla">
+                <thead>
+                  <tr><th scope="col">Código</th><th scope="col">Ubicación</th><th scope="col">Tipo</th><th scope="col">Batería</th><th scope="col">Estado</th><th scope="col">Acciones</th></tr>
+                </thead>
+                <tbody data-lista="puntos"></tbody>
+              </table>
+            </div>
+            <p class="nota" data-mensaje="sin-puntos" hidden>No hay puntos que coincidan.</p>
+          </section>
+
+          <!-- 9.3 · Registrar punto (#puntos/registrar) -->
+          <section class="parte" data-parte="registrar" aria-labelledby="titulo-registrar" hidden>
+            <header class="barra-superior">
+              <a class="boton-icono" href="#puntos" aria-label="Volver a puntos de referencia"><span class="icono material-symbols-rounded" aria-hidden="true">arrow_back</span></a>
+              <h2 id="titulo-registrar" tabindex="-1">Registrar punto</h2>
+            </header>
+            <div class="columnas">
+              <section class="tarjeta" aria-labelledby="titulo-datos-punto">
+                <h3 class="tarjeta-titulo" id="titulo-datos-punto"><span class="icono material-symbols-rounded" aria-hidden="true">sensors</span> Datos del punto</h3>
+                <form class="formulario" novalidate data-formulario="registrar-punto">
+                  <div class="campo">
+                    <label class="campo-etiqueta" for="punto-codigo">Código del punto</label>
+                    <div class="campo-control">
+                      <input id="punto-codigo" name="codigo" type="text" placeholder="BLE-0046" autocomplete="off" aria-describedby="punto-codigo-ayuda" required>
+                    </div>
+                    <p class="campo-ayuda" id="punto-codigo-ayuda">Está impreso en la etiqueta del dispositivo.</p>
+                    <p class="error-campo" id="punto-codigo-error" hidden></p>
+                  </div>
+                  <fieldset class="opciones opciones-chip">
+                    <legend>Tipo</legend>
+                    <label class="opcion-chip"><input type="radio" name="tecnologia" value="BLE" checked> <span class="icono material-symbols-rounded" aria-hidden="true">bluetooth</span> BLE</label>
+                    <label class="opcion-chip"><input type="radio" name="tecnologia" value="NFC"> <span class="icono material-symbols-rounded" aria-hidden="true">nfc</span> NFC</label>
+                  </fieldset>
+                  <div class="campo">
+                    <label class="campo-etiqueta" for="punto-ubicacion">Edificio y piso</label>
+                    <div class="campo-control">
+                      <span class="icono material-symbols-rounded" aria-hidden="true">apartment</span>
+                      <select id="punto-ubicacion" name="ubicacion" data-lista="edificios-pisos"></select>
+                    </div>
+                  </div>
+                  <div class="campo">
+                    <label class="campo-etiqueta" for="punto-referencia">Referencia</label>
+                    <div class="campo-control">
+                      <span class="icono material-symbols-rounded" aria-hidden="true">location_on</span>
+                      <input id="punto-referencia" name="referencia" type="text" placeholder="Entrada del pasillo, junto al aula B-302" autocomplete="off" required>
+                    </div>
+                    <p class="error-campo" id="punto-referencia-error" hidden></p>
+                  </div>
+                  <!-- Ubicación exacta: se llena al tocar el mapa; también se puede escribir (CA143: con teclado) -->
+                  <fieldset class="coordenadas">
+                    <legend>Ubicación en el mapa</legend>
+                    <p class="campo-ayuda" id="coordenadas-ayuda">Toca el mapa o escribe las coordenadas.</p>
+                    <div class="campo">
+                      <label class="campo-etiqueta" for="punto-latitud">Latitud</label>
+                      <div class="campo-control"><input id="punto-latitud" name="latitud" type="number" step="any" inputmode="decimal" aria-describedby="coordenadas-ayuda"></div>
+                    </div>
+                    <div class="campo">
+                      <label class="campo-etiqueta" for="punto-longitud">Longitud</label>
+                      <div class="campo-control"><input id="punto-longitud" name="longitud" type="number" step="any" inputmode="decimal" aria-describedby="coordenadas-ayuda"></div>
+                    </div>
+                    <p class="error-campo" id="punto-coordenadas-error" hidden></p>
+                  </fieldset>
+                  <div class="acciones acciones-fila">
+                    <button class="boton boton-principal" type="submit"><span class="icono material-symbols-rounded" aria-hidden="true">check</span> Guardar punto</button>
+                    <a class="boton boton-secundario" href="#puntos">Cancelar</a>
+                  </div>
+                </form>
+              </section>
+              <section class="tarjeta tarjeta-mapa" aria-labelledby="titulo-mapa-registrar">
+                <h3 class="tarjeta-titulo" id="titulo-mapa-registrar"><span class="icono material-symbols-rounded" aria-hidden="true">map</span> Toca el mapa para colocar el punto</h3>
+                <figure class="mapa">
+                  <div class="mapa-lienzo" data-mapa="registrar"></div>
+                  <figcaption data-dato="mapa-registrar-descripcion"></figcaption>
+                </figure>
+              </section>
+            </div>
+          </section>
+
+          <!-- 9.4 · Editar punto y mensaje (#puntos/editar/<código>) -->
+          <section class="parte" data-parte="editar" aria-labelledby="titulo-editar-punto" hidden>
+            <header class="barra-superior">
+              <a class="boton-icono" href="#puntos" aria-label="Volver a puntos de referencia"><span class="icono material-symbols-rounded" aria-hidden="true">arrow_back</span></a>
+              <h2 id="titulo-editar-punto" tabindex="-1" data-dato="punto-titulo">Editar punto</h2>
+            </header>
+            <div class="columnas">
+              <section class="tarjeta" aria-label="Datos del punto">
+                <form class="formulario" novalidate data-formulario="editar-punto">
+                  <div class="interruptor">
+                    <span class="interruptor-texto" id="punto-activo-et">Punto activo <span class="interruptor-detalle">Si lo desactivas, la guía deja de usar este punto.</span></span>
+                    <button class="interruptor-boton" type="button" role="switch" aria-checked="true" aria-labelledby="punto-activo-et">Sí</button>
+                  </div>
+                  <div class="campo">
+                    <label class="campo-etiqueta" for="editar-referencia">Ubicación</label>
+                    <div class="campo-control">
+                      <span class="icono material-symbols-rounded" aria-hidden="true">location_on</span>
+                      <input id="editar-referencia" name="referencia" type="text" autocomplete="off" required>
+                    </div>
+                    <p class="error-campo" id="editar-referencia-error" hidden></p>
+                  </div>
+                  <div class="campo">
+                    <label class="campo-etiqueta" for="editar-mensaje">Mensaje de voz del punto</label>
+                    <div class="campo-control">
+                      <textarea id="editar-mensaje" name="mensaje" rows="3" maxlength="120" aria-describedby="editar-mensaje-contador"></textarea>
+                    </div>
+                    <p class="campo-ayuda" id="editar-mensaje-contador"><span data-dato="mensaje-largo">0</span> de 120 caracteres · se lee al pasar cerca del punto</p>
+                  </div>
+                  <div class="acciones acciones-fila">
+                    <button class="boton boton-secundario" type="button" data-accion="escuchar-mensaje"><span class="icono material-symbols-rounded" aria-hidden="true">volume_up</span> Escuchar vista previa</button>
+                    <button class="boton boton-principal" type="submit"><span class="icono material-symbols-rounded" aria-hidden="true">check</span> Guardar cambios</button>
+                  </div>
+                </form>
+                <p class="mensaje mensaje-borde" data-mensaje="punto-guardado" role="status" hidden></p>
+              </section>
+              <section class="estado-punto" aria-labelledby="titulo-estado-punto">
+                <h3 class="seccion-titulo" id="titulo-estado-punto">Estado del punto</h3>
+                <div class="indicadores indicadores-dos">
+                  <div class="indicador" data-indicador="bateria-punto">
+                    <p class="indicador-titulo"><span class="icono material-symbols-rounded" aria-hidden="true">battery_full</span> Batería</p>
+                    <p class="indicador-valor" data-dato="punto-bateria"></p>
+                    <p class="indicador-detalle" data-dato="punto-bateria-detalle"></p>
+                  </div>
+                  <div class="indicador" data-indicador="senal-punto">
+                    <p class="indicador-titulo"><span class="icono material-symbols-rounded" aria-hidden="true">sensors</span> Última señal</p>
+                    <p class="indicador-valor" data-dato="punto-senal"></p>
+                    <p class="indicador-detalle" data-dato="punto-senal-detalle"></p>
+                  </div>
+                </div>
+                <section class="alerta" aria-labelledby="titulo-punto-inactivo-aviso" data-mensaje="punto-inactivo-aviso" hidden>
+                  <span class="icono material-symbols-rounded" aria-hidden="true">warning</span>
+                  <p class="alerta-titulo" id="titulo-punto-inactivo-aviso">Este punto está inactivo</p>
+                  <p>Reactívalo cuando cambies la batería o revises el dispositivo.</p>
+                </section>
+              </section>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- ============ mapa · 9.5 y carga del mapa GeoJSON ============ -->
+      <section class="vista" id="vista-mapa" data-vista="mapa" aria-labelledby="titulo-mapa" hidden>
+        <header class="barra-superior">
+          <h1 id="titulo-mapa" tabindex="-1">Mapa del campus</h1>
+        </header>
+        <div class="contenido">
+          <section class="tarjeta" aria-labelledby="titulo-archivo-mapa">
+            <h2 class="tarjeta-titulo" id="titulo-archivo-mapa"><span class="icono material-symbols-rounded" aria-hidden="true">upload_file</span> Archivo del mapa (GeoJSON)</h2>
+            <p class="nota" data-dato="origen-mapa"></p>
+            <dl class="resumen-mapa" data-lista="resumen-mapa"></dl>
+            <form class="formulario formulario-fila" novalidate data-formulario="cargar-mapa">
+              <div class="campo">
+                <label class="campo-etiqueta" for="archivo-mapa">Cargar un mapa nuevo</label>
+                <input class="campo-archivo" id="archivo-mapa" name="archivo" type="file" accept=".geojson,.json,application/geo+json,application/json" aria-describedby="archivo-mapa-ayuda">
+                <p class="campo-ayuda" id="archivo-mapa-ayuda">Un FeatureCollection con edificios, pasillos, escaleras, ascensores, destinos y puntos. Los puntos que ya registraste se conservan.</p>
+              </div>
+              <button class="boton boton-principal" type="submit"><span class="icono material-symbols-rounded" aria-hidden="true">upload</span> Cargar mapa</button>
+            </form>
+            <section class="alerta" data-mensaje="errores-mapa" role="alert" aria-labelledby="titulo-errores-mapa" hidden>
+              <span class="icono material-symbols-rounded" aria-hidden="true">warning</span>
+              <p class="alerta-titulo" id="titulo-errores-mapa">No se cargó el mapa: el archivo tiene errores</p>
+              <ul class="lista-errores" data-lista="errores-mapa"></ul>
+            </section>
+            <p class="mensaje mensaje-borde" data-mensaje="mapa-cargado" role="status" hidden></p>
+            <div class="acciones acciones-fila">
+              <button class="boton boton-secundario" type="button" data-accion="exportar-mapa"><span class="icono material-symbols-rounded" aria-hidden="true">download</span> Exportar campus.geojson</button>
+              <button class="boton boton-secundario" type="button" data-accion="restablecer-mapa" aria-haspopup="dialog" aria-controls="dialogo-restablecer"><span class="icono material-symbols-rounded" aria-hidden="true">restart_alt</span> Volver al mapa del repositorio</button>
+            </div>
+          </section>
+
+          <div class="columnas columnas-mapa">
+            <section class="tarjeta" aria-labelledby="titulo-edificios">
+              <h2 class="tarjeta-titulo" id="titulo-edificios"><span class="icono material-symbols-rounded" aria-hidden="true">apartment</span> Edificios y pisos</h2>
+              <ul class="arbol" data-lista="edificios"></ul>
+            </section>
+            <section class="tarjeta" aria-labelledby="titulo-destinos-piso">
+              <h2 class="tarjeta-titulo" id="titulo-destinos-piso"><span class="icono material-symbols-rounded" aria-hidden="true">meeting_room</span> <span data-dato="titulo-piso"></span></h2>
+              <ul class="lista" data-lista="destinos-piso"></ul>
+              <p class="nota" data-mensaje="sin-destinos" hidden>Este piso no tiene destinos en el mapa.</p>
+              <!-- Prueba del cálculo de rutas (A*) con el mapa actual -->
+              <form class="formulario" novalidate data-formulario="probar-ruta">
+                <h3 class="tarjeta-subtitulo">Probar una ruta</h3>
+                <div class="campo">
+                  <label class="campo-etiqueta" for="ruta-desde">Desde el punto</label>
+                  <div class="campo-control"><select id="ruta-desde" name="desde" data-lista="puntos-ruta"></select></div>
+                </div>
+                <div class="campo">
+                  <label class="campo-etiqueta" for="ruta-hasta">Hasta el destino</label>
+                  <div class="campo-control"><select id="ruta-hasta" name="hasta" data-lista="destinos-ruta"></select></div>
+                </div>
+                <label class="casilla"><input type="checkbox" name="evitar-escaleras"> Evitar escaleras</label>
+                <button class="boton boton-principal" type="submit"><span class="icono material-symbols-rounded" aria-hidden="true">route</span> Calcular ruta</button>
+                <p class="mensaje mensaje-borde" data-mensaje="resultado-ruta" role="status" hidden></p>
+              </form>
+            </section>
+            <section class="tarjeta tarjeta-mapa" aria-labelledby="titulo-mapa-piso">
+              <h2 class="tarjeta-titulo" id="titulo-mapa-piso"><span class="icono material-symbols-rounded" aria-hidden="true">map</span> <span data-dato="titulo-mapa-piso"></span></h2>
+              <figure class="mapa">
+                <div class="mapa-lienzo" data-mapa="piso"></div>
+                <figcaption data-dato="mapa-piso-descripcion"></figcaption>
+              </figure>
+            </section>
+          </div>
+        </div>
+
+        <dialog class="confirmar" id="dialogo-restablecer" aria-labelledby="titulo-restablecer" aria-describedby="texto-restablecer">
+          <span class="icono material-symbols-rounded" aria-hidden="true">restart_alt</span>
+          <h2 id="titulo-restablecer">¿Volver al mapa del repositorio?</h2>
+          <p id="texto-restablecer">Se borrarán el mapa y los puntos que guardaste en este navegador. Si quieres conservarlos, expórtalos antes.</p>
+          <form method="dialog" class="acciones">
+            <button class="boton boton-principal" type="submit" value="cancelar" autofocus>Cancelar</button>
+            <button class="boton boton-secundario" type="submit" value="restablecer">Sí, volver al del repositorio</button>
+          </form>
+        </dialog>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ============ Plantillas ============ -->
+  <template data-plantilla="fila-punto">
+    <tr>
+      <td data-dato="codigo"></td>
+      <td data-dato="ubicacion"></td>
+      <td data-dato="tipo"></td>
+      <td data-dato="bateria"></td>
+      <td><span class="estado"><span class="icono material-symbols-rounded" aria-hidden="true" data-dato="estado-icono"></span> <span data-dato="estado"></span></span></td>
+      <td><a class="enlace-tabla" href="#puntos" data-dato-aria-label="Editar">Editar</a></td>
+    </tr>
+  </template>
+
+  <template data-plantilla="fila-actividad">
+    <tr><td data-dato="hora"></td><td data-dato="evento"></td><td data-dato="detalle"></td></tr>
+  </template>
+
+  <template data-plantilla="destino-piso">
+    <li class="dato"><span class="icono material-symbols-rounded" aria-hidden="true" data-dato="icono"></span> <span class="item-texto"><span class="item-nombre" data-dato="nombre"></span> <span class="item-detalle" data-dato="detalle"></span></span></li>
+  </template>
+
+  <div class="anuncios" role="status" aria-live="polite" aria-atomic="true"></div>
+  <script type="module" src="nucleo/app.js"></script>
+</body>
+</html>

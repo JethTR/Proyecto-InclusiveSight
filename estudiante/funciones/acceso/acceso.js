@@ -137,17 +137,20 @@ function enviarRecuperar(evento) {
   anunciar('Revisa tu correo. Te enviamos un enlace. Tiene vigencia limitada.');
 }
 
-/* ===== Arranque ===== */
+/* ===== Arranque (index.html y auth.html cargan este archivo) ===== */
 
-iniciarCampos();
-document.querySelector('[data-formulario="ingreso"]').addEventListener('submit', enviarIngreso);
-document.querySelector('[data-formulario="registro"]').addEventListener('submit', enviarRegistro);
-document.querySelector('[data-formulario="recuperar"]').addEventListener('submit', enviarRecuperar);
-
-// "Seguir como invitado" deja la sesión cerrada
+// "Continuar como invitado" (M1) y "Ahora no, seguir como invitado" (1.1) cierran la sesión que hubiera abierta:
+// sin esto, la app seguiría usando la cuenta con la que se entró antes.
 document.addEventListener('click', (evento) => {
   if (evento.target.closest('[data-accion="entrar-invitado"]')) cuenta.cerrarSesion();
 });
 
-window.addEventListener('hashchange', () => mostrarSeccion());
-mostrarSeccion(true);
+// El resto solo existe en auth.html
+if (document.querySelector('[data-formulario="ingreso"]')) {
+  iniciarCampos();
+  document.querySelector('[data-formulario="ingreso"]').addEventListener('submit', enviarIngreso);
+  document.querySelector('[data-formulario="registro"]').addEventListener('submit', enviarRegistro);
+  document.querySelector('[data-formulario="recuperar"]').addEventListener('submit', enviarRecuperar);
+  window.addEventListener('hashchange', () => mostrarSeccion());
+  mostrarSeccion(true);
+}
