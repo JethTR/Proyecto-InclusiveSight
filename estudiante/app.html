@@ -154,6 +154,8 @@
               <button class="boton boton-pequeno" type="button" data-patron="riesgo" aria-describedby="patron-riesgo">Probar</button>
             </li>
           </ul>
+          <!-- Si el dispositivo no puede vibrar (computadora, iPhone), lo dice en pantalla -->
+          <p class="nota" data-mensaje="sin-vibracion" hidden></p>
           <div class="acciones">
             <a class="boton boton-principal" href="#buscar"><span class="icono material-symbols-rounded" aria-hidden="true">check</span> Listo, empezar</a>
             <a class="boton boton-secundario" href="#tutorial">Repetir tutorial</a>
@@ -207,7 +209,7 @@
               <h2 class="tarjeta-titulo" id="titulo-mapa-buscar"><span class="icono material-symbols-rounded" aria-hidden="true">map</span> Mapa del campus</h2>
               <!-- El mapa es un complemento: lo que muestra también está en texto -->
               <figure class="mapa">
-                <div class="mapa-lienzo" aria-hidden="true"></div>
+                <div class="mapa-lienzo"></div>
                 <figcaption data-dato="mapa-descripcion"></figcaption>
               </figure>
               <div class="destino-elegido" data-mensaje="destino-elegido" hidden>
@@ -317,7 +319,7 @@
             <section class="tarjeta tarjeta-mapa" aria-labelledby="titulo-mapa-destino">
               <h2 class="tarjeta-titulo" id="titulo-mapa-destino"><span class="icono material-symbols-rounded" aria-hidden="true">map</span> Ubicación</h2>
               <figure class="mapa">
-                <div class="mapa-lienzo" aria-hidden="true"></div>
+                <div class="mapa-lienzo"></div>
                 <figcaption data-dato="mapa-descripcion"></figcaption>
               </figure>
             </section>
@@ -341,71 +343,19 @@
           <button class="boton-icono boton-ayuda" type="button" data-accion="abrir-ayuda" aria-controls="ayuda-ajustes" aria-haspopup="dialog" aria-label="Ayuda de esta pantalla"><span class="icono material-symbols-rounded" aria-hidden="true">help</span></button>
         </header>
         <div class="contenido">
-          <div class="columnas">
-            <!-- W6 · Tarjeta Cuenta (escritorio) -->
-            <section class="tarjeta" aria-labelledby="titulo-ajustes-cuenta" data-dispositivo="escritorio">
-              <h2 class="tarjeta-titulo" id="titulo-ajustes-cuenta"><span class="icono material-symbols-rounded" aria-hidden="true">person</span> Cuenta</h2>
-              <div data-requiere-cuenta>
-                <div class="perfil"><span class="icono material-symbols-rounded" aria-hidden="true">person</span> <p><span class="perfil-nombre" data-dato="usuario-nombre"></span> <span class="perfil-correo" data-dato="usuario-correo"></span></p></div>
-                <a class="boton boton-secundario" href="auth.html#recuperar"><span class="icono material-symbols-rounded" aria-hidden="true">lock_reset</span> Cambiar contraseña</a>
-                <button class="boton boton-principal" type="button" data-accion="cerrar-sesion"><span class="icono material-symbols-rounded" aria-hidden="true">logout</span> Cerrar sesión</button>
-                <p class="nota">Tus favoritos y preferencias se guardan en tu cuenta.</p>
-              </div>
-              <div data-solo-invitado>
-                <div class="perfil"><span class="icono material-symbols-rounded" aria-hidden="true">person</span> <p><span class="perfil-nombre">Invitado</span> <span class="perfil-correo">Sin cuenta</span></p></div>
-                <a class="boton boton-principal" href="auth.html#iniciar-sesion"><span class="icono material-symbols-rounded" aria-hidden="true">login</span> Iniciar sesión o crear cuenta</a>
-                <p class="nota">Estás usando InclusiveSight como invitado. Tus ajustes se guardan solo en este dispositivo.</p>
-              </div>
-            </section>
-
-            <!-- W6 · Tarjeta Preferencias de la guía (escritorio) -->
-            <section class="tarjeta" aria-labelledby="titulo-preferencias" data-dispositivo="escritorio">
-              <h2 class="tarjeta-titulo" id="titulo-preferencias"><span class="icono material-symbols-rounded" aria-hidden="true">tune</span> Preferencias de la guía</h2>
-              <p class="nota"><span data-requiere-cuenta>Se aplican también en tu celular.</span><span data-solo-invitado>Se guardan solo en este dispositivo.</span></p>
-              <form class="formulario" data-formulario="preferencias">
-                <fieldset class="opciones">
-                  <legend class="visualmente-oculto">Modo de guía</legend>
-                  <label class="opcion">
-                    <input type="radio" name="modo" value="voz-vibracion" checked>
-                    <span class="opcion-texto"><span class="opcion-titulo">Voz y vibración</span> <span class="opcion-detalle">Instrucciones habladas y vibración en los giros</span></span>
-                  </label>
-                  <label class="opcion">
-                    <input type="radio" name="modo" value="vibracion">
-                    <span class="opcion-texto"><span class="opcion-titulo">Solo vibración</span> <span class="opcion-detalle">Para lugares ruidosos</span></span>
-                  </label>
-                  <label class="opcion">
-                    <input type="radio" name="modo" value="voz">
-                    <span class="opcion-texto"><span class="opcion-titulo">Solo voz</span> <span class="opcion-detalle">Sin vibración</span></span>
-                  </label>
-                </fieldset>
-                <div data-requiere-cuenta>
-                  <div class="interruptor">
-                    <span class="interruptor-texto" id="pref-zonas-et">Avisos de zonas cerradas</span>
-                    <button class="interruptor-boton" type="button" role="switch" aria-checked="true" aria-labelledby="pref-zonas-et" data-accion="alternar">Sí</button>
-                  </div>
-                  <div class="interruptor">
-                    <span class="interruptor-texto" id="pref-recordatorios-et">Recordatorios de ruta</span>
-                    <button class="interruptor-boton" type="button" role="switch" aria-checked="true" aria-labelledby="pref-recordatorios-et" data-accion="alternar">Sí</button>
-                  </div>
-                </div>
-                <button class="boton boton-principal" type="submit">Guardar preferencias</button>
-              </form>
-            </section>
-
-            <!-- 7.1 · Lista de ajustes (celular) -->
-            <nav class="lista-ajustes" aria-label="Ajustes" data-dispositivo="movil">
-              <ul class="lista">
-                <li><a class="item-lista" href="#modo-guia"><span class="icono material-symbols-rounded" aria-hidden="true">record_voice_over</span> <span class="item-texto"><span class="item-nombre">Modo de guía</span> <span class="item-detalle" data-dato="ajuste-modo"></span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
-                <li><a class="item-lista" href="#modo-guia/intensidad"><span class="icono material-symbols-rounded" aria-hidden="true">vibration</span> <span class="item-texto"><span class="item-nombre">Intensidad de vibración</span> <span class="item-detalle" data-dato="ajuste-intensidad"></span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
-                <li><a class="item-lista" href="#instrucciones"><span class="icono material-symbols-rounded" aria-hidden="true">record_voice_over</span> <span class="item-texto"><span class="item-nombre">Instrucciones</span> <span class="item-detalle" data-dato="ajuste-instrucciones"></span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
-                <li data-requiere-cuenta><a class="item-lista" href="#avisos/notificaciones"><span class="icono material-symbols-rounded" aria-hidden="true">notifications</span> <span class="item-texto"><span class="item-nombre">Notificaciones</span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
-                <li><a class="item-lista" href="#contacto-emergencia"><span class="icono material-symbols-rounded" aria-hidden="true">emergency</span> <span class="item-texto"><span class="item-nombre">Contacto de emergencia</span> <span class="item-detalle" data-dato="ajuste-contacto"></span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
-                <li><a class="item-lista" href="#tutorial"><span class="icono material-symbols-rounded" aria-hidden="true">help</span> <span class="item-texto"><span class="item-nombre">Ayuda y tutorial</span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
-                <li data-requiere-cuenta><a class="item-lista" href="#cuenta"><span class="icono material-symbols-rounded" aria-hidden="true">person</span> <span class="item-texto"><span class="item-nombre">Cuenta</span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
-                <li data-solo-invitado><a class="item-lista" href="auth.html#iniciar-sesion"><span class="icono material-symbols-rounded" aria-hidden="true">login</span> <span class="item-texto"><span class="item-nombre">Iniciar sesión o crear cuenta</span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
-              </ul>
-            </nav>
-          </div>
+          <!-- 7.1 · Lista de ajustes: la misma en celular y en la web -->
+          <nav class="lista-ajustes" aria-label="Ajustes">
+            <ul class="lista">
+              <li><a class="item-lista" href="#modo-guia"><span class="icono material-symbols-rounded" aria-hidden="true">record_voice_over</span> <span class="item-texto"><span class="item-nombre">Modo de guía</span> <span class="item-detalle" data-dato="ajuste-modo"></span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
+              <li><a class="item-lista" href="#modo-guia/intensidad"><span class="icono material-symbols-rounded" aria-hidden="true">vibration</span> <span class="item-texto"><span class="item-nombre">Intensidad de vibración</span> <span class="item-detalle" data-dato="ajuste-intensidad"></span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
+              <li><a class="item-lista" href="#instrucciones"><span class="icono material-symbols-rounded" aria-hidden="true">record_voice_over</span> <span class="item-texto"><span class="item-nombre">Instrucciones</span> <span class="item-detalle" data-dato="ajuste-instrucciones"></span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
+              <li data-requiere-cuenta><a class="item-lista" href="#avisos/notificaciones"><span class="icono material-symbols-rounded" aria-hidden="true">notifications</span> <span class="item-texto"><span class="item-nombre">Notificaciones</span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
+              <li><a class="item-lista" href="#contacto-emergencia"><span class="icono material-symbols-rounded" aria-hidden="true">emergency</span> <span class="item-texto"><span class="item-nombre">Contacto de emergencia</span> <span class="item-detalle" data-dato="ajuste-contacto"></span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
+              <li><a class="item-lista" href="#tutorial"><span class="icono material-symbols-rounded" aria-hidden="true">help</span> <span class="item-texto"><span class="item-nombre">Ayuda y tutorial</span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
+              <li data-requiere-cuenta><a class="item-lista" href="#cuenta"><span class="icono material-symbols-rounded" aria-hidden="true">person</span> <span class="item-texto"><span class="item-nombre">Cuenta</span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
+              <li data-solo-invitado><a class="item-lista" href="auth.html#iniciar-sesion"><span class="icono material-symbols-rounded" aria-hidden="true">login</span> <span class="item-texto"><span class="item-nombre">Iniciar sesión o crear cuenta</span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
+            </ul>
+          </nav>
         </div>
         <dialog class="ayuda-contextual" id="ayuda-ajustes" aria-labelledby="titulo-ayuda-ajustes">
           <span class="icono material-symbols-rounded" aria-hidden="true">help</span>
@@ -452,6 +402,8 @@
               </div>
             </div>
             <button class="boton boton-secundario" type="button" data-accion="probar-vibracion"><span class="icono material-symbols-rounded" aria-hidden="true">vibration</span> Probar vibración</button>
+            <!-- Resultado de la prueba: dice qué patrón vibró o por qué el dispositivo no puede vibrar -->
+            <p class="prueba" data-mensaje="prueba-vibracion" role="status" hidden><span class="icono material-symbols-rounded" aria-hidden="true">vibration</span> <span data-dato="prueba-vibracion"></span></p>
             <button class="boton boton-principal" type="submit">Guardar</button>
           </form>
         </div>
@@ -486,6 +438,8 @@
               </div>
             </div>
             <button class="boton boton-secundario" type="button" data-accion="escuchar-ejemplo"><span class="icono material-symbols-rounded" aria-hidden="true">volume_up</span> Escuchar ejemplo</button>
+            <!-- Resultado de la prueba: qué frase se está leyendo o por qué no se puede leer -->
+            <p class="prueba" data-mensaje="prueba-voz" role="status" hidden><span class="icono material-symbols-rounded" aria-hidden="true">volume_up</span> <span data-dato="prueba-voz"></span></p>
             <button class="boton boton-principal" type="submit">Guardar</button>
           </form>
         </div>

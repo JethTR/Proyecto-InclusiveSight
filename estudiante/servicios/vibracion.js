@@ -14,8 +14,25 @@ export const PATRONES = {
 // La intensidad alarga o acorta los pulsos (la API no permite cambiar la fuerza)
 const FACTOR = { 1: 0.6, 2: 1, 3: 1.4 };
 
+/**
+ * Por qué este dispositivo no puede vibrar desde el navegador, o null si puede.
+ * Chrome de escritorio tiene navigator.vibrate pero no tiene motor de vibración: por eso también se mira
+ * si la pantalla es táctil. Safari (iPhone y Mac) no tiene la Vibration API.
+ */
+export function motivoSinVibracion() {
+  if (!('vibrate' in navigator)) {
+    return /iPhone|iPad|iPod/.test(navigator.userAgent)
+      ? 'El iPhone no permite que las páginas web vibren. En un celular Android sí vibra.'
+      : 'Este navegador no permite vibrar. Prueba con Chrome en un celular Android.';
+  }
+  if (!matchMedia('(any-pointer: coarse)').matches) {
+    return 'Las computadoras no vibran. Abre la app en tu celular para sentir la vibración.';
+  }
+  return null;
+}
+
 export function puedeVibrar() {
-  return 'vibrate' in navigator;
+  return motivoSinVibracion() === null;
 }
 
 /**

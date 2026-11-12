@@ -319,6 +319,11 @@
     flex: 1;
     min-width: 0;
   }
+
+  /* Si al lado va el mapa, la columna de texto es más angosta y el mapa gana espacio */
+  .columnas > .columna:has(~ .tarjeta-mapa) {
+    flex-basis: 400px;
+  }
 }
 
 /* Pantallas de una columna sin menú: index, auth, ayuda, tutorial y guía */
@@ -1085,7 +1090,10 @@ dialog h2 {
 }
 
 .mapa-lienzo {
-  min-height: 240px;
+  display: flex;
+  flex-direction: column;
+  height: 460px;
+  overflow: hidden;
   border-radius: var(--radio-m);
   background: var(--color-mapa);
 }
@@ -1096,45 +1104,95 @@ dialog h2 {
 
 @media (min-width: 900px) {
   .mapa-lienzo {
-    min-height: 560px;
+    height: clamp(460px, calc(100vh - 260px), 720px);
   }
 }
 
-/* Mapa dibujado (compartido/mapa/dibujar.js): mismos colores que el mockup (W1, 9.3) */
-.mapa-lienzo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
+/* Mapa dibujado (compartido/mapa/dibujar.js): mismos colores que el mockup (W1, 9.3).
+   Se arrastra para moverlo; los botones lo acercan, lo alejan y cambian de piso. */
 .mapa-svg {
   display: block;
+  flex: 1;
   width: 100%;
-  height: 100%;
-  max-height: 560px;
+  min-height: 0;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.mapa-svg.mapa-arrastrando {
+  cursor: grabbing;
 }
 
 .mapa-tocable {
   cursor: crosshair;
 }
 
+/* Barra debajo del dibujo: así los botones nunca tapan el mapa */
+.mapa-controles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2);
+  border-top: 1px solid #c9cfdb;
+}
+
+.mapa-grupo {
+  display: flex;
+  gap: 4px;
+}
+
+.mapa-controles .mapa-grupo:first-child {
+  order: 2;
+}
+
+.mapa-boton {
+  min-width: var(--tactil);
+  min-height: var(--tactil);
+  padding: 0 var(--espacio-3);
+  border: 2px solid var(--color-fondo);
+  border-radius: var(--radio-m);
+  background: var(--color-superficie);
+  line-height: 1;
+  color: var(--color-texto-superficie);
+  font: inherit;
+  font-size: var(--texto-base);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mapa-boton:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.mapa-boton[aria-pressed="true"] {
+  background: var(--color-acento);
+}
+
+.mapa-boton:focus-visible {
+  outline: 3px solid var(--color-acento);
+  outline-offset: 2px;
+}
+
 .mapa-edificio {
   fill: #dde3ef;
   stroke: #9faac4;
-  stroke-width: 1;
+  stroke-width: 1.5px;
+  vector-effect: non-scaling-stroke;
 }
 
 .mapa-edificio.mapa-destacado {
   fill: var(--color-superficie);
   stroke: var(--color-acento);
-  stroke-width: 2.5;
+  stroke-width: 3px;
 }
 
 .mapa-pasillo {
   fill: none;
   stroke: #c9cfdb;
-  stroke-width: 3;
+  stroke-width: var(--pasillo, 3px);
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -1142,14 +1200,15 @@ dialog h2 {
 .mapa-escalera {
   fill: none;
   stroke: var(--color-fondo);
-  stroke-width: 3;
-  stroke-dasharray: 2 2;
+  stroke-width: 3px;
+  stroke-dasharray: 4 4;
+  vector-effect: non-scaling-stroke;
 }
 
 .mapa-ruta {
   fill: none;
   stroke: var(--color-acento);
-  stroke-width: 4;
+  stroke-width: var(--ruta, 4px);
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -1157,39 +1216,48 @@ dialog h2 {
 .mapa-destino {
   fill: var(--color-superficie);
   stroke: var(--color-fondo);
-  stroke-width: 1.5;
+  stroke-width: 1.5px;
+  vector-effect: non-scaling-stroke;
 }
 
 .mapa-destino.mapa-destacado {
   fill: var(--color-acento);
+  stroke-width: 2.5px;
 }
 
 .mapa-punto {
   fill: var(--color-superficie);
   stroke: var(--color-fondo);
-  stroke-width: 2;
+  stroke-width: 2px;
+  vector-effect: non-scaling-stroke;
 }
 
 .mapa-punto-inactivo {
   fill: var(--color-acento);
 }
 
+.mapa-marcador,
+.mapa-inicio {
+  stroke: var(--color-superficie);
+  stroke-width: 3px;
+  vector-effect: non-scaling-stroke;
+}
+
 .mapa-marcador {
   fill: var(--color-acento);
   stroke: var(--color-fondo);
-  stroke-width: 2;
 }
 
+.mapa-inicio {
+  fill: var(--color-fondo);
+}
+
+/* El tamaño de letra y el borde los pone dibujar.js para que no cambien con el zoom */
 .mapa-etiqueta {
   fill: var(--color-texto-superficie);
   font-family: var(--fuente);
-  font-size: 5px;
   font-weight: 700;
   paint-order: stroke;
   stroke: var(--color-superficie);
-  stroke-width: 1.5px;
-}
-
-.mapa-etiqueta-punto {
-  font-size: 4px;
+  stroke-linejoin: round;
 }

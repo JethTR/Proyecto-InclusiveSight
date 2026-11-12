@@ -49,7 +49,7 @@ function mostrarDestinoElegido(d) {
   tarjeta.hidden = !d;
   if (!d) return;
   llenar(tarjeta, { 'destino-nombre': d.nombre, 'destino-detalle': [detalleDe(d), d.tiempo ? `${d.tiempo} min` : null].filter(Boolean).join(' · ') });
-  dibujarMapa($('#vista-buscar .mapa-lienzo'), datos.mapa, { piso: 1, destacar: d.edificioId });
+  dibujarMapa($('#vista-buscar .mapa-lienzo'), datos.mapa, { piso: 1, destacar: d.edificioId, encuadrar: false });
   $('[data-accion="ver-detalle"]', tarjeta).href = `#destino/${encodeURIComponent(d.id)}`;
   llenar($('#vista-buscar .tarjeta-mapa'), { 'mapa-descripcion': `${d.nombre} está en el ${d.edificio}, ${d.piso.toLowerCase()}.` });
 }
@@ -217,12 +217,14 @@ function mostrarDestino(seccion, id) {
   $('[data-accion="iniciar-ruta"]', seccion).href = `#guia/${encodeURIComponent(d.id)}`;
   $('[data-accion="ver-ruta"]', seccion).href = `#ruta/${encodeURIComponent(d.id)}`;
   actualizarBotonFavorito(seccion);
-  // W2: el mapa muestra el piso del destino y la ruta en ese piso
+  // W2: el mapa muestra el piso del destino y la ruta; con los botones se ven los otros pisos de la ruta
   const ruta = buscarRuta(datos.grafo, datos.origen, d.nodo);
+  const nodos = (ruta?.nodos ?? []).map((id) => datos.grafo.nodos.get(id));
   dibujarMapa($('.mapa-lienzo', seccion), datos.mapa, {
     piso: d.pisoNumero,
+    pisos: [d.pisoNumero, ...nodos.map((n) => n.piso)],
     destacar: d.id,
-    ruta: (ruta?.nodos ?? []).map((id) => datos.grafo.nodos.get(id)),
+    ruta: nodos,
   });
 }
 

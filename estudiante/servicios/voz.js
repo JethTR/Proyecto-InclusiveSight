@@ -5,19 +5,49 @@ import { leerPreferencias } from './preferencias.js';
 
 const VELOCIDAD = { 1: 0.8, 2: 1, 3: 1.25 };
 
+// Voz en español: se prefiere la de Perú y luego otras de Latinoamérica. Las voces cargan después de abrir la página.
+const PREFERIDAS = ['es-PE', 'es-419', 'es-US', 'es-MX', 'es-CO', 'es-AR', 'es-CL', 'es-ES'];
+let vozElegida = null;
+
+function elegirVoz() {
+  const voces = speechSynthesis.getVoices().filter((v) => v.lang.replace('_', '-').toLowerCase().startsWith('es'));
+  const rango = (v) => {
+    const i = PREFERIDAS.findIndex((codigo) => v.lang.replace('_', '-').toLowerCase() === codigo.toLowerCase());
+    return i === -1 ? PREFERIDAS.length : i;
+  };
+  vozElegida = voces.sort((a, b) => rango(a) - rango(b) || Number(b.localService) - Number(a.localService))[0] ?? null;
+}
+
+if ('speechSynthesis' in window) {
+  elegirVoz();
+  speechSynthesis.addEventListener?.('voiceschanged', elegirVoz);
+}
+
+export function puedeHablar() {
+  return 'speechSynthesis' in window;
+}
+
 /**
  * Dice un texto. Respeta el modo "solo vibración" salvo con forzar (ayuda, tutorial, alertas de peligro).
  * velocidad: la que se está probando en ajustes, antes de guardarla.
+ * Devuelve la frase (SpeechSynthesisUtterance) para escuchar sus eventos start, end y error, o null si no se dice.
  */
 export function decir(texto, { forzar = false, velocidad } = {}) {
-  if (!('speechSynthesis' in window) || !texto) return;
+  if (!puedeHablar() || !texto) return null;
   const preferencias = leerPreferencias();
-  if (!forzar && preferencias.modo === 'vibracion') return;
-  speechSynthesis.cancel();
+  if (!forzar && preferencias.modo === 'vibracion') return null;
   const frase = new SpeechSynthesisUtterance(texto);
-  frase.lang = 'es';
+  if (!vozElegida) elegirVoz();
+  if (vozElegida) frase.voice = vozElegida;
+  frase.lang = vozElegida?.lang ?? 'es-PE';
   frase.rate = VELOCIDAD[velocidad ?? preferencias.velocidad] ?? 1;
-  speechSynthesis.speak(frase);
+  const ocupado = speechSynthesis.speaking || speechSynthesis.pending;
+  speechSynthesis.cancel();
+  // Chrome para Android a veces queda en pausa y descarta lo que se dice justo después de cancel()
+  speechSynthesis.resume();
+  if (ocupado) setTimeout(() => speechSynthesis.speak(frase), 120);
+  else speechSynthesis.speak(frase);
+  return frase;
 }
 
 export function callar() {

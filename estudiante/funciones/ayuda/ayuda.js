@@ -5,7 +5,7 @@
 import { anunciar } from '../../../compartido/servicios/anuncios.js';
 import { usuarioActual } from '../../../compartido/servicios/cuenta.js';
 import { decir, callar, pausarVoz, reanudarVoz } from '../../servicios/voz.js';
-import { PATRONES, vibrar, puedeVibrar } from '../../servicios/vibracion.js';
+import { PATRONES, vibrar, motivoSinVibracion } from '../../servicios/vibracion.js';
 
 /* ===== Tutorial ===== */
 
@@ -38,7 +38,13 @@ function probarPatron(nombre) {
   vibrar(nombre, { forzar: true });
   const texto = `${patron.nombre}: ${patron.detalle}.`;
   decir(texto, { forzar: true });
-  anunciar(puedeVibrar() ? texto : `${texto} Este dispositivo no permite vibrar desde el navegador.`);
+  const motivo = motivoSinVibracion();
+  const aviso = document.querySelector('#vista-tutorial [data-mensaje="sin-vibracion"]');
+  if (aviso) {
+    aviso.hidden = !motivo;
+    aviso.textContent = motivo ?? '';
+  }
+  anunciar(motivo ? `${texto} ${motivo}` : texto);
 }
 
 export function iniciar() {

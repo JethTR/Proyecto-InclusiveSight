@@ -328,9 +328,10 @@ function mostrarRuta(seccion, id) {
   $('[data-lista="pasos"]', seccion).replaceChildren(...filas);
   $('[data-accion="volver-destino"]', seccion).href = `#destino/${encodeURIComponent(destino.id)}`;
   $('[data-mensaje="ruta-enviada"]', seccion).hidden = true;
-  // El mapa muestra el piso donde empieza la ruta
+  // El mapa muestra el piso donde empieza la ruta; con los botones se ven los demás pisos que recorre
   dibujarMapa($('.mapa-lienzo', seccion), datos.mapa, {
     piso: rutaEnVista.nodos[0]?.piso ?? 1,
+    pisos: rutaEnVista.nodos.map((n) => n.piso),
     ruta: rutaEnVista.nodos,
     destacar: destino.edificioId,
   });

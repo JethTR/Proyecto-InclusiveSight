@@ -1,17 +1,34 @@
-/* Estilos de las vistas ajustes (W6, 7.1), modo-guia (7.2) e instrucciones (7.3). */
+/* Estilos de las vistas ajustes (7.1), modo-guia (7.2) e instrucciones (7.3).
+   En la web se ven igual que en el celular, en una columna. */
 
-/* W6: tarjeta Cuenta a la izquierda (420px) y Preferencias a la derecha */
-@media (min-width: 900px) {
-  #vista-ajustes .columnas > .tarjeta:first-child {
-    flex: 0 0 420px;
-  }
+.lista-ajustes {
+  max-width: var(--contenido-movil);
+}
 
-  #vista-ajustes .tarjeta [data-requiere-cuenta],
-  #vista-ajustes .tarjeta [data-solo-invitado] {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
+/* Resultado de "Probar vibración" y "Escuchar ejemplo" */
+.prueba {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espacio-3);
+  padding: var(--espacio-3) var(--espacio-4);
+  border-radius: var(--radio-l);
+  background: var(--color-superficie);
+  color: var(--color-texto-superficie);
+}
+
+.prueba .icono {
+  flex: none;
+}
+
+/* El ícono imita el patrón de prueba para verlo aunque el dispositivo no vibre */
+.prueba-activa .icono {
+  animation: pulso-prueba 0.6s ease-in-out 1;
+}
+
+@keyframes pulso-prueba {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
+  20%, 40%, 60%, 80% { transform: translateX(3px); }
 }
 
 /* 7.2 y 7.3: el formulario ocupa el alto y "Guardar" queda al final */
