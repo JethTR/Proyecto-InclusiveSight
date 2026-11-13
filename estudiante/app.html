@@ -17,7 +17,7 @@
 </head>
 <!--
   Esqueleto de la aplicación del estudiante y sus vistas de uso general: tutorial, buscar, destino, ajustes,
-  modo-guia e instrucciones. Cada vista es una <section class="vista"> con hidden y se muestra según el hash.
+  modo-guia, intensidad e instrucciones. Cada vista es una <section class="vista"> con hidden y se muestra según el hash.
   Formato del hash: #vista o #vista/parte (ej. #mis-rutas/recientes, #destino/<id>). Sin hash: #buscar.
 
   Las demás vistas están en fragmentos que el router carga con fetch dentro de <main id="vista">:
@@ -193,7 +193,15 @@
                 </ul>
               </nav>
 
-              <section aria-labelledby="titulo-resultados">
+              <!-- Inicio: rutas hechas hace poco. Se ve mientras no se busca nada -->
+              <section aria-labelledby="titulo-recientes-inicio" data-mensaje="recientes-inicio">
+                <h2 class="seccion-titulo" id="titulo-recientes-inicio">Recientes</h2>
+                <ul class="lista lista-resultados" data-lista="recientes-inicio"></ul>
+                <p class="mensaje" data-mensaje="sin-recientes-inicio" hidden>Todavía no has hecho ninguna ruta. Busca un destino por su nombre, por voz o por categoría para empezar.</p>
+              </section>
+
+              <!-- Resultados de lo que se escribe o de la categoría elegida -->
+              <section aria-labelledby="titulo-resultados" data-mensaje="resultados" hidden>
                 <h2 class="seccion-titulo" id="titulo-resultados">Resultados</h2>
                 <!-- Categoría elegida en 3.3: se muestra mientras filtra los resultados -->
                 <p class="filtro" data-mensaje="filtro-categoria" hidden>Categoría: <strong data-dato="categoria-nombre"></strong> <button class="enlace-secundario" type="button" data-accion="quitar-categoria">Quitar filtro</button></p>
@@ -229,8 +237,8 @@
               <span class="icono material-symbols-rounded" aria-hidden="true">mic</span>
               <p class="escucha-estado" aria-live="polite" data-dato="escucha-estado">Escuchando…</p>
               <p class="nota">La app también lo dice en voz alta</p>
-              <!-- Aparece si no se entendió la frase (CA080) -->
-              <button class="boton boton-principal" type="button" data-accion="escuchar-de-nuevo" hidden><span class="icono material-symbols-rounded" aria-hidden="true">mic</span> Volver a escuchar</button>
+              <!-- Aparece cuando termina de escuchar: sirve para repetir la búsqueda por voz (CA080) -->
+              <button class="boton boton-principal" type="button" data-accion="escuchar-de-nuevo" hidden><span class="icono material-symbols-rounded" aria-hidden="true">mic</span> Buscar otra vez por voz</button>
             </div>
             <section class="tarjeta" aria-labelledby="titulo-escuche" data-mensaje="transcripcion" hidden>
               <h3 class="tarjeta-subtitulo" id="titulo-escuche">Escuché:</h3>
@@ -347,7 +355,7 @@
           <nav class="lista-ajustes" aria-label="Ajustes">
             <ul class="lista">
               <li><a class="item-lista" href="#modo-guia"><span class="icono material-symbols-rounded" aria-hidden="true">record_voice_over</span> <span class="item-texto"><span class="item-nombre">Modo de guía</span> <span class="item-detalle" data-dato="ajuste-modo"></span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
-              <li><a class="item-lista" href="#modo-guia/intensidad"><span class="icono material-symbols-rounded" aria-hidden="true">vibration</span> <span class="item-texto"><span class="item-nombre">Intensidad de vibración</span> <span class="item-detalle" data-dato="ajuste-intensidad"></span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
+              <li><a class="item-lista" href="#intensidad"><span class="icono material-symbols-rounded" aria-hidden="true">vibration</span> <span class="item-texto"><span class="item-nombre">Intensidad de vibración</span> <span class="item-detalle" data-dato="ajuste-intensidad"></span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
               <li><a class="item-lista" href="#instrucciones"><span class="icono material-symbols-rounded" aria-hidden="true">record_voice_over</span> <span class="item-texto"><span class="item-nombre">Instrucciones</span> <span class="item-detalle" data-dato="ajuste-instrucciones"></span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
               <li data-requiere-cuenta><a class="item-lista" href="#avisos/notificaciones"><span class="icono material-symbols-rounded" aria-hidden="true">notifications</span> <span class="item-texto"><span class="item-nombre">Notificaciones</span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
               <li><a class="item-lista" href="#contacto-emergencia"><span class="icono material-symbols-rounded" aria-hidden="true">emergency</span> <span class="item-texto"><span class="item-nombre">Contacto de emergencia</span> <span class="item-detalle" data-dato="ajuste-contacto"></span></span> <span class="icono material-symbols-rounded" aria-hidden="true">chevron_right</span></a></li>
@@ -368,7 +376,7 @@
         </dialog>
       </section>
 
-      <!-- ============ modo-guia · 7.2 ============ -->
+      <!-- ============ modo-guia · 7.2 (voz, vibración o ambas) ============ -->
       <section class="vista" id="vista-modo-guia" data-vista="modo-guia" data-barra-movil="oculta" aria-labelledby="titulo-modo-guia" hidden>
         <header class="barra-superior">
           <a class="boton-icono" href="#ajustes" aria-label="Volver a ajustes"><span class="icono material-symbols-rounded" aria-hidden="true">arrow_back</span></a>
@@ -391,15 +399,45 @@
                 <span class="opcion-texto"><span class="opcion-titulo">Solo voz</span> <span class="opcion-detalle">Sin vibración</span></span>
               </label>
             </fieldset>
-            <!-- Intensidad (#modo-guia/intensidad). Valor por defecto: Media -->
-            <div class="ajuste-nivel" data-parte="intensidad">
-              <label class="campo-etiqueta" for="nivel-intensidad">Intensidad de vibración</label>
+            <button class="boton boton-principal" type="submit">Guardar</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- ============ intensidad · 7.2 (intensidad de vibración) ============ -->
+      <section class="vista" id="vista-intensidad" data-vista="intensidad" data-barra-movil="oculta" aria-labelledby="titulo-intensidad" hidden>
+        <header class="barra-superior">
+          <a class="boton-icono" href="#ajustes" aria-label="Volver a ajustes"><span class="icono material-symbols-rounded" aria-hidden="true">arrow_back</span></a>
+          <h1 id="titulo-intensidad" tabindex="-1">Intensidad de vibración</h1>
+        </header>
+        <div class="contenido">
+          <form class="formulario" data-formulario="intensidad">
+            <!-- Tipo de pulso: cuánto dura cada vibración. Valor por defecto: medio -->
+            <fieldset class="opciones">
+              <legend class="campo-etiqueta">Tipo de pulso</legend>
+              <label class="opcion">
+                <input type="radio" name="pulso" value="largo">
+                <span class="opcion-texto"><span class="opcion-titulo">Pulso largo</span> <span class="opcion-detalle">Vibraciones más largas, fáciles de notar en el bolsillo</span></span>
+              </label>
+              <label class="opcion">
+                <input type="radio" name="pulso" value="medio" checked>
+                <span class="opcion-texto"><span class="opcion-titulo">Pulso medio</span> <span class="opcion-detalle">Duración normal</span></span>
+              </label>
+              <label class="opcion">
+                <input type="radio" name="pulso" value="suave">
+                <span class="opcion-texto"><span class="opcion-titulo">Pulso suave</span> <span class="opcion-detalle">Vibraciones cortas y discretas</span></span>
+              </label>
+            </fieldset>
+            <!-- Intensidad: qué tan fuerte se siente. Valor por defecto: Media -->
+            <div class="ajuste-nivel">
+              <label class="campo-etiqueta" for="nivel-intensidad">Intensidad</label>
               <output class="nivel-valor" for="nivel-intensidad">Media</output>
               <div class="nivel-control">
                 <button class="boton-icono" type="button" data-accion="bajar" aria-controls="nivel-intensidad" aria-label="Bajar intensidad"><span class="icono material-symbols-rounded" aria-hidden="true">remove</span></button>
                 <input id="nivel-intensidad" name="intensidad" type="range" min="1" max="3" step="1" value="2" aria-valuetext="Media">
                 <button class="boton-icono" type="button" data-accion="subir" aria-controls="nivel-intensidad" aria-label="Subir intensidad"><span class="icono material-symbols-rounded" aria-hidden="true">add</span></button>
               </div>
+              <p class="nivel-escala" aria-hidden="true"><span>Baja</span> <span>Media</span> <span>Alta</span></p>
             </div>
             <button class="boton boton-secundario" type="button" data-accion="probar-vibracion"><span class="icono material-symbols-rounded" aria-hidden="true">vibration</span> Probar vibración</button>
             <!-- Resultado de la prueba: dice qué patrón vibró o por qué el dispositivo no puede vibrar -->
@@ -430,12 +468,15 @@
             </fieldset>
             <div class="ajuste-nivel">
               <label class="campo-etiqueta" for="nivel-velocidad">Velocidad de la voz</label>
-              <output class="nivel-valor" for="nivel-velocidad">Normal</output>
+              <!-- Velocidad actual: nombre y multiplicador (ej. «Normal · x1») -->
+              <output class="nivel-valor" for="nivel-velocidad">Normal · x1</output>
               <div class="nivel-control">
                 <button class="boton-icono" type="button" data-accion="bajar" aria-controls="nivel-velocidad" aria-label="Bajar velocidad"><span class="icono material-symbols-rounded" aria-hidden="true">remove</span></button>
-                <input id="nivel-velocidad" name="velocidad" type="range" min="1" max="3" step="1" value="2" aria-valuetext="Normal">
+                <input id="nivel-velocidad" name="velocidad" type="range" min="0.5" max="2" step="0.25" value="1" aria-valuetext="Normal, x1">
                 <button class="boton-icono" type="button" data-accion="subir" aria-controls="nivel-velocidad" aria-label="Subir velocidad"><span class="icono material-symbols-rounded" aria-hidden="true">add</span></button>
               </div>
+              <!-- Marcas debajo de la barra: x1 queda a un tercio (de x0.5 a x2) -->
+              <p class="nivel-escala nivel-escala-velocidad" aria-hidden="true"><span>Lenta<br>x0.5</span> <span>Normal<br>x1</span> <span>Rápida<br>x2</span></p>
             </div>
             <button class="boton boton-secundario" type="button" data-accion="escuchar-ejemplo"><span class="icono material-symbols-rounded" aria-hidden="true">volume_up</span> Escuchar ejemplo</button>
             <!-- Resultado de la prueba: qué frase se está leyendo o por qué no se puede leer -->

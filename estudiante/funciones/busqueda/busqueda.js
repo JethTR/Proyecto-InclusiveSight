@@ -1,5 +1,6 @@
 // Vistas buscar y destino: búsqueda por texto con sugerencias, por voz, por categoría y cerca de mí,
 // "Sin resultados" y ficha del destino con "Guardar en favoritos".
+// Mientras no se busca nada, el inicio muestra las rutas recientes en lugar de resultados.
 
 import { cargarDatos, buscarDestino, buscarCategoria, normalizar } from '../../../compartido/servicios/datos.js';
 import { anunciar } from '../../../compartido/servicios/anuncios.js';
@@ -8,9 +9,10 @@ import { dibujarMapa } from '../../../compartido/mapa/dibujar.js';
 import { buscarRuta } from '../../../compartido/mapa/a-estrella.js';
 import { obtenerUbicacion } from '../../servicios/ubicacion.js';
 import { decir, escuchar, puedeEscuchar, detenerEscucha } from '../../servicios/voz.js';
-import { esFavorito, agregarFavorito, quitarFavorito } from '../../servicios/rutas-guardadas.js';
+import { esFavorito, agregarFavorito, quitarFavorito, recientes, fechaCorta } from '../../servicios/rutas-guardadas.js';
 
 const MINIMO_CARACTERES = 3; // CA081: sugerencias a partir del tercer carácter
+const MAX_RECIENTES_INICIO = 5;
 
 let datos = { categorias: [], destinos: [] };
 const estado = { consulta: '', categoria: null };
@@ -43,18 +45,49 @@ function filtrar() {
   return [...lista].sort((a, b) => (a.distancia ?? Infinity) - (b.distancia ?? Infinity) || a.nombre.localeCompare(b.nombre));
 }
 
-/** W1: en escritorio, la tarjeta del mapa muestra el primer resultado y lo marca en la lista. */
+/** W1: en escritorio, la tarjeta del mapa muestra el primer resultado (o la ruta más reciente). */
 function mostrarDestinoElegido(d) {
   const tarjeta = $('[data-mensaje="destino-elegido"]');
   tarjeta.hidden = !d;
-  if (!d) return;
+  if (!d) {
+    dibujarMapa($('#vista-buscar .mapa-lienzo'), datos.mapa, { piso: 1, encuadrar: false });
+    llenar($('#vista-buscar .tarjeta-mapa'), { 'mapa-descripcion': 'Mapa de todo el campus.' });
+    return;
+  }
   llenar(tarjeta, { 'destino-nombre': d.nombre, 'destino-detalle': [detalleDe(d), d.tiempo ? `${d.tiempo} min` : null].filter(Boolean).join(' · ') });
   dibujarMapa($('#vista-buscar .mapa-lienzo'), datos.mapa, { piso: 1, destacar: d.edificioId, encuadrar: false });
   $('[data-accion="ver-detalle"]', tarjeta).href = `#destino/${encodeURIComponent(d.id)}`;
   llenar($('#vista-buscar .tarjeta-mapa'), { 'mapa-descripcion': `${d.nombre} está en el ${d.edificio}, ${d.piso.toLowerCase()}.` });
 }
 
+/** Hay búsqueda cuando se escribió lo suficiente o se eligió una categoría. */
+function hayBusqueda() {
+  return Boolean(estado.categoria) || normalizar(estado.consulta).length >= MINIMO_CARACTERES;
+}
+
+/** Inicio sin búsqueda: rutas recientes, o un mensaje si todavía no hay ninguna. */
+function mostrarRecientes() {
+  const filas = recientes()
+    .map((r) => [r, buscarDestino(datos, r.id)])
+    .filter(([, d]) => d)
+    .slice(0, MAX_RECIENTES_INICIO);
+  $('[data-lista="recientes-inicio"]').replaceChildren(
+    ...filas.map(([r, d]) => filaResultado(d, `${fechaCorta(r.fecha)} · ${d.edificio} · ${d.piso}`)),
+  );
+  $('[data-lista="recientes-inicio"]').hidden = filas.length === 0;
+  $('[data-mensaje="sin-recientes-inicio"]').hidden = filas.length > 0;
+  mostrarDestinoElegido(filas[0]?.[1]);
+}
+
 function mostrarResultados({ anunciarConteo = false } = {}) {
+  const buscando = hayBusqueda();
+  $('[data-mensaje="recientes-inicio"]').hidden = buscando;
+  $('[data-mensaje="resultados"]').hidden = !buscando;
+  if (!buscando) {
+    if (anunciarConteo) $('[data-dato="conteo-resultados"]').textContent = '';
+    mostrarRecientes();
+    return;
+  }
   const lista = filtrar();
   const ul = $('[data-lista="resultados"]');
   ul.replaceChildren(...lista.map((d) => filaResultado(d)));
@@ -98,10 +131,11 @@ async function buscarPorVoz() {
   const tarjeta = $('[data-mensaje="transcripcion"]', parte);
   const reintentar = $('[data-accion="escuchar-de-nuevo"]', parte);
   tarjeta.hidden = true;
+  // Mientras escucha no se puede repetir; al terminar, el botón siempre aparece
   reintentar.hidden = true;
 
   if (!puedeEscuchar()) {
-    estadoTexto.textContent = 'Este navegador no permite buscar por voz. Usa «Escribir en su lugar».';
+    estadoTexto.textContent = 'Este navegador no permite buscar por voz. Usa «Escribir en su lugar» o prueba con Chrome.';
     return;
   }
   estadoTexto.textContent = 'Escuchando…';
@@ -134,7 +168,10 @@ async function buscarPorVoz() {
   });
   $('[data-lista="sugerencias-voz"]', parte).replaceChildren(...filas);
   tarjeta.hidden = false;
-  reintentar.hidden = encontrados.length > 0;
+  // Aunque encuentre el destino, se puede buscar otra vez por voz (no solo escribiendo)
+  reintentar.hidden = false;
+  reintentar.classList.toggle('boton-principal', encontrados.length === 0);
+  reintentar.classList.toggle('boton-secundario', encontrados.length > 0);
 
   // CA079: varios resultados se anuncian como lista; CA080: si no hay, se ofrece repetir o escribir
   estadoTexto.textContent = encontrados.length === 0

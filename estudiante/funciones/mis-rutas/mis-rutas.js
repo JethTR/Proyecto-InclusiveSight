@@ -5,7 +5,7 @@ import { cargarDatos, buscarDestino } from '../../../compartido/servicios/datos.
 import { anunciar, anunciarAlLlegar } from '../../../compartido/servicios/anuncios.js';
 import { abrirDialogo } from '../../../compartido/componentes/dialogo.js';
 import { clonar, llenar } from '../../../compartido/componentes/plantillas.js';
-import { favoritos, recientes, quitarFavorito, renombrarFavorito } from '../../servicios/rutas-guardadas.js';
+import { favoritos, recientes, quitarFavorito, renombrarFavorito, fechaCorta } from '../../servicios/rutas-guardadas.js';
 
 let datos = { destinos: [] };
 let editando = null; // id del favorito que se está editando
@@ -34,17 +34,6 @@ function pintarFavoritos() {
   $('[data-lista="favoritos"]').replaceChildren(...filas);
   $('[data-mensaje="sin-favoritos"]').hidden = filas.length > 0;
   $('[data-accion="editar-favoritos"]').hidden = filas.length === 0;
-}
-
-/** "Hoy · 8:05", "Ayer · 13:10" o "Lun · 16:40" (5.2). */
-function fechaCorta(iso) {
-  const fecha = new Date(iso);
-  const hora = fecha.toLocaleTimeString('es-PE', { hour: 'numeric', minute: '2-digit', hour12: false });
-  const dias = Math.round((new Date().setHours(0, 0, 0, 0) - new Date(iso).setHours(0, 0, 0, 0)) / 86400000);
-  if (dias === 0) return `Hoy · ${hora}`;
-  if (dias === 1) return `Ayer · ${hora}`;
-  const dia = fecha.toLocaleDateString('es-PE', { weekday: 'short' }).replace('.', '');
-  return `${dia.charAt(0).toUpperCase()}${dia.slice(1)} · ${hora}`;
 }
 
 function pintarRecientes() {

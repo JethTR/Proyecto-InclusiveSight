@@ -11,8 +11,8 @@ Rutas guiadas por voz y vibración dentro del campus, para estudiantes ciegos o 
 | `voz.js` | Síntesis de voz (respeta modo y velocidad; elige una voz en español, de preferencia de Perú o Latinoamérica) y reconocimiento para la búsqueda por voz |
 | `vibracion.js` | Patrones de vibración (respeta modo e intensidad; la alerta de riesgo siempre vibra al máximo). `motivoSinVibracion()` explica por qué un dispositivo no vibra: las computadoras y el iPhone no vibran desde el navegador |
 | `ubicacion.js` | Ubicación actual y avance por la ruta (simulados) |
-| `preferencias.js` | Modo de guía, intensidad, detalle, velocidad y notificaciones |
-| `rutas-guardadas.js` | Favoritos y recientes (últimas 10) |
+| `preferencias.js` | Modo de guía, tipo de pulso, intensidad, detalle, velocidad de la voz (multiplicador) y notificaciones |
+| `rutas-guardadas.js` | Favoritos y recientes (últimas 10; el visitante las guarda solo en el dispositivo) |
 | `recordatorios.js` | Recordatorios de ruta y aviso a la hora calculada |
 | `contacto-emergencia.js` | Contacto de emergencia |
 | `datos-usuario.js` | Guarda cada dato a nombre del usuario, o solo en el dispositivo si es visitante |
@@ -77,11 +77,12 @@ y abre `http://localhost:8000/estudiante/`. También sirve Live Server de VS Cod
 | Vista (hash) | Pantallas del mockup | Dónde está su HTML | CSS y JS | Quién la ve |
 |---|---|---|---|---|
 | `tutorial` | 2.1, 2.2, 2.3 | `app.html` | `ayuda/` | Todos |
-| `buscar` | W1, M2, 3.1, 3.2, 3.3, 3.4 | `app.html` | `busqueda/` | Todos |
+| `buscar` | W1, M2, 3.1, 3.2, 3.3, 3.4 (sin búsqueda muestra las rutas recientes) | `app.html` | `busqueda/` | Todos |
 | `destino` | W2, 3.5 | `app.html` | `busqueda/` | Todos |
 | `ajustes` | 7.1 (también en la web, en lugar de W6) | `app.html` | `ajustes/` | Todos |
-| `modo-guia` | 7.2 | `app.html` | `ajustes/` | Todos |
-| `instrucciones` | 7.3 | `app.html` | `ajustes/` | Todos |
+| `modo-guia` | 7.2 (voz y vibración, solo vibración o solo voz) | `app.html` | `ajustes/` | Todos |
+| `intensidad` | 7.2 (tipo de pulso: largo, medio o suave, y barra de intensidad) | `app.html` | `ajustes/` | Todos |
+| `instrucciones` | 7.3 (detalle y velocidad de la voz, de x0.5 a x2) | `app.html` | `ajustes/` | Todos |
 | `ruta` | W4 | `ruta-guiada.html` | `ruta-guiada/` | Todos |
 | `guia` | M3, 4.1 a 4.7 | `ruta-guiada.html` | `ruta-guiada/` | Todos |
 | `contacto-emergencia` | 4.8 | `ruta-guiada.html` | `ruta-guiada/` | Todos |
@@ -98,7 +99,10 @@ La ayuda contextual (2.4) de cada vista es un `<dialog>` dentro de esa vista. La
 - `[data-solo-invitado]`: "Invitado / Sin cuenta" e "Iniciar sesión o crear cuenta".
 - Un invitado que entra por URL a una vista de solo registrados va a `auth.html#iniciar-sesion`, y `registrado.html` no se descarga.
 - Ajustes es para todos. Para el invitado se guardan solo en ese dispositivo.
-- Ajustes tiene la misma estructura en la web y en el celular (la lista de 7.1). "Probar vibración" y "Escuchar ejemplo" muestran en pantalla qué se está probando o por qué el dispositivo no puede hacerlo.
+- Ajustes tiene la misma estructura en la web y en el celular (la lista de 7.1). Modo de guía e Intensidad de vibración son pantallas separadas.
+- Intensidad: la Vibration API no cambia la fuerza del motor, así que la intensidad baja y media se simulan prendiéndolo y apagándolo muy rápido (ciclos de 50 ms); el tipo de pulso cambia la duración de cada vibración.
+- El inicio (`#buscar`) muestra las últimas 5 rutas recientes mientras no se escribe ni se elige una categoría; si no hay, un mensaje lo dice. Al buscar, aparecen los resultados.
+- Después de buscar por voz siempre aparece «Buscar otra vez por voz». "Probar vibración" y "Escuchar ejemplo" muestran en pantalla qué se está probando o por qué el dispositivo no puede hacerlo.
 - Las alertas de peligro no se pueden desactivar.
 
 Mientras no exista el JavaScript, el CSS puede ocultar lo que no corresponde:

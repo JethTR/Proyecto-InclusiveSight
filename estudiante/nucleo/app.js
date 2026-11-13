@@ -23,6 +23,7 @@ const VISTAS = {
   destino: { funcion: 'busqueda' },
   ajustes: { funcion: 'ajustes' },
   'modo-guia': { funcion: 'ajustes' },
+  intensidad: { funcion: 'ajustes' },
   instrucciones: { funcion: 'ajustes' },
   ruta: { funcion: 'ruta-guiada', fragmento: RUTA_GUIADA },
   guia: { funcion: 'ruta-guiada', fragmento: RUTA_GUIADA },

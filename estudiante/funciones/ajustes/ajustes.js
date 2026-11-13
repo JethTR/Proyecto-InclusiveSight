@@ -1,11 +1,14 @@
-// Vistas ajustes (7.1), modo-guia (7.2) e instrucciones (7.3): preferencias de la guía.
+// Vistas ajustes (7.1), modo-guia (7.2), intensidad (7.2, intensidad de vibración) e instrucciones (7.3).
 // En la web se usa la misma estructura que en el celular: la lista de 7.1 lleva a cada pantalla.
-// Las tres vistas comparten este archivo porque editan los mismos datos (estudiante/servicios/preferencias.js).
+// - Modo de guía: voz y vibración, solo vibración o solo voz.
+// - Intensidad de vibración: tipo de pulso (largo, medio, suave) y la barra de intensidad.
+// - Instrucciones: nivel de detalle y velocidad de la voz (x0.5 a x2).
+// Las vistas comparten este archivo porque editan los mismos datos (estudiante/servicios/preferencias.js).
 // El invitado también puede cambiarlas: se guardan solo en este dispositivo.
 
 import { anunciar } from '../../../compartido/servicios/anuncios.js';
 import { llenar } from '../../../compartido/componentes/plantillas.js';
-import { NOMBRES, leerPreferencias, guardarPreferencias } from '../../servicios/preferencias.js';
+import { NOMBRES, multiplicador, leerPreferencias, guardarPreferencias } from '../../servicios/preferencias.js';
 import { leerContacto } from '../../servicios/contacto-emergencia.js';
 import { vibrar, motivoSinVibracion, PATRONES } from '../../servicios/vibracion.js';
 import { decir, puedeHablar } from '../../servicios/voz.js';
@@ -18,7 +21,7 @@ const EJEMPLOS = {
   detalladas: 'Gira a la derecha y avanza 20 metros por el pasillo',
 };
 
-/* ===== Radios, interruptores y niveles ===== */
+/* ===== Radios y niveles ===== */
 
 function marcarRadio(formulario, nombre, valor) {
   const radio = formulario.querySelector(`input[name="${nombre}"][value="${valor}"]`);
@@ -29,20 +32,25 @@ function radioElegido(formulario, nombre) {
   return formulario.querySelector(`input[name="${nombre}"]:checked`)?.value;
 }
 
-/** Pone el valor del nivel (1 a 3) en el control deslizante, su texto visible y su aria-valuetext. */
-function ponerNivel(control, valor, nombres) {
-  const nivel = Math.min(3, Math.max(1, Number(valor)));
+/** Texto de cada nivel: "Media" para la intensidad y "Normal · x1" para la velocidad. */
+const TEXTO_NIVEL = {
+  'nivel-intensidad': (valor) => NOMBRES.intensidad[valor],
+  'nivel-velocidad': (valor) => `${NOMBRES.velocidad(valor)} · ${multiplicador(valor)}`,
+};
+
+/** Pone el valor en el control deslizante (dentro de su mínimo y máximo), su texto visible y su aria-valuetext. */
+function ponerNivel(control, valor) {
+  const min = Number(control.min);
+  const max = Number(control.max);
+  const paso = Number(control.step) || 1;
+  const nivel = Math.min(max, Math.max(min, Math.round(Number(valor) / paso) * paso));
   control.value = nivel;
-  control.setAttribute('aria-valuetext', nombres[nivel]);
+  const texto = TEXTO_NIVEL[control.id](nivel);
+  control.setAttribute('aria-valuetext', texto.replace(' · ', ', '));
   const salida = document.querySelector(`output[for="${control.id}"]`);
-  if (salida) salida.textContent = nombres[nivel];
+  if (salida) salida.textContent = texto;
   return nivel;
 }
-
-const NIVELES = {
-  'nivel-intensidad': NOMBRES.intensidad,
-  'nivel-velocidad': NOMBRES.velocidad,
-};
 
 /* ===== Cargar valores en cada vista ===== */
 
@@ -52,23 +60,27 @@ function mostrarAjustes() {
 
   llenar($('#vista-ajustes'), {
     'ajuste-modo': NOMBRES.modo[p.modo],
-    'ajuste-intensidad': NOMBRES.intensidad[p.intensidad],
-    'ajuste-instrucciones': `${NOMBRES.detalle[p.detalle]} · velocidad ${NOMBRES.velocidad[p.velocidad].toLowerCase()}`,
+    'ajuste-intensidad': `${NOMBRES.pulso[p.pulso]} · intensidad ${NOMBRES.intensidad[p.intensidad].toLowerCase()}`,
+    'ajuste-instrucciones': `${NOMBRES.detalle[p.detalle]} · velocidad ${NOMBRES.velocidad(p.velocidadVoz).toLowerCase()} (${multiplicador(p.velocidadVoz)})`,
     'ajuste-contacto': contacto?.nombre ?? '',
   });
 }
 
 function mostrarModoGuia() {
+  marcarRadio($('[data-formulario="modo-guia"]'), 'modo', leerPreferencias().modo);
+}
+
+function mostrarIntensidad() {
   const p = leerPreferencias();
-  marcarRadio($('[data-formulario="modo-guia"]'), 'modo', p.modo);
-  ponerNivel($('#nivel-intensidad'), p.intensidad, NOMBRES.intensidad);
+  marcarRadio($('[data-formulario="intensidad"]'), 'pulso', p.pulso);
+  ponerNivel($('#nivel-intensidad'), p.intensidad);
   ocultarPrueba('prueba-vibracion');
 }
 
 function mostrarInstrucciones() {
   const p = leerPreferencias();
   marcarRadio($('[data-formulario="instrucciones"]'), 'detalle', p.detalle);
-  ponerNivel($('#nivel-velocidad'), p.velocidad, NOMBRES.velocidad);
+  ponerNivel($('#nivel-velocidad'), p.velocidadVoz);
   ocultarPrueba('prueba-voz');
 }
 
@@ -80,8 +92,14 @@ function confirmar() {
 
 function guardarModoGuia(evento) {
   evento.preventDefault();
+  guardarPreferencias({ modo: radioElegido(evento.currentTarget, 'modo') });
+  confirmar();
+}
+
+function guardarIntensidad(evento) {
+  evento.preventDefault();
   guardarPreferencias({
-    modo: radioElegido(evento.currentTarget, 'modo'),
+    pulso: radioElegido(evento.currentTarget, 'pulso'),
     intensidad: Number($('#nivel-intensidad').value),
   });
   confirmar();
@@ -91,7 +109,7 @@ function guardarInstrucciones(evento) {
   evento.preventDefault();
   guardarPreferencias({
     detalle: radioElegido(evento.currentTarget, 'detalle'),
-    velocidad: Number($('#nivel-velocidad').value),
+    velocidadVoz: Number($('#nivel-velocidad').value),
   });
   confirmar();
 }
@@ -116,20 +134,20 @@ function ocultarPrueba(nombre) {
 }
 
 function probarVibracion() {
+  const pulso = radioElegido($('[data-formulario="intensidad"]'), 'pulso') ?? 'medio';
   const intensidad = Number($('#nivel-intensidad').value);
-  const { detalle } = PATRONES.derecha;
-  const nivel = NOMBRES.intensidad[intensidad].toLowerCase();
+  const eleccion = `${NOMBRES.pulso[pulso].toLowerCase()}, intensidad ${NOMBRES.intensidad[intensidad].toLowerCase()}`;
   const motivo = motivoSinVibracion();
   if (motivo) {
-    // El ícono se mueve para mostrar el patrón aunque no se sienta
-    mostrarPrueba('prueba-vibracion', `${motivo} El patrón de prueba es ${detalle}, intensidad ${nivel}.`, { activa: true });
+    // El ícono se mueve para mostrar la prueba aunque no se sienta
+    mostrarPrueba('prueba-vibracion', `${motivo} La prueba es ${PATRONES.prueba.detalle} con ${eleccion}.`, { activa: true });
     return;
   }
-  // CA065: al elegir la intensidad se reproduce un patrón de prueba
-  const vibro = vibrar('derecha', { forzar: true, intensidad });
+  // CA065: al elegir el pulso o la intensidad se reproduce un patrón de prueba
+  const vibro = vibrar('prueba', { forzar: true, pulso, intensidad });
   mostrarPrueba('prueba-vibracion', vibro
-    ? `Vibrando: ${detalle}, intensidad ${nivel}. Si no lo sientes, revisa que la vibración del celular esté activada y que no esté en modo de ahorro de batería.`
-    : 'El celular no vibró. Revisa que la vibración esté activada y vuelve a tocar «Probar vibración».', { activa: vibro });
+    ? `Vibrando: ${PATRONES.prueba.detalle}, ${eleccion}. Si no lo sientes, revisa que la vibración del celular esté activada, que no esté en silencio total ni en ahorro de batería.`
+    : 'El celular no aceptó vibrar. Revisa que la vibración esté activada y vuelve a tocar «Probar vibración».', { activa: vibro });
 }
 
 function escucharEjemplo() {
@@ -141,7 +159,7 @@ function escucharEjemplo() {
   }
   // CA071: frase de prueba con la velocidad elegida, aunque todavía no se haya guardado
   const frase = decir(EJEMPLOS[detalle], { forzar: true, velocidad });
-  const texto = `«${EJEMPLOS[detalle]}», velocidad ${NOMBRES.velocidad[velocidad].toLowerCase()}.`;
+  const texto = `«${EJEMPLOS[detalle]}», velocidad ${NOMBRES.velocidad(velocidad).toLowerCase()} (${multiplicador(velocidad)}).`;
   mostrarPrueba('prueba-voz', `Reproduciendo ${texto} Si no se oye, sube el volumen y revisa que el celular no esté en silencio.`, { activa: true });
   frase?.addEventListener('end', () => mostrarPrueba('prueba-voz', `Se reprodujo ${texto}`));
   frase?.addEventListener('error', (evento) => {
@@ -154,16 +172,22 @@ function escucharEjemplo() {
 
 export function iniciar() {
   $('[data-formulario="modo-guia"]').addEventListener('submit', guardarModoGuia);
+  $('[data-formulario="intensidad"]').addEventListener('submit', guardarIntensidad);
   $('[data-formulario="instrucciones"]').addEventListener('submit', guardarInstrucciones);
+
+  // Al elegir otro tipo de pulso se prueba al instante
+  $('[data-formulario="intensidad"]').addEventListener('change', (evento) => {
+    if (evento.target.name === 'pulso') probarVibracion();
+  });
 
   // Botones − y + de los niveles
   document.addEventListener('click', (evento) => {
     const boton = evento.target.closest('[data-accion="bajar"], [data-accion="subir"]');
     if (boton) {
       const control = document.getElementById(boton.getAttribute('aria-controls'));
-      const paso = boton.dataset.accion === 'subir' ? 1 : -1;
-      const nivel = ponerNivel(control, Number(control.value) + paso, NIVELES[control.id]);
-      anunciar(NIVELES[control.id][nivel]);
+      const paso = (Number(control.step) || 1) * (boton.dataset.accion === 'subir' ? 1 : -1);
+      ponerNivel(control, Number(control.value) + paso);
+      anunciar(control.getAttribute('aria-valuetext'));
       if (control.id === 'nivel-intensidad') probarVibracion();
       return;
     }
@@ -171,9 +195,9 @@ export function iniciar() {
     if (evento.target.closest('[data-accion="escuchar-ejemplo"]')) escucharEjemplo();
   });
 
-  for (const id of Object.keys(NIVELES)) {
+  for (const id of Object.keys(TEXTO_NIVEL)) {
     const control = document.getElementById(id);
-    control.addEventListener('input', () => ponerNivel(control, control.value, NIVELES[id]));
+    control.addEventListener('input', () => ponerNivel(control, control.value));
     if (id === 'nivel-intensidad') control.addEventListener('change', probarVibracion);
   }
 }
@@ -181,5 +205,6 @@ export function iniciar() {
 export function mostrar({ vista }) {
   if (vista === 'ajustes') mostrarAjustes();
   else if (vista === 'modo-guia') mostrarModoGuia();
+  else if (vista === 'intensidad') mostrarIntensidad();
   else if (vista === 'instrucciones') mostrarInstrucciones();
 }

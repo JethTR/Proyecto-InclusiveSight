@@ -9,10 +9,38 @@ export const PATRONES = {
   derecha: { nombre: 'Giro a la derecha', detalle: 'un pulso largo', ms: [600] },
   llegada: { nombre: 'Llegada al destino', detalle: 'tres pulsos', ms: [200, 120, 200, 120, 200] },
   riesgo: { nombre: 'Alerta de riesgo', detalle: 'vibración continua fuerte', ms: [1500] },
+  // Patrón de prueba de la pantalla Intensidad de vibración (7.2)
+  prueba: { nombre: 'Prueba', detalle: 'dos pulsos', ms: [350, 200, 350] },
 };
 
-// La intensidad alarga o acorta los pulsos (la API no permite cambiar la fuerza)
-const FACTOR = { 1: 0.6, 2: 1, 3: 1.4 };
+// Tipo de pulso: alarga o acorta cada vibración
+const DURACION = { largo: 1.5, medio: 1, suave: 0.6 };
+
+// Intensidad: la Vibration API no deja cambiar la fuerza del motor. Se simula prendiéndolo y apagándolo
+// muy rápido (ms encendido / ms apagado en cada ciclo de 50 ms): menos tiempo encendido se siente más suave.
+const CICLO = { 1: [30, 20], 2: [40, 10], 3: null }; // 3 = Alta: vibración continua
+const MAX_PATRON = 99; // Chrome ignora lo que pase de 99 valores en el patrón
+
+function conIntensidad(ms, intensidad) {
+  const ciclo = CICLO[intensidad];
+  if (!ciclo) return ms;
+  const [encendido, apagado] = ciclo;
+  const resultado = [];
+  ms.forEach((duracion, i) => {
+    if (i % 2 === 1) {
+      // Pausa del patrón: queda igual
+      resultado.push(duracion);
+      return;
+    }
+    let resto = duracion;
+    while (resto > encendido + apagado) {
+      resultado.push(encendido, apagado);
+      resto -= encendido + apagado;
+    }
+    resultado.push(Math.max(resto, 20));
+  });
+  return resultado.length <= MAX_PATRON ? resultado : ms;
+}
 
 /**
  * Por qué este dispositivo no puede vibrar desde el navegador, o null si puede.
@@ -36,18 +64,21 @@ export function puedeVibrar() {
 }
 
 /**
- * Vibra con un patrón. Respeta el modo "solo voz" y la intensidad elegida, salvo en la alerta de riesgo,
- * que siempre vibra con la intensidad máxima (CA066, CA075). forzar: vibra aunque el modo sea "solo voz"
- * (prácticas y pruebas). intensidad: la que se está probando en ajustes, antes de guardarla.
+ * Vibra con un patrón. Respeta el modo "solo voz", el tipo de pulso y la intensidad elegidos, salvo en la alerta
+ * de riesgo, que siempre vibra continua y al máximo (CA066, CA075). forzar: vibra aunque el modo sea "solo voz"
+ * (prácticas y pruebas). pulso e intensidad: los que se están probando en ajustes, antes de guardarlos.
+ * Devuelve true si el navegador aceptó vibrar.
  */
-export function vibrar(patron, { forzar = false, intensidad } = {}) {
+export function vibrar(patron, { forzar = false, pulso, intensidad } = {}) {
   if (!puedeVibrar() || !PATRONES[patron]) return false;
   // El navegador no deja vibrar hasta que la persona toca la página por primera vez
   if (navigator.userActivation && !navigator.userActivation.hasBeenActive) return false;
   const preferencias = leerPreferencias();
   const esRiesgo = patron === 'riesgo';
   if (!forzar && !esRiesgo && preferencias.modo === 'voz') return false;
-  const factor = esRiesgo ? FACTOR[3] : FACTOR[intensidad ?? preferencias.intensidad] ?? 1;
+  const factor = esRiesgo ? 1 : DURACION[pulso ?? preferencias.pulso] ?? 1;
   const ms = PATRONES[patron].ms.map((d, i) => (i % 2 === 0 ? Math.round(d * factor) : d));
-  return navigator.vibrate(ms);
+  // Algunos navegadores no vibran si ya hay una vibración en curso: se detiene antes
+  navigator.vibrate(0);
+  return navigator.vibrate(esRiesgo ? ms : conIntensidad(ms, intensidad ?? preferencias.intensidad));
 }

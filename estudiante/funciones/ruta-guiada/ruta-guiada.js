@@ -26,7 +26,6 @@ let guia = null; // { ruta, indice, estado, seguimiento }
 
 const $ = (selector, raiz = document) => raiz.querySelector(selector);
 const seccionGuia = () => $('#vista-guia');
-const esRegistrado = () => document.body.dataset.modo === 'registrado';
 
 /* ===== Textos de cada paso según las preferencias ===== */
 
@@ -110,7 +109,8 @@ function iniciarGuia(destino) {
     return;
   }
   guia = { ruta, indice: 0, estado: 'en-curso', seguimiento: null };
-  if (esRegistrado()) agregarReciente(destino.id);
+  // Con cuenta queda a nombre del usuario; como visitante, en este dispositivo (Recientes del inicio)
+  agregarReciente(destino.id);
 
   pintarCabecera();
   pintarInstruccion();
