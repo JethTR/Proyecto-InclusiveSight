@@ -6,15 +6,13 @@ Panel web para que la oficina de inclusión cargue el **mapa del campus (GeoJSON
 
 ## Cómo entrar
 
-Abre `http://localhost:8000/administrador/` con un servidor local desde la raíz del repositorio (ver el README principal).
-
 Solo entran cuentas con rol `administrador`; una cuenta de estudiante ve "Esta cuenta no está autorizada para el panel". Mientras no haya backend existe una **cuenta de prueba de desarrollo**, que se crea sola al abrir el acceso:
 
 | Correo | Contraseña |
 |---|---|
 | `coordinacion@universidad.edu.pe` | `Coordinacion2026` |
 
-Está en `funciones/acceso/acceso.js`. Bórrala cuando exista el backend. El panel tiene su propia sesión: entrar aquí no abre sesión en la app del estudiante.
+Está en `funciones/acceso/acceso.js`. Se borrara cuando exista el backend. El panel tiene su propia sesión: entrar aquí no abre sesión en la app del estudiante.
 
 ## Carpetas
 
@@ -25,29 +23,12 @@ administrador/
 ├── estilos/panel.css        ← estilos que usan varias funciones del panel (tablas, indicadores, estados)
 ├── funciones/
 │   ├── acceso/              ← acceso.css, acceso.js
-│   ├── resumen/             ← resumen.css, resumen.js        (9.1)
-│   ├── puntos/              ← puntos.css, puntos.js          (9.2, 9.3, 9.4)
-│   └── mapa/                ← mapa.css, mapa.js              (9.5, carga del GeoJSON, prueba de A*)
+│   ├── resumen/             ← resumen.css, resumen.js        
+│   ├── puntos/              ← puntos.css, puntos.js          
+│   └── mapa/                ← mapa.css, mapa.js (carga del GeoJSON, prueba de A*)
 ├── servicios/estado-puntos.js  ← estado de un punto (activo, inactivo, batería baja)
 └── nucleo/app.js            ← sesión del panel, alertas y router (compartido/nucleo/router.js)
 ```
-
-| Vista (hash) | Pantallas | Qué hace |
-|---|---|---|
-| `#resumen` | 9.1 | Puntos activos, con batería baja e inactivos; zonas cerradas; primer punto inactivo; actividad reciente |
-| `#puntos` | 9.2 | Lista con búsqueda y filtros (todos, activos, inactivos, batería baja) |
-| `#puntos/registrar` | 9.3 | Código, tipo (BLE/NFC), edificio y piso, referencia y ubicación tocando el mapa (o con latitud y longitud, para usarlo con teclado) |
-| `#puntos/editar/<código>` | 9.4 | Activar o desactivar, ubicación, mensaje de voz (120 caracteres, con vista previa) y estado |
-| `#mapa` | 9.5 | Cargar el GeoJSON, exportarlo, volver al del repositorio, edificios y pisos con sus destinos, y probar una ruta con A* |
-
-## Cómo llega la información al estudiante
-
-No hay backend, así que:
-
-1. Lo que guarda el panel queda en el `localStorage` del navegador (`compartido/servicios/campus.js`). La app del estudiante, **en el mismo navegador**, lo usa al recargar.
-2. Para que lo vean todos (GitHub Pages), usa **Exportar campus.geojson** y reemplaza `compartido/datos/campus.geojson` en el repositorio. Ese archivo es el mapa que usa cualquiera que no tenga cambios guardados.
-3. **Volver al mapa del repositorio** borra lo guardado en el navegador.
-
 ## Formato del mapa (GeoJSON)
 
 Un `FeatureCollection` con coordenadas `[longitud, latitud]` (WGS84). Cada elemento dice qué es en `properties.tipo`:
