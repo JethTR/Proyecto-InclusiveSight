@@ -16,31 +16,12 @@ export const PATRONES = {
 // Tipo de pulso: alarga o acorta cada vibración
 const DURACION = { largo: 1.5, medio: 1, suave: 0.6 };
 
-// Intensidad: la Vibration API no deja cambiar la fuerza del motor. Se simula prendiéndolo y apagándolo
-// muy rápido (ms encendido / ms apagado en cada ciclo de 50 ms): menos tiempo encendido se siente más suave.
-const CICLO = { 1: [30, 20], 2: [40, 10], 3: null }; // 3 = Alta: vibración continua
-const MAX_PATRON = 99; // Chrome ignora lo que pase de 99 valores en el patrón
-
-function conIntensidad(ms, intensidad) {
-  const ciclo = CICLO[intensidad];
-  if (!ciclo) return ms;
-  const [encendido, apagado] = ciclo;
-  const resultado = [];
-  ms.forEach((duracion, i) => {
-    if (i % 2 === 1) {
-      // Pausa del patrón: queda igual
-      resultado.push(duracion);
-      return;
-    }
-    let resto = duracion;
-    while (resto > encendido + apagado) {
-      resultado.push(encendido, apagado);
-      resto -= encendido + apagado;
-    }
-    resultado.push(Math.max(resto, 20));
-  });
-  return resultado.length <= MAX_PATRON ? resultado : ms;
-}
+// Intensidad: la Vibration API no deja cambiar la fuerza del motor. Antes se simulaba prendiéndolo y apagándolo
+// cada 40 ms, pero muchos celulares Android ignoran pulsos tan cortos y no vibraban. Ahora la intensidad
+// alarga o acorta cada vibración (más tiempo encendido se siente más fuerte) y Alta además acorta las pausas.
+const FUERZA = { 1: 0.6, 2: 1, 3: 1.4 };
+const PAUSA = { 1: 1.2, 2: 1, 3: 0.8 };
+const MINIMO_MS = 80; // por debajo de esto varios motores no llegan a arrancar
 
 /**
  * Por qué este dispositivo no puede vibrar desde el navegador, o null si puede.
@@ -76,9 +57,13 @@ export function vibrar(patron, { forzar = false, pulso, intensidad } = {}) {
   const preferencias = leerPreferencias();
   const esRiesgo = patron === 'riesgo';
   if (!forzar && !esRiesgo && preferencias.modo === 'voz') return false;
-  const factor = esRiesgo ? 1 : DURACION[pulso ?? preferencias.pulso] ?? 1;
-  const ms = PATRONES[patron].ms.map((d, i) => (i % 2 === 0 ? Math.round(d * factor) : d));
+  const nivel = intensidad ?? preferencias.intensidad;
+  const factor = esRiesgo ? 1 : (DURACION[pulso ?? preferencias.pulso] ?? 1) * (FUERZA[nivel] ?? 1);
+  const pausa = esRiesgo ? 1 : PAUSA[nivel] ?? 1;
+  const ms = PATRONES[patron].ms.map((d, i) => (i % 2 === 0
+    ? Math.max(MINIMO_MS, Math.round(d * factor))
+    : Math.round(d * pausa)));
   // Algunos navegadores no vibran si ya hay una vibración en curso: se detiene antes
   navigator.vibrate(0);
-  return navigator.vibrate(esRiesgo ? ms : conIntensidad(ms, intensidad ?? preferencias.intensidad));
+  return navigator.vibrate(ms);
 }

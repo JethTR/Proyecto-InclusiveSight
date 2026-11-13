@@ -100,7 +100,7 @@ La ayuda contextual (2.4) de cada vista es un `<dialog>` dentro de esa vista. La
 - Un invitado que entra por URL a una vista de solo registrados va a `auth.html#iniciar-sesion`, y `registrado.html` no se descarga.
 - Ajustes es para todos. Para el invitado se guardan solo en ese dispositivo.
 - Ajustes tiene la misma estructura en la web y en el celular (la lista de 7.1). Modo de guía e Intensidad de vibración son pantallas separadas.
-- Intensidad: la Vibration API no cambia la fuerza del motor, así que la intensidad baja y media se simulan prendiéndolo y apagándolo muy rápido (ciclos de 50 ms); el tipo de pulso cambia la duración de cada vibración.
+- Intensidad: la Vibration API no cambia la fuerza del motor, así que la intensidad alarga o acorta cada vibración (Baja ×0.6, Media ×1, Alta ×1.4, y Alta acorta las pausas); el tipo de pulso también cambia la duración. Ninguna vibración baja de 80 ms: muchos motores Android no arrancan con pulsos más cortos (por eso se descartó prender y apagar el motor cada 40 ms).
 - El inicio (`#buscar`) muestra las últimas 5 rutas recientes mientras no se escribe ni se elige una categoría; si no hay, un mensaje lo dice. Al buscar, aparecen los resultados.
 - Después de buscar por voz siempre aparece «Buscar otra vez por voz». "Probar vibración" y "Escuchar ejemplo" muestran en pantalla qué se está probando o por qué el dispositivo no puede hacerlo.
 - Las alertas de peligro no se pueden desactivar.
