@@ -54,16 +54,6 @@ Lo que usan también el administrador (estilos base, componentes, cuenta simulad
 
 Los fragmentos no llevan `<!DOCTYPE>`, `<html>` ni `<body>`: son solo `<section>` y `<template>`. El router los carga con `fetch`, los inserta en `<main id="vista">`, los guarda en memoria para no pedirlos otra vez y, si la carga falla, muestra el mensaje `[data-mensaje="error-carga"]` con el botón "Reintentar". Sus rutas internas son relativas a `app.html`.
 
-## Cómo correrlo
-
-Necesita un servidor local, porque los módulos ES y `fetch` no funcionan con `file://`. Desde la raíz del repositorio:
-
-```bash
-python -m http.server 8000
-```
-
-y abre `http://localhost:8000/estudiante/`. También sirve Live Server de VS Code.
-
 ## Vistas y hash
 
 `auth.html` y `app.html` muestran una sola sección a la vez según el hash. Las demás llevan `hidden`.
@@ -105,13 +95,6 @@ La ayuda contextual (2.4) de cada vista es un `<dialog>` dentro de esa vista. La
 - Después de buscar por voz siempre aparece «Buscar otra vez por voz». "Probar vibración" y "Escuchar ejemplo" muestran en pantalla qué se está probando o por qué el dispositivo no puede hacerlo.
 - Las alertas de peligro no se pueden desactivar.
 
-Mientras no exista el JavaScript, el CSS puede ocultar lo que no corresponde:
-
-```css
-body[data-modo="invitado"] [data-requiere-cuenta],
-body[data-modo="registrado"] [data-solo-invitado] { display: none; }
-```
-
 ## Inicio de sesión
 
 - El error es genérico ("Correo o contraseña incorrectos") y no dice qué dato falló. En cada intento fallido también dice cuántos intentos quedan.
@@ -148,8 +131,3 @@ No hay datos inventados en el HTML. Los únicos datos de ejemplo están en `comp
 - Botones solo con ícono con `aria-label`. Íconos decorativos con `aria-hidden="true"`.
 - El mapa es un complemento: toda su información también está en texto.
 
-## Verificación
-
-Revisado con un verificador propio (Python) sobre las páginas y sobre `app.html` con los dos fragmentos insertados: no hay ids repetidos, enlaces o anclas rotos, referencias ARIA rotas, encabezados vacíos ni campos sin etiqueta; cada vista tiene un solo `h1` y todas las rutas son relativas.
-
-Falta pasar `html-validate` (reglas `recommended` y `a11y`), que necesita Node.js. Hay que activar `allowMultipleH1` en `heading-level` (un `h1` por vista) y validar los fragmentos dentro de una página de prueba o con la opción para fragmentos.
