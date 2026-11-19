@@ -145,6 +145,8 @@ function probarVibracion() {
   }
   // CA065: al elegir el pulso o la intensidad se reproduce un patrón de prueba
   const vibro = vibrar('prueba', { forzar: true, pulso, intensidad });
+  // Igual que en la guía: la vibración va acompañada de voz, así quien no ve la pantalla sabe qué se está probando
+  if (vibro) decir(`Probando ${eleccion}.`, { forzar: true });
   mostrarPrueba('prueba-vibracion', vibro
     ? `Vibrando: ${PATRONES.prueba.detalle}, ${eleccion}. Si no lo sientes, revisa que la vibración del celular esté activada, que no esté en silencio total ni en ahorro de batería.`
     : 'El celular no aceptó vibrar. Revisa que la vibración esté activada y vuelve a tocar «Probar vibración».', { activa: vibro });

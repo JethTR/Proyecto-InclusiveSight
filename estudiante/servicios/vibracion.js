@@ -63,7 +63,7 @@ export function vibrar(patron, { forzar = false, pulso, intensidad } = {}) {
   const ms = PATRONES[patron].ms.map((d, i) => (i % 2 === 0
     ? Math.max(MINIMO_MS, Math.round(d * factor))
     : Math.round(d * pausa)));
-  // Algunos navegadores no vibran si ya hay una vibración en curso: se detiene antes
-  navigator.vibrate(0);
+  // No se llama antes a navigator.vibrate(0): una llamada nueva ya reemplaza la vibración en curso, y cancelar
+  // justo antes de vibrar hacía que en algunos Android la segunda orden se perdiera.
   return navigator.vibrate(ms);
 }
