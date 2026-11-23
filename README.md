@@ -8,20 +8,6 @@ Sistema de orientación por voz y vibración para que estudiantes universitarios
 | Repositorio | https://github.com/JethTR/Proyecto-InclusiveSight |
 | Mockups y prototipo en Figma | https://www.figma.com/design/mAMd9yocUOIolmdB7gkmNK |
 
-## Qué es la entrega
-
-El handbook del curso (capítulo V) pide una **Landing Page funcional** hecha con **HTML, CSS y JavaScript**, **responsive** (un solo código para celular, tablet y escritorio), **accesible**, publicada en **GitHub Pages** y que evidencie **30 Historias de Usuario core**. Las pruebas de aceptación y la validación con usuarios se hacen sobre la versión publicada.
-
-En este proyecto la Landing Page es el sitio completo que se publica en GitHub Pages:
-
-```
-index.html (portada de la startup, en la raíz)
- ├── «Probar la app»      → pages/estudiante/      app del estudiante y del visitante
- └── «Panel de control»   → pages/administrador/   panel del coordinador del campus
-```
-
-Todo funciona en el navegador, sin servidor: las cuentas, favoritos y ajustes se guardan en el `localStorage` del navegador, y el mapa sale de `assets/datos/`. Así el sitio publicado en GitHub Pages es la versión completa que se evalúa.
-
 ## Estructura del repositorio
 
 Sigue la estructura que pide el handbook:
@@ -65,10 +51,8 @@ No se usan `assets/fonts/` ni `assets/videos/`: las fuentes (Atkinson Hyperlegib
 
 | Archivo | Qué es |
 |---|---|
-| [`docs/estudiante.md`](docs/estudiante.md) | App del estudiante y del visitante: vistas, servicios, modo invitado y registrado, accesibilidad |
-| [`docs/administrador.md`](docs/administrador.md) | Panel del coordinador: acceso, vistas, formato del mapa GeoJSON y cálculo de rutas con A* |
-| [`docs/prompt_contexto_InclusiveSight.md`](docs/prompt_contexto_InclusiveSight.md) | Contexto del proyecto: decisiones, épicas e historias de usuario |
-| [`docs/prompt_claude_code_inclusivesight_v2.md`](docs/prompt_claude_code_inclusivesight_v2.md) | Instrucciones originales para construir la aplicación |
+| [`docs/estudiante.md`](docs/estudiante.md) | Contexto del app web del estudiante y del visitante: vistas, servicios, modo invitado y registrado, accesibilidad |
+| [`docs/administrador.md`](docs/administrador.md) | Contexto del panel del coordinador: acceso, vistas, formato del mapa GeoJSON y cálculo de rutas con A* |
 
 ## Créditos
 
